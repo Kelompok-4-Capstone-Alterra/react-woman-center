@@ -1,35 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import './App.css';
+import Dashboard from './layouts/Dashboard';
+import { Route, Routes } from 'react-router';
 
 function App() {
-  const [count, setCount] = useState(0)
+  // Output return bisa diganti ke component sesuai page
+
+  const Landingpage = () => {
+    return <h1>Landing Page</h1>;
+    // return <LandingPage />;
+  };
+
+  const Login = () => {
+    return <h1>Login Page</h1>;
+    // return <LoginPage />;
+  };
+
+  const Dashboardpage = () => {
+    return <h1>Dashboard Page</h1>;
+    // return <Dashboard />;
+  };
+
+  const Profile = () => {
+    return <h1>Profile Page</h1>;
+    // return <ProfilePage/>
+  };
+
+  const UserAndCounselor = () => {
+    return <h1>UserAndCounselor Page</h1>;
+    // return <UserAndCounselorPage/>
+  };
+
+  const Counseling = () => {
+    return <h1>Counseling Page</h1>;
+    // return <CounselingPage/>
+  };
+
+  const Career = () => {
+    return <h1>Career Page</h1>;
+    // return <CareerPage/>
+  };
+
+  const ArticleAndForum = () => {
+    return <h1>ArticleAndForum Page</h1>;
+    // return <ArticleAndForumPage/>
+  };
+
+  const Report = () => {
+    return <h1>Report Page</h1>;
+    // return <ReportPage/>
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Routes>
+      <Route path="/landing-page" element={<Landingpage />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/" element={<Dashboard />}>
+        <Route index element={<Dashboardpage />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/user-counselor" element={<UserAndCounselor />} />
+        <Route path="/counseling" element={<Counseling />} />
+        <Route path="/career" element={<Career />} />
+        <Route path="/article-forum" element={<ArticleAndForum />} />
+        <Route path="/report" element={<Report />} />
+      </Route>
+    </Routes>
+  );
 }
 
-export default App
+export default App;
