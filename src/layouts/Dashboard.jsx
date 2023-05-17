@@ -1,5 +1,6 @@
-import React from "react";
-import Sidebar from "../components/layouts/Sidebar";
+import React from 'react';
+import Sidebar from '../components/layouts/Sidebar';
+import { Outlet } from 'react-router';
 
 const Dashboard = () => {
   return (
@@ -11,8 +12,7 @@ const Dashboard = () => {
           <h2 className="text-white">Subtitle</h2>
         </div>
         <div>
-          {/* Buat Outlet dari React Router */}
-          {/* <Outlet/> */}
+          <Outlet />
         </div>
       </div>
     </div>
