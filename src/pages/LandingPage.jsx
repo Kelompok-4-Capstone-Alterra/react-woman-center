@@ -1,10 +1,15 @@
 import React from "react";
-import './App.css'
-import loginImage from './assets/login-image.png'
+import { useNavigate } from 'react-router';
+import '../App.css'
+import loginImage from '../assets/login-image.png'
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined';
 
 function LandingPage() {
 
+  const navigate = useNavigate();
+  const navigateToLogin = () => {
+      navigate('/login');
+  };
   return (
     <div className="flex relative w-full h-screen bg-primary">
       <div className="flex flex-col justify-center text-left pl-[117px] pr-[139px] w-full h-full">
@@ -13,7 +18,7 @@ function LandingPage() {
         <p className="text-base mb-16">As an administrator of a women's center, 
           your role is to oversee the day-to-day operations of the center 
           and ensure that it is fulfilling its mission of supporting and empowering women.</p>
-        <button className="bg-[#BDB728] h-[56px] rounded">
+        <button className="bg-[#BDB728] h-[56px] rounded" onClick={navigateToLogin}>
           <LoginOutlinedIcon className="m-2.5 pb-0.5"/> Get into the dashboard
         </button>
       </div>
