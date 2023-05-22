@@ -1,6 +1,7 @@
-import './App.css';
-import Dashboard from './layouts/Dashboard';
-import { Route, Routes } from 'react-router';
+import "./App.css";
+import Tables from "./components/Dashboard/Tables";
+import Dashboard from "./layouts/Dashboard";
+import { Route, Routes } from "react-router";
 
 function App() {
   // Output return bisa diganti ke component sesuai page
@@ -26,7 +27,11 @@ function App() {
   };
 
   const UserAndCounselor = () => {
-    return <h1>UserAndCounselor Page</h1>;
+    return (
+      <div className="p-10">
+        <Tables />
+      </div>
+    );
     // return <UserAndCounselorPage/>
   };
 
