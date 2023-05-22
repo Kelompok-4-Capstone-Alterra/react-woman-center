@@ -1,4 +1,3 @@
-import React from "react";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -14,6 +13,7 @@ import { NavLink } from "react-router-dom";
 const Sidebar = ({ expand }) => {
   const activelink = "text-primaryMain";
   const normalLink = "hover:text-primaryMain";
+
   return (
     <div
       className={`h-screen  shadow-right flex flex-col justify-start py-8  w-40 absolute left-0 z-10 bg-white ${
@@ -141,8 +141,7 @@ const Sidebar = ({ expand }) => {
       </div>
       <NavLink
         to={"/login"}
-        className={`${({ isActive }) =>
-          isActive ? activelink : normalLink} mt-auto`}
+        className={({ isActive }) => (isActive ? activelink : normalLink)}
       >
         <div
           className={`flex   items-center text-center mt-auto ${
