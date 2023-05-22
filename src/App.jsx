@@ -1,5 +1,4 @@
 import "./App.css";
-import Tables from "./components/Dashboard/Tables";
 import Dashboard from "./layouts/Dashboard";
 import { Route, Routes } from "react-router";
 
@@ -27,11 +26,7 @@ function App() {
   };
 
   const UserAndCounselor = () => {
-    return (
-      <div className="p-10">
-        <Tables />
-      </div>
-    );
+    return <h1>User and Counselor Page</h1>;
     // return <UserAndCounselorPage/>
   };
 
