@@ -1,6 +1,5 @@
-import React from 'react';
-import Sidebar from '../components/layouts/Sidebar';
-import { Outlet } from 'react-router';
+import Sidebar from "../components/layouts/Sidebar";
+import { Outlet } from "react-router";
 
 const Dashboard = () => {
   return (
