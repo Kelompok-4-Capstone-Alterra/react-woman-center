@@ -11,6 +11,8 @@ export default {
         secondary: "#BDB728",
         primaryMain: "#AF1582",
         primaryBorder: "#B5589A",
+        successMain: "#0E9325",
+        dangerMain: "#B3261E",
       },
     },
   },
