@@ -1,23 +1,21 @@
 import "./App.css";
 import Dashboard from "./layouts/Dashboard";
+import LandingPage from "./pages/LandingPage";
+import DashboardPage from "./pages/DashboardPage";
+import Report from "./pages/Report";
 import { Route, Routes } from "react-router";
 
 function App() {
   // Output return bisa diganti ke component sesuai page
 
-  const Landingpage = () => {
-    return <h1>Landing Page</h1>;
-    // return <LandingPage />;
-  };
+  // const LandingPage = () => {
+  //   return <h1>Landing Page</h1>;
+  //   // return <LandingPage />;
+  // };
 
   const Login = () => {
     return <h1>Login Page</h1>;
     // return <LoginPage />;
-  };
-
-  const Dashboardpage = () => {
-    return <h1>Dashboard Page</h1>;
-    // return <Dashboard />;
   };
 
   const Profile = () => {
@@ -45,17 +43,13 @@ function App() {
     // return <ArticleAndForumPage/>
   };
 
-  const Report = () => {
-    return <h1>Report Page</h1>;
-    // return <ReportPage/>
-  };
 
   return (
     <Routes>
-      <Route path="/landing-page" element={<Landingpage />} />
+      <Route path="/landing-page" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<Dashboard />}>
-        <Route index element={<Dashboardpage />} />
+        <Route index element={<DashboardPage />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/user-counselor" element={<UserAndCounselor />} />
         <Route path="/counseling" element={<Counseling />} />
