@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router';
 import '../App.css'
 import loginImage from '../assets/login-image.png'
 import LoginOutlinedIcon from '@mui/icons-material/LoginOutlined';
+import Button from "../components/Button";
 
-function LandingPage() {
-
+const LandingPage =()=> {
   const navigate = useNavigate();
   const navigateToLogin = () => {
       navigate('/login');
@@ -18,9 +18,10 @@ function LandingPage() {
         <p className="text-base mb-16">As an administrator of a women's center, 
           your role is to oversee the day-to-day operations of the center 
           and ensure that it is fulfilling its mission of supporting and empowering women.</p>
-        <button className="bg-[#BDB728] h-[56px] rounded" onClick={navigateToLogin}>
+        <Button className="bg-[#BDB728] h-[56px]
+        border-[#EADB7D] hover:bg-[#AEAB59] active:bg-[#913175] hover:outline-[#AEAB59]" onClick={navigateToLogin}>
           <LoginOutlinedIcon className="m-2.5 pb-0.5"/> Get into the dashboard
-        </button>
+        </Button>
       </div>
       <div id='login-image' className="flex items-center justify-center w-full h-full">
           <img src={loginImage} alt="login-image" className="max-h-screen" />
