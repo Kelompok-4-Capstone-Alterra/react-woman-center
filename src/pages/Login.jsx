@@ -5,7 +5,7 @@ import ArrowBack from "@mui/icons-material/ArrowBack";
 
 const Login = () => {
   return (
-    <div className="flex relative w-full h-screen bg-primary">
+    <div className="flex relative w-full h-screen bg-primaryPressed">
      <div id='login-form' className="flex flex-col justify-center bg-white px-48 w-full h-full">
             <div className="mb-12">
             <ArrowBack />
