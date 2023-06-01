@@ -49,7 +49,7 @@ const Sidebar = ({ expand }) => {
           </div>
         </NavLink>
         <NavLink
-          to={"/"}
+          to={"/dashboard"}
           className={({ isActive }) => (isActive ? activelink : normalLink)}
         >
           <div
@@ -140,7 +140,7 @@ const Sidebar = ({ expand }) => {
         </NavLink>
       </div>
       <NavLink
-        to={"/login"}
+        to={"/"}
         className={({ isActive }) => (isActive ? activelink : normalLink)}
       >
         <div
