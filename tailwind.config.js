@@ -13,6 +13,7 @@ export default {
         primaryBorder: "#B5589A",
         successMain: "#0E9325",
         dangerMain: "#B3261E",
+        primaryHover: "#954E80"
       },
     },
   },
