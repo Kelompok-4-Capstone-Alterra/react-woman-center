@@ -7,13 +7,16 @@ export default {
         right: "1px 0 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);",
       },
       colors: {
-        primaryPressed: "#913175",
-        secondary: "#BDB728",
         primaryMain: "#AF1582",
+        primaryHover: "#954E80",
+        primaryPressed: "#913175",
         primaryBorder: "#B5589A",
+        secondaryMain: "#BDB728",
+        secondaryHover: "#AEAB59",
+        secondaryPressed: "#9A8A23",
+        secondaryBorder:"#EADB7D",
         successMain: "#0E9325",
-        dangerMain: "#B3261E",
-        primaryHover: "#954E80"
+        dangerMain: "#B3261E"
       },
     },
   },
