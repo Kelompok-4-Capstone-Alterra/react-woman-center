@@ -48,118 +48,110 @@ const Sidebar = ({ expand }) => {
             <p className="text-sm">User</p>
           </div>
         </NavLink>
-        <div
-          className={`flex flex-col ${
-            expand ? "items-start gap-8" : "items-center gap-5"
-          }`}
-        >
-          <NavLink
-            to={"/"}
-            className={({ isActive }) => (isActive ? activelink : normalLink)}
-          >
-            <div
-              className={`flex items-center text-center ${
-                expand
-                  ? "flex-row justify-start gap-2"
-                  : "flex-col justify-center gap-1"
-              }`}
-            >
-              <DashboardIcon />
-              <p className="text-sm">Dashboard</p>
-            </div>
-          </NavLink>
-          <NavLink
-            to={"/user-counselor"}
-            className={({ isActive }) => (isActive ? activelink : normalLink)}
-          >
-            <div
-              className={`flex items-center text-center ${
-                expand
-                  ? "flex-row justify-start gap-2"
-                  : "flex-col justify-center gap-1"
-              }`}
-            >
-              <PeopleIcon />
-              <p className="text-sm">User & Counselor</p>
-            </div>
-          </NavLink>
-          <NavLink
-            to={"/counseling"}
-            className={({ isActive }) => (isActive ? activelink : normalLink)}
-          >
-            <div
-              className={`flex items-center text-center ${
-                expand
-                  ? "flex-row justify-start gap-2"
-                  : "flex-col justify-center gap-1"
-              }`}
-            >
-              <ListAltIcon />
-              <p className="text-sm">Counseling</p>
-            </div>
-          </NavLink>
-          <NavLink
-            to={"/career"}
-            className={({ isActive }) => (isActive ? activelink : normalLink)}
-          >
-            <div
-              className={`flex items-center text-center ${
-                expand
-                  ? "flex-row justify-start gap-2"
-                  : "flex-col justify-center gap-1"
-              }`}
-            >
-              <WorkIcon />
-              <p className="text-sm">Career</p>
-            </div>
-          </NavLink>
-          <NavLink
-            to={"/article-forum"}
-            className={({ isActive }) => (isActive ? activelink : normalLink)}
-          >
-            <div
-              className={`flex items-center text-center ${
-                expand
-                  ? "flex-row justify-start gap-2"
-                  : "flex-col justify-center gap-1"
-              }`}
-            >
-              <ArticleIcon />
-              <p className="text-sm">Article & Forum</p>
-            </div>
-          </NavLink>
-          <NavLink
-            to={"/report"}
-            className={({ isActive }) => (isActive ? activelink : normalLink)}
-          >
-            <div
-              className={`flex items-center text-center ${
-                expand
-                  ? "flex-row justify-start gap-2"
-                  : "flex-col justify-center gap-1"
-              }`}
-            >
-              <FolderIcon />
-              <p className="text-sm">Report</p>
-            </div>
-          </NavLink>
-        </div>
         <NavLink
-          to={"/login"}
+          to={"/dashboard"}
           className={({ isActive }) => (isActive ? activelink : normalLink)}
         >
           <div
-            className={`flex items-center text-center ${
+            className={`flex   items-center text-center ${
               expand
                 ? "flex-row justify-start gap-2"
-                : "flex-col justify-center gap-1"
+                : "flex-col justify-center"
             }`}
           >
-            <ExitToAppIcon />
-            <p className="text-sm">Logout</p>
+            <DashboardIcon />
+            <p className="text-sm">Dashboard</p>
+          </div>
+        </NavLink>
+        <NavLink
+          to={"/user-counselor"}
+          className={({ isActive }) => (isActive ? activelink : normalLink)}
+        >
+          <div
+            className={`flex   items-center text-center ${
+              expand
+                ? "flex-row justify-start gap-2"
+                : "flex-col justify-center"
+            }`}
+          >
+            <PeopleIcon />
+            <p className="text-sm">User & Counselor</p>
+          </div>
+        </NavLink>
+        <NavLink
+          to={"/counseling"}
+          className={({ isActive }) => (isActive ? activelink : normalLink)}
+        >
+          <div
+            className={`flex   items-center text-center ${
+              expand
+                ? "flex-row justify-start gap-2"
+                : "flex-col justify-center"
+            }`}
+          >
+            <ListAltIcon />
+            <p className="text-sm">Counseling</p>
+          </div>
+        </NavLink>
+        <NavLink
+          to={"/career"}
+          className={({ isActive }) => (isActive ? activelink : normalLink)}
+        >
+          <div
+            className={`flex   items-center text-center ${
+              expand
+                ? "flex-row justify-start gap-2"
+                : "flex-col justify-center"
+            }`}
+          >
+            <WorkIcon />
+            <p className="text-sm">Career</p>
+          </div>
+        </NavLink>
+        <NavLink
+          to={"/article-forum"}
+          className={({ isActive }) => (isActive ? activelink : normalLink)}
+        >
+          <div
+            className={`flex   items-center text-center ${
+              expand
+                ? "flex-row justify-start gap-2"
+                : "flex-col justify-center"
+            }`}
+          >
+            <ArticleIcon />
+            <p className="text-sm">Article & Forum</p>
+          </div>
+        </NavLink>
+        <NavLink
+          to={"/report"}
+          className={({ isActive }) => (isActive ? activelink : normalLink)}
+        >
+          <div
+            className={`flex   items-center text-center ${
+              expand
+                ? "flex-row justify-start gap-2"
+                : "flex-col justify-center"
+            }`}
+          >
+            <FolderIcon />
+            <p className="text-sm">Report</p>
           </div>
         </NavLink>
       </div>
+      <NavLink
+        to={"/"}
+        className={({ isActive }) => (isActive ? activelink : normalLink)}
+      >
+        <div
+          className={`flex   items-center text-center mt-auto ${
+            expand ? "flex-row justify-start gap-2" : "flex-col justify-center"
+          }`}
+        >
+          <ExitToAppIcon />
+          <p className="text-sm">Logout</p>
+        </div>
+      </NavLink>
     </div>
   );
 };
