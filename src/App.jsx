@@ -3,9 +3,9 @@ import Dashboard from "./layouts/Dashboard";
 import LandingPage from "./pages/LandingPage";
 import DashboardPage from "./pages/DashboardPage";
 import Report from "./pages/Report";
+import Login from "./pages/Login";
 import { RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
-import Login from "./pages/Login";
 import CounselingPage from "./pages/CounselingPage";
 
 // element router bisa diganti ke component sesuai page

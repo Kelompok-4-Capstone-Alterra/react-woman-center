@@ -1,0 +1,13 @@
+.rdp {
+    --rdp-background-color: #AF1582 !important;
+    }
+
+.rdp-cell {
+    padding: 10px;
+}
+
+.rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+  background-color: var(--rdp-background-color);
+  border-radius: 0px;
+  color: white;
+}
