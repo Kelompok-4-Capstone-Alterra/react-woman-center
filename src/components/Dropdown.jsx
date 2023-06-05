@@ -4,7 +4,7 @@ import { useController } from "react-hook-form";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
-const Dropdown = ({ control, name, placeholder, label, children }) => {
+const Dropdown = ({ control, name, placeholder, label, children, handleSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const {
@@ -21,6 +21,7 @@ const Dropdown = ({ control, name, placeholder, label, children }) => {
   const handleOptionSelect = (selected) => {
     onChange(selected);
     toggleDropdown();
+    handleSelect();
   };
 
   return (
