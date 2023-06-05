@@ -9,6 +9,7 @@ export default {
       colors: {
         primaryPressed: "#913175",
         secondary: "#BDB728",
+        secondarySurface: "#E3DDB2",
         primaryMain: "#AF1582",
         primaryBorder: "#B5589A",
         successMain: "#0E9325",
