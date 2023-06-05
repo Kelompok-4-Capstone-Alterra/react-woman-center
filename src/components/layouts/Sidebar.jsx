@@ -16,12 +16,12 @@ const Sidebar = ({ expand }) => {
 
   return (
     <div
-      className={`h-screen  shadow-right flex flex-col justify-start py-8  w-40 absolute left-0 z-10 bg-white ${
+      className={`h-screen shadow-right flex flex-col justify-start py-7 w-40 absolute left-0 z-10 bg-white ${
         expand ? "w-[15rem] px-6" : ""
       }`}
     >
       <div
-        className={`mb-12 flex  ${
+        className={`mb-10 flex h-full ${
           expand ? "justify-between" : "justify-center"
         }`}
       >
@@ -29,8 +29,8 @@ const Sidebar = ({ expand }) => {
         <button>{expand ? <ChevronLeftIcon /> : <ChevronRightIcon />}</button>
       </div>
       <div
-        className={`flex flex-col   ${
-          expand ? "items-start gap-8" : "items-center gap-4"
+        className={`flex flex-col gap-8 px-6 ${
+          expand ? "items-start" : "items-center"
         }`}
       >
         <NavLink
@@ -38,10 +38,10 @@ const Sidebar = ({ expand }) => {
           className={({ isActive }) => (isActive ? activelink : normalLink)}
         >
           <div
-            className={`flex   items-center text-center ${
+            className={`flex items-center text-center ${
               expand
                 ? "flex-row justify-start gap-2"
-                : "flex-col justify-center"
+                : "flex-col justify-center gap-1"
             }`}
           >
             <AccountCircleIcon color="" />

@@ -4,6 +4,7 @@ function ButtonSecondary({
   type = 'submit',
   className = '',
   processing,
+  onClick,
   children,
 }) {
   return (
@@ -16,6 +17,7 @@ function ButtonSecondary({
         } ` + className
       }
       disabled={processing}
+      onClick={onClick}
     >
       {children}
     </button>

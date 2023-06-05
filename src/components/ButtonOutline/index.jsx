@@ -4,6 +4,7 @@ export default function ButtonOutline({
   type = 'submit',
   className = '',
   processing,
+  onClick,
   children,
 }) {
   return (
@@ -17,6 +18,7 @@ export default function ButtonOutline({
         } ` + className
       }
       disabled={processing}
+      onClick={onClick}
     >
       {children}
     </button>

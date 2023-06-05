@@ -1,11 +1,11 @@
-import './App.css';
-import Dashboard from './layouts/Dashboard';
-import LandingPage from './pages/LandingPage';
-import DashboardPage from './pages/DashboardPage';
-import Report from './pages/Report';
-import { RouterProvider } from 'react-router';
-import { createBrowserRouter } from 'react-router-dom';
-import Login from './pages/Login';
+import "./App.css";
+import Dashboard from "./layouts/Dashboard";
+import LandingPage from "./pages/LandingPage";
+import DashboardPage from "./pages/DashboardPage";
+import Report from "./pages/Report";
+import Login from "./pages/Login";
+import { RouterProvider } from "react-router";
+import { createBrowserRouter } from "react-router-dom";
 
 // element router bisa diganti ke component sesuai page
 
@@ -46,15 +46,15 @@ const ArticleAndForum = () => {
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <LandingPage />,
   },
   {
-    path: '/login',
+    path: "/login",
     element: <Login />,
   },
   {
-    path: '/dashboard',
+    path: "/dashboard",
     element: <Dashboard />,
     children: [
       {
@@ -64,7 +64,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/profile',
+    path: "/profile",
     element: <Dashboard />,
     children: [
       {
@@ -74,7 +74,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/user-counselor',
+    path: "/user-counselor",
     element: <Dashboard />,
     children: [
       {
@@ -84,7 +84,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/counseling',
+    path: "/counseling",
     element: <Dashboard />,
     children: [
       {
@@ -94,7 +94,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/career',
+    path: "/career",
     element: <Dashboard />,
     children: [
       {
@@ -104,7 +104,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/article-forum',
+    path: "/article-forum",
     element: <Dashboard />,
     children: [
       {
@@ -114,7 +114,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/report',
+    path: "/report",
     element: <Dashboard />,
     children: [
       {

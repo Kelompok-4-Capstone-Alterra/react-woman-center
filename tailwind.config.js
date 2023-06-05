@@ -14,9 +14,10 @@ export default {
         secondaryMain: "#BDB728",
         secondaryHover: "#AEAB59",
         secondaryPressed: "#9A8A23",
-        secondaryBorder:"#EADB7D",
+        secondarySurface: "#E3DDB2",
+        secondaryBorder: "#EADB7D",
         successMain: "#0E9325",
-        dangerMain: "#B3261E"
+        dangerMain: "#B3261E",
       },
     },
   },
