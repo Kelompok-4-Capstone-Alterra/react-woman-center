@@ -1,11 +1,12 @@
-import './App.css';
-import Dashboard from './layouts/Dashboard';
-import LandingPage from './pages/LandingPage';
-import DashboardPage from './pages/DashboardPage';
-import Report from './pages/Report';
-import { RouterProvider } from 'react-router';
-import { createBrowserRouter } from 'react-router-dom';
-import Login from './pages/Login';
+import "./App.css";
+import Dashboard from "./layouts/Dashboard";
+import LandingPage from "./pages/LandingPage";
+import DashboardPage from "./pages/DashboardPage";
+import Report from "./pages/Report";
+import { RouterProvider } from "react-router";
+import { createBrowserRouter } from "react-router-dom";
+import Login from "./pages/Login";
+import CounselingPage from "./pages/CounselingPage";
 
 // element router bisa diganti ke component sesuai page
 
@@ -29,10 +30,10 @@ const UserAndCounselor = () => {
   // return <UserAndCounselorPage/>
 };
 
-const Counseling = () => {
-  return <h1>Counseling Page</h1>;
-  // return <CounselingPage/>
-};
+// const Counseling = () => {
+//   return <h1>Counseling Page</h1>;
+//   // return <CounselingPage/>
+// };
 
 const Career = () => {
   return <h1>Career Page</h1>;
@@ -46,15 +47,15 @@ const ArticleAndForum = () => {
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <LandingPage />,
   },
   {
-    path: '/login',
+    path: "/login",
     element: <Login />,
   },
   {
-    path: '/dashboard',
+    path: "/dashboard",
     element: <Dashboard />,
     children: [
       {
@@ -64,7 +65,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/profile',
+    path: "/profile",
     element: <Dashboard />,
     children: [
       {
@@ -74,7 +75,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/user-counselor',
+    path: "/user-counselor",
     element: <Dashboard />,
     children: [
       {
@@ -84,17 +85,17 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/counseling',
+    path: "/counseling",
     element: <Dashboard />,
     children: [
       {
-        element: <Counseling />,
+        element: <CounselingPage />,
         index: true,
       },
     ],
   },
   {
-    path: '/career',
+    path: "/career",
     element: <Dashboard />,
     children: [
       {
@@ -104,7 +105,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/article-forum',
+    path: "/article-forum",
     element: <Dashboard />,
     children: [
       {
@@ -114,7 +115,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/report',
+    path: "/report",
     element: <Dashboard />,
     children: [
       {
