@@ -32,13 +32,9 @@ const UserCounselorPage = () => {
           <PersonIcon className="me-4" />{" "}
           <p className="text-lg font-medium ">Admin</p>
         </div>
-        {isCounselor ? (
+        {isCounselor && (
           <ButtonPrimary className="flex items-center justify-center text-sm">
             <AddIcon /> Add Counselor
-          </ButtonPrimary>
-        ) : (
-          <ButtonPrimary className="flex items-center justify-center text-sm">
-            <AddIcon /> Add User
           </ButtonPrimary>
         )}
       </div>
