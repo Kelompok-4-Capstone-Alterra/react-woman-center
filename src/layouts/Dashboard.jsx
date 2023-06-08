@@ -1,15 +1,25 @@
-import React from 'react';
-import Sidebar from '../components/layouts/Sidebar';
-import { Outlet } from 'react-router';
+import { useState } from "react";
+import { Outlet } from "react-router";
+import Sidebar from "../components/layouts/Sidebar";
 
-const Dashboard = () => {
+const Dashboard = ({ page }) => {
+  const [isExpand, setIsExpand] = useState(false);
+
+  const handleExpandSidebar = (isExpand) => {
+    setIsExpand(isExpand);
+  };
+
   return (
-    <div className="flex relative">
-      <Sidebar expand={false} className="z-10" />
-      <div className=" absolute left-40 right-0 ">
-        <div className="bg-primary ps-12 flex flex-col justify-center h-24 -z-10">
-          <h1 className="text-white text-2xl">Dashboard</h1>
-          <h2 className="text-white">Subtitle</h2>
+    <div className="relative flex">
+      <Sidebar
+        expand={isExpand}
+        handleExpandSidebar={handleExpandSidebar}
+        className="z-10"
+      />
+      <div className="absolute right-0 left-40">
+        <div className="flex flex-col justify-center h-24 bg-primaryPressed ps-12 -z-10 gap-1">
+          <h1 className="text-2xl text-white">Dashboard</h1>
+          <h2 className="text-white">{page}</h2>
         </div>
         <div>
           <Outlet />
