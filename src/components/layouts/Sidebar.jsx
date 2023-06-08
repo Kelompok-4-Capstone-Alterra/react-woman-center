@@ -3,7 +3,6 @@ import { useRef } from "react";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
 import ListAltIcon from "@mui/icons-material/ListAlt";
@@ -12,6 +11,7 @@ import ArticleIcon from "@mui/icons-material/Article";
 import FolderIcon from "@mui/icons-material/Folder";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import sidebarLogo from "../../assets/logo.png";
+import avatar from "../../assets/profile/avatar.png";
 
 const Sidebar = ({ expand, handleExpandSidebar }) => {
   const activelink = "text-primaryMain";
@@ -25,11 +25,11 @@ const Sidebar = ({ expand, handleExpandSidebar }) => {
     <div
       ref={wrapperSidebar}
       className={`h-screen shadow-right flex flex-col justify-start py-8 w-40 absolute left-0 z-10 bg-white transition-all ${
-        expand ? "w-[15rem] px-6" : ""
+        expand ? "w-[17rem] px-6" : ""
       }`}
     >
       <div
-        className={`mb-12 flex items-center h-7 ${
+        className={`mb-10 flex items-center h-7 ${
           expand ? "justify-between" : "justify-center"
         }`}
       >
@@ -47,10 +47,7 @@ const Sidebar = ({ expand, handleExpandSidebar }) => {
           expand ? "items-start gap-8" : "items-center gap-5"
         }`}
       >
-        <NavLink
-          to={"/profile"}
-          className={({ isActive }) => (isActive ? activelink : normalLink)}
-        >
+        <NavLink to={"/profile"}>
           <div
             className={`flex items-center text-center ${
               expand
@@ -58,8 +55,8 @@ const Sidebar = ({ expand, handleExpandSidebar }) => {
                 : "flex-col justify-center gap-1"
             }`}
           >
-            <AccountCircleIcon color="" />
-            <p className="text-sm">User</p>
+            <img src={avatar} alt="" />
+            <p className="text-sm">Admin</p>
           </div>
         </NavLink>
         <NavLink
