@@ -6,13 +6,16 @@ const Modal = ({ isOpen, onClose, children, type }) => {
 
   let paddingModal = '';
   let paddingContent = '';
+  let layoutContent = '';
 
-  if (type === 'addCounselour' || type === 'viewUpdateCounselor' || type === 'viewUser' || type === 'addCareer' || type === 'editCareer' || type === 'addArticle' || type === 'editArticle') {
+  if (type === 'addCounselor' || type === 'viewUpdateCounselor' || type === 'viewUser' || type === 'addCareer' || type === 'editCareer' || type === 'addArticle' || type === 'editArticle') {
     paddingModal = 'px-[32px] py-[16px]';
-    paddingContent = 'flex-col p-[32px]';
+    paddingContent = 'p-[32px]';
+    layoutContent = 'flex-col';
   } else if (type === 'link' || type == 'addSchedule') {
     paddingModal = 'px-[56px]';
-    paddingContent = 'flex-col px-[16px] py-[32px]';
+    paddingContent = 'px-[16px] py-[32px]';
+    layoutContent = 'flex-col';
   } else {
     paddingModal = 'p-0';
   }
@@ -22,7 +25,7 @@ const Modal = ({ isOpen, onClose, children, type }) => {
       <div className="fixed bg-black opacity-50 w-[100vw] h-[100vh] inset-0"></div>
       <div className="my-10 z-10">
         <div className={`bg-white w-[664px] ${paddingModal} z-10 rounded-md shadow border-solid border-[1px] border-primaryBorder`}>
-          <div className={`flex ${paddingContent}`}>{children}</div>
+          <div className={`flex ${layoutContent} ${paddingContent}`}>{children}</div>
         </div>
       </div>
     </div>
