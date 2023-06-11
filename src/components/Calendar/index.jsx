@@ -83,7 +83,7 @@ const Calendar = ({control, name, label, type, placeholder, errors, register, ha
       <div ref={popperRef} className="flex my-4 w-full focus:outline-none focus:ring-0 focus:border-primaryMain focus:shadow-md focus:shadow-primaryMain/15 py-4 px-4 border-solid border-2 rounded mt-2">
         <input
           type="text"
-          placeholder={format(new Date(), "y-MM-dd")}
+          placeholder={format(new Date(), "dd-MM-y")}
           value={inputValue}
           onChange={handleInputChange}
           className="w-full"
