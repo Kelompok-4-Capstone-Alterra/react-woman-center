@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import { RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import Career from "./pages/Career";
+import UserAndCounselor from "./pages/UserCounselorPage";
 
 // element router bisa diganti ke component sesuai page
 
@@ -25,10 +26,10 @@ const Profile = () => {
   // return <ProfilePage/>
 };
 
-const UserAndCounselor = () => {
-  return <h1>User and Counselor Page</h1>;
+//const UserAndCounselor = () => {
+  //return <h1>User and Counselor Page</h1>;
   // return <UserAndCounselorPage/>
-};
+//};
 
 const Counseling = () => {
   return <h1>Counseling Page</h1>;
@@ -76,7 +77,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/user-counselor",
-    element: <Dashboard />,
+    element: <Dashboard page="UserAndCounselor" />,
     children: [
       {
         element: <UserAndCounselor />,
