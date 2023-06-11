@@ -31,7 +31,7 @@ const Calendar = ({control, name, label, type, placeholder, errors, register, ha
 
   const handleInputChange = (e) => {
     setInputValue(e.currentTarget.value);
-    const date = parse(e.currentTarget.value, "y-MM-dd", new Date());
+    const date = parse(e.currentTarget.value, "dd-MM-y", new Date());
     if (isValid(date)) {
       setSelected(date);
     } else {
@@ -46,7 +46,7 @@ const Calendar = ({control, name, label, type, placeholder, errors, register, ha
   const handleDaySelect = date => {
     setSelected(date)
     if (date) {
-      setInputValue(format(date, "y-MM-dd"));
+      setInputValue(format(date, "dd-MM-y"));
       handleSelect(date);
     } else {
       setInputValue("");
