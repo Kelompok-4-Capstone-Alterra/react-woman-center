@@ -8,7 +8,7 @@ import './index.css'
 import { Controller } from 'react-hook-form';
 import CalendarIcon from "@mui/icons-material/CalendarToday";
 
-const Calendar = ({control, name, label, type, placeholder, errors, register, handleSelect}) => {
+const Calendar = ({control, name, label, type, placeholder, errors, register, handleSelect, dateValue}) => {
   const [selected, setSelected] = useState();
   const [inputValue, setInputValue] = useState("");
   const [isPopperOpen, setIsPopperOpen] = useState(false);
@@ -140,6 +140,37 @@ const Calendar = ({control, name, label, type, placeholder, errors, register, ha
         </FocusTrap>
       )}
     </div>
+    )
+  }
+
+  else if (type === 'calendar-view') {
+    return(
+      <div className="relative mb-5 flex flex-col ">
+          <label>{label}</label>
+          <div className="border border-primaryMain flex justify-center mt-2">
+          <style>{css}</style>
+          <Controller
+          name={name}
+          control={control}
+          defaultValue={dateValue}
+          render={({ field }) => (
+            <DayPicker
+              showOutsideDays
+              initialFocus={isPopperOpen}
+              mode="multiple"
+              selected={dateValue}
+              modifiersClassNames={{
+                selected: 'my-selected',
+                today: 'my-today'
+              }}
+              styles={{
+                head: { color: '#AF1582' },
+              }}
+            />
+          )}
+        />
+          </div>
+        </div>
     )
   }
 
