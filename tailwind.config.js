@@ -18,6 +18,8 @@ export default {
         secondaryBorder: "#EADB7D",
         successMain: "#0E9325",
         dangerMain: "#B3261E",
+        neutralMedium: "#6B6161",
+        neutralHigh: "#282424",
       },
     },
   },

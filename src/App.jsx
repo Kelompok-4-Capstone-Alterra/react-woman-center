@@ -6,7 +6,7 @@ import Report from "./pages/Report";
 import Login from "./pages/Login";
 import { RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
-import CounselingPage from "./pages/CounselingPage";
+import CounselingPage from "./pages/CounselinPage/CounselingPage";
 import Career from "./pages/Career";
 
 // element router bisa diganti ke component sesuai page
