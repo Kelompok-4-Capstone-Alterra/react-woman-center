@@ -144,8 +144,9 @@ const UserCounselorPage = () => {
               <ButtonOutline onClick={handleEdit}>Not Now</ButtonOutline>
               </div>
       </Modal>
-      <Modal isOpen={isView} type={'viewUser'}>
-              <Modal.Title title={'View User'} />
+      {isCounselor ? (
+        <Modal isOpen={isView} type={'viewUpdateCounselor'}>
+              <Modal.Title title={'View & Update Counselor'} />
               <div>
               <form className="mb-3">
               <ImageUploader>
@@ -162,6 +163,26 @@ const UserCounselorPage = () => {
               <ButtonPrimary onClick={handleView}>Close</ButtonPrimary>
               </div>
       </Modal>
+            ) : (
+              <Modal isOpen={isView} type={'viewUser'}>
+              <Modal.Title title={'View User'} />
+              <div>
+              <form className="mb-3">
+              <ImageUploader>
+                <ImageThumbnail/>
+                <AddIcon />
+              </ImageUploader>
+              <InputField name="username" label="User ID" type="text" placeholder="johndoe" errors={errors} register={register}  />
+              <InputField name="username" label="Name" type="text" placeholder="johndoe" errors={errors} register={register}  />
+              <InputField name="username" label="Email" type="text" placeholder="johndoe" errors={errors} register={register}  />
+              <InputField name="username" label="Username" type="text" placeholder="Choose counselor's topic" errors={errors} register={register}  />
+              <InputField name="username" label="Phone Number" type="text" placeholder="Ex : Counselor work to empower women to make positive changes" errors={errors} register={register}  />
+              <InputField name="username" label="Birthdate" type="number" placeholder="johndoe" errors={errors} register={register}  />
+              </form>
+              <ButtonPrimary onClick={handleView}>Close</ButtonPrimary>
+              </div>
+      </Modal>
+            )}
       <ModalConfirm
       isConfirm={isDelete}
       messages="Are you sure you want to delete this item?"
