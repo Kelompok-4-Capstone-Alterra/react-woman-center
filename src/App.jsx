@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import { RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import Career from "./pages/Career";
+import ArticleForumPage from "./pages/ArticleForumPage";
 
 // element router bisa diganti ke component sesuai page
 
@@ -106,10 +107,10 @@ const router = createBrowserRouter([
   },
   {
     path: "/article-forum",
-    element: <Dashboard />,
+    element: <Dashboard page="Article & Discussion" />,
     children: [
       {
-        element: <ArticleAndForum />,
+        element: <ArticleForumPage />,
         index: true,
       },
     ],
