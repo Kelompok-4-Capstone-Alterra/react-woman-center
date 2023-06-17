@@ -5,14 +5,15 @@ import ImageThumbnail from '../../ImageUploader/ImageThumbnail';
 import InputField from '../../InputField';
 import Dropdown from '../../Dropdown';
 import ButtonPrimary from '../../ButtonPrimary';
+import ButtonOutline from '../../ButtonOutline';
 import { useState } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import AddIcon from '@mui/icons-material/Add';
-import ButtonOutline from '../../ButtonOutline';
+import { TextEditor } from '../../TextEditor';
 
-const EditArticleModal = ({ modalState, closeModal }) => {
+const AddArticleModal = ({ modalState, closeModal }) => {
   const [topics, setTopics] = useState([]);
   const {
     register,
@@ -40,17 +41,23 @@ const EditArticleModal = ({ modalState, closeModal }) => {
     console.log('Value: ', dropdownValue.label);
   };
 
+  const onSubmit = (data) => {
+    console.log(data);
+
+  };
+
   return (
-    <Modal isOpen={modalState} type={'editArticle'}>
-      <Modal.Title title={'Edit Article'} />
+    <Modal isOpen={modalState} type={'addArticle'}>
+      <Modal.Title title={'Add Article'} />
       <div>
-        <form className="mb-3">
+        <form className="mb-3" onSubmit={handleSubmit(onSubmit)}>
           <ImageUploader icon={<AddIcon />}>
             <ImageThumbnail />
           </ImageUploader>
-          <InputField name="title" label="Title" type="text" placeholder="12345" errors={errors} register={register} />
+          <InputField name="id" label="ID" type="text" placeholder="12345" errors={errors} register={register} />
           <InputField name="title" label="Title" type="text" placeholder="Ex : How to get women's right?" errors={errors} register={register} />
           <InputField name="author" label="Author" type="text" placeholder="Ex : Ruby Jane" errors={errors} register={register} />
+          <TextEditor label={'Description'} name={'description'} register={register} control={control} />
           <Dropdown control={control} name={'topic'} label={'Topic'} placeholder={'Choose article`s Topics'} handleSelect={handleSelectTopic}>
             {topics.map((topic) => (
               <option label={topic.name} key={topic.id} />
@@ -67,4 +74,4 @@ const EditArticleModal = ({ modalState, closeModal }) => {
   );
 };
 
-export default EditArticleModal;
+export default AddArticleModal;
