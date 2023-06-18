@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import TableContainer from "../components/Dashboard/Tables/TableContainer"
 import TableTitle from "../components/Dashboard/Tables/TableTitle"
 import Tables from "../components/Dashboard/Tables/Tables"
@@ -23,6 +24,50 @@ const UserCounselorPage = () => {
   const [isAdd, setisAdd] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [isView, setisView] = useState(false);
+
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get('https://13.210.163.192:8080/admin/users', {
+          headers: {
+            Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2ODczMjM2NjV9.qmH-MZg7YgO8O0D6o356Mi3qR3WNpoNMIOzcbkjpIpA',
+          },
+        });
+  
+        const responseData = response.data;
+        if (responseData?.data?.users) {
+          setData(responseData.data.users);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+  
+    const fetchCounselorData = async () => {
+      try {
+        const response = await axios.get('https://13.210.163.192:8080/admin/counselors?page=1&limit=5&search=ubah', {
+          headers: {
+            Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2ODczMjM2NjV9.qmH-MZg7YgO8O0D6o356Mi3qR3WNpoNMIOzcbkjpIpA',
+          },
+        });
+  
+        const responseData = response.data;
+        if (responseData?.data?.counselors) {
+          setData(responseData.data.counselors);
+        }
+      } catch (error) {
+        console.error('Error fetching counselor data:', error);
+      }
+    };
+  
+    if (isCounselor) {
+      fetchCounselorData();
+    } else {
+      fetchUserData();
+    }
+  }, [isCounselor]);
 
 
   const handleSelect = () => {
@@ -99,28 +144,49 @@ const UserCounselorPage = () => {
         )}
           <TableBody>
           {isCounselor ? (
-            <TableRow>
-            <td>123</td>
-            <td>Not John Doe</td>
-            <td>notjohndoe123</td>
-            <td>notjohndoe123@gmail.com</td>
-            <td>Mental Health</td>
-            <td>
-            <ButtonPrimary onClick={handleView}>
-            View
-            </ButtonPrimary>
-            </td>
-            <td><ButtonOutline onClick={handleDelete}>Delete</ButtonOutline></td>
-            </TableRow>) : (
-            <TableRow>
-            <td>123</td>
-            <td>John Doe</td>
-            <td>johndoe123</td>
-            <td>johndoe@gmail.com</td>
-            <td><ButtonPrimary onClick={handleView}>View</ButtonPrimary></td>
-            <td><ButtonOutline onClick={handleDelete}>Delete</ButtonOutline></td>
-            </TableRow>
-            )}
+          data && Array.isArray(data) ? (
+            data.map((item) => (
+              <TableRow key={item.id}>
+                <td>{item.id}</td>
+                <td>{item.name}</td>
+                <td>{item.username}</td>
+                <td>{item.email}</td>
+                <td>{item.topic}</td>
+                <td>
+                  <ButtonPrimary onClick={handleView}>View</ButtonPrimary>
+                </td>
+                <td>
+                  <ButtonOutline onClick={handleDelete}>Delete</ButtonOutline>
+                </td>
+              </TableRow>
+            ))
+          ) : (
+              <tr>
+                <td colSpan="7">Loading...</td>
+              </tr>
+          )
+        ) : (
+          data && Array.isArray(data) ? (
+            data.map((item) => (
+              <TableRow key={item.id}>
+                <td>{item.id}</td>
+                <td>{item.name}</td>
+                <td>{item.username}</td>
+                <td>{item.email}</td>
+                <td>
+                  <ButtonPrimary onClick={handleView}>View</ButtonPrimary>
+                </td>
+                <td>
+                  <ButtonOutline onClick={handleDelete}>Delete</ButtonOutline>
+                </td>
+              </TableRow>
+            ))
+          ) : (
+              <tr>
+                <td colSpan="7">Loading...</td>
+              </tr>
+          )
+        )}
           </TableBody>
         </Tables>
       </TableContainer>
@@ -133,12 +199,30 @@ const UserCounselorPage = () => {
                 <ImageThumbnail/>
                 <AddIcon />
               </ImageUploader>
-              <InputField name="username" label="Name" type="text" placeholder="johndoe" errors={errors} register={register}  />
-              <InputField name="username" label="Email" type="text" placeholder="johndoe" errors={errors} register={register}  />
+              <InputField name="name" label="Name" type="text" placeholder="johndoe" errors={errors} register={register}  />
+              <InputField name="email" label="Email" type="text" placeholder="johndoe" errors={errors} register={register}  />
               <InputField name="username" label="Username" type="text" placeholder="johndoe" errors={errors} register={register}  />
-              <InputField name="username" label="Topic" type="text" placeholder="Choose counselor's topic" errors={errors} register={register}  />
-              <InputField name="username" label="Description" type="text" placeholder="Ex : Counselor work to empower women to make positive changes" errors={errors} register={register}  />
-              <InputField name="username" label="Counseling Price" type="number" placeholder="johndoe" errors={errors} register={register}  />
+              <Dropdown
+              control={control}
+              name={"topic"}
+              label={"Category "}
+              placeholder={"Choose counselor category"}
+              errors={errors}
+              register={register}
+            >
+              <option value="Self Development" label="Self Development" />
+              <option value="Spiritual" label="Spiritual"  />
+              <option value="Family" label="Family"  />
+              <option value="Couples" label="Couples"  />
+              <option value="Career" label="Career"  />
+              <option value="Depression" label="Depression"  />
+              <option value="Discrimination" label="Discrimination"  />
+              <option value="Mental Disorder" label="Mental Disorder"  />
+              <option value="Sexual Abuse" label="Sexual Abuse"  />
+              <option value="Self Harming Behaviour" label="Self Harming Behaviour"  />
+            </Dropdown>
+              <InputField name="description" label="Description" type="text" placeholder="Ex : Counselor work to empower women to make positive changes" errors={errors} register={register}  />
+              <InputField name="price" label="Counseling Price" type="number" placeholder="johndoe" errors={errors} register={register}  />
               <ButtonPrimary>+ Add New Counselor</ButtonPrimary>
               </form>
               <ButtonOutline onClick={handleEdit}>Not Now</ButtonOutline>
