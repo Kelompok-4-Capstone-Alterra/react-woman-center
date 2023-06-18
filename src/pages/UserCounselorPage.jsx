@@ -24,8 +24,17 @@ const UserCounselorPage = () => {
   const [isAdd, setisAdd] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [isView, setisView] = useState(false);
-
   const [data, setData] = useState(null);
+  const [selectedImage, setSelectedImage] = useState('');
+
+  const handleImageChange = (file) => {
+    const fileURL = URL.createObjectURL(file);
+    setSelectedImage(fileURL);
+  };
+
+  const onSubmit = (counselor) => {
+    alert(JSON.stringify(counselor));
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -194,10 +203,9 @@ const UserCounselorPage = () => {
     <Modal isOpen={isAdd} type={'addCounselor'}>
               <Modal.Title title={'New Counselor'} />
               <div>
-              <form className="mb-3">
-              <ImageUploader>
-                <ImageThumbnail/>
-                <AddIcon />
+              <form className="mb-3" onSubmit={handleSubmit(onSubmit)}>
+              <ImageUploader icon={<AddIcon />}  handleChange={handleImageChange}>
+                <ImageThumbnail src={selectedImage}/>
               </ImageUploader>
               <InputField name="name" label="Name" type="text" placeholder="johndoe" errors={errors} register={register}  />
               <InputField name="email" label="Email" type="text" placeholder="johndoe" errors={errors} register={register}  />
