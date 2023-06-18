@@ -13,7 +13,7 @@ const TableTitle = ({ title }) => {
           id=""
           placeholder="Search what you need here..."
         />
-        <SearchIcon fontSize="large" className="absolute z-10 left-4 top-2" />
+        <SearchIcon fontSize="large" className="absolute z-[1] left-4 top-2" />
       </div>
     </div>
   );
