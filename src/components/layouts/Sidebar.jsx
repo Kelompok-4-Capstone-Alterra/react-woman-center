@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -12,8 +12,10 @@ import FolderIcon from "@mui/icons-material/Folder";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import sidebarLogo from "../../assets/logo.png";
 import avatar from "../../assets/profile/avatar.png";
+import { removeAuthCookie } from "../../utils/cookies";
 
 const Sidebar = ({ expand, handleExpandSidebar }) => {
+  const navigate = useNavigate();
   const activelink = "text-primaryMain";
   const normalLink = "hover:text-primaryMain";
 
@@ -21,10 +23,15 @@ const Sidebar = ({ expand, handleExpandSidebar }) => {
 
   useClickOutside(wrapperSidebar, handleExpandSidebar);
 
+  const onLogout = () => {
+    navigate("/");
+    removeAuthCookie();
+  };
+
   return (
     <div
       ref={wrapperSidebar}
-      className={`h-screen shadow-right flex flex-col justify-start py-8 w-40 absolute left-0 z-10 bg-white transition-all ${
+      className={`h-full overflow-hidden shadow-right flex flex-col justify-start py-8 w-40 fixed left-0 z-10 bg-white transition-all ${
         expand ? "w-[17rem] px-6" : ""
       }`}
     >
@@ -44,21 +51,23 @@ const Sidebar = ({ expand, handleExpandSidebar }) => {
       </div>
       <div
         className={`flex flex-col ${
-          expand ? "items-start gap-8" : "items-center gap-5"
+          expand
+            ? "items-start gap-8"
+            : "items-center gap-6 mb-6 box-content w-full overflow-y-auto no-scrollbar"
         }`}
       >
-        <NavLink to={"/profile"}>
-          <div
-            className={`flex items-center text-center ${
-              expand
-                ? "flex-row justify-start gap-2"
-                : "flex-col justify-center gap-1"
-            }`}
-          >
-            <img src={avatar} alt="" />
-            <p className="text-sm">Admin</p>
-          </div>
-        </NavLink>
+        {/* <NavLink to={"/profile"}> */}
+        <div
+          className={`flex items-center text-center ${
+            expand
+              ? "flex-row justify-start gap-2"
+              : "flex-col justify-center gap-1"
+          }`}
+        >
+          <img src={avatar} alt="" />
+          <p className="text-sm">Admin</p>
+        </div>
+        {/* </NavLink> */}
         <NavLink
           to={"/dashboard"}
           className={({ isActive }) => (isActive ? activelink : normalLink)}
@@ -150,22 +159,23 @@ const Sidebar = ({ expand, handleExpandSidebar }) => {
           </div>
         </NavLink>
       </div>
-      <NavLink
+      {/* <NavLink
         to={"/"}
         className={({ isActive }) => (isActive ? activelink : normalLink)}
         style={{ marginTop: "auto" }}
+      > */}
+      <div
+        className={`flex items-center text-center mt-auto hover:text-primaryMain cursor-pointer ${
+          expand
+            ? "flex-row justify-start gap-2 gap"
+            : "flex-col justify-center gap-1"
+        }`}
+        onClick={onLogout}
       >
-        <div
-          className={`flex items-center text-center mt-auto ${
-            expand
-              ? "flex-row justify-start gap-2 gap"
-              : "flex-col justify-center gap-1"
-          }`}
-        >
-          <ExitToAppIcon />
-          <p className="text-sm">Logout</p>
-        </div>
-      </NavLink>
+        <ExitToAppIcon />
+        <p className="text-sm">Logout</p>
+      </div>
+      {/* </NavLink> */}
     </div>
   );
 };
