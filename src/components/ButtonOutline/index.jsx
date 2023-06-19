@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
 export default function ButtonOutline({
-  type = 'submit',
-  className = '',
+  type = "submit",
+  className = "",
   processing,
   onClick,
   children,
@@ -11,11 +11,9 @@ export default function ButtonOutline({
     <button
       type={type}
       className={
-        `bg-white outline outline-primaryMain hover:bg-[#954E80] hover:text-white hover:outline-[#954E80] active:bg-[#913175] 
-        focus:outline-none h-9 w-[130.4px] rounded-[3px] text-primaryMain text-xs transition
-        ${
-          processing && 'opacity-25'
-        } ` + className
+        `box-border min-h-[45px] bg-white border-2 border-primaryMain hover:bg-[#954E80] hover:text-white hover:border-[#954E80] active:bg-[#913175] py-3 px-3 rounded-[3px] text-primaryMain text-xs transition ${
+          processing ? "opacity-25" : ""
+        }` + className
       }
       disabled={processing}
       onClick={onClick}
