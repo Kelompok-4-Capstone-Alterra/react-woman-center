@@ -1,7 +1,11 @@
-import React, { useState } from "react";
-import ButtonOutline from "../ButtonOutline";
+import { useRef } from "react";
+import { useClickOutside } from "../../hooks/useClickOutside";
 
 const Modal = ({ isOpen, onClose, children, type }) => {
+  const wrapperModal = useRef(null);
+
+  useClickOutside(wrapperModal, onClose);
+
   if (!isOpen) return null;
 
   let paddingModal = "";
@@ -29,18 +33,22 @@ const Modal = ({ isOpen, onClose, children, type }) => {
   }
 
   return (
-    <div className="fixed w-[100vw] h-[100vh] z-10 inset-0 flex flex-col items-center overflow-auto">
-      <div className="fixed bg-black opacity-50 w-[100vw] h-[100vh] inset-0"></div>
-      <div className="z-10 my-10">
-        <div
-          className={`bg-white w-[664px] ${paddingModal} z-10 rounded-md shadow border-solid border-[1px] border-primaryBorder`}
-        >
-          <div className={`flex ${layoutContent} ${paddingContent}`}>
-            {children}
+    <>
+      {isOpen && (
+        <div className="fixed w-[100vw] h-[100vh] z-10 inset-0 flex flex-col items-center overflow-auto">
+          <div className="fixed bg-black opacity-50 w-[100vw] h-[100vh] inset-0"></div>
+          <div className="my-10 z-10" ref={wrapperModal}>
+            <div
+              className={`bg-white w-[664px] ${paddingModal} z-10 rounded-md shadow border-solid border-[1px] border-primaryBorder`}
+            >
+              <div className={`flex ${layoutContent} ${paddingContent}`}>
+                {children}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 

@@ -4,11 +4,10 @@ import LandingPage from "./pages/LandingPage";
 import DashboardPage from "./pages/DashboardPage";
 import Report from "./pages/Report";
 import Login from "./pages/Login";
-import { RouterProvider } from "react-router";
+import { RouterProvider, redirect } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import CounselingPage from "./pages/CounselinPage/CounselingPage";
 import Career from "./pages/Career";
-import UserAndCounselor from "./pages/UserCounselorPage";
 
 // element router bisa diganti ke component sesuai page
 
@@ -55,16 +54,34 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+    loader: () => {
+      const userAuth = getAuthCookie();
+
+      if (userAuth) {
+        return redirect("/dashboard");
+      }
+
+      return null;
+    },
   },
   {
     path: "/dashboard",
-    element: <Dashboard />,
+    element: <Dashboard page="Hello, Admin!" />,
     children: [
       {
         element: <DashboardPage />,
         index: true,
       },
     ],
+    loader: () => {
+      const userAuth = getAuthCookie();
+
+      if (!userAuth) {
+        return redirect("/login");
+      }
+
+      return null;
+    },
   },
   {
     path: "/profile",
@@ -75,6 +92,15 @@ const router = createBrowserRouter([
         index: true,
       },
     ],
+    loader: () => {
+      const userAuth = getAuthCookie();
+
+      if (!userAuth) {
+        return redirect("/login");
+      }
+
+      return null;
+    },
   },
   {
     path: "/user-counselor",
@@ -85,6 +111,15 @@ const router = createBrowserRouter([
         index: true,
       },
     ],
+    loader: () => {
+      const userAuth = getAuthCookie();
+
+      if (!userAuth) {
+        return redirect("/login");
+      }
+
+      return null;
+    },
   },
   {
     path: "/counseling",
@@ -95,6 +130,15 @@ const router = createBrowserRouter([
         index: true,
       },
     ],
+    loader: () => {
+      const userAuth = getAuthCookie();
+
+      if (!userAuth) {
+        return redirect("/login");
+      }
+
+      return null;
+    },
   },
   {
     path: "/career",
@@ -105,6 +149,15 @@ const router = createBrowserRouter([
         index: true,
       },
     ],
+    loader: () => {
+      const userAuth = getAuthCookie();
+
+      if (!userAuth) {
+        return redirect("/login");
+      }
+
+      return null;
+    },
   },
   {
     path: "/article-forum",
@@ -115,6 +168,15 @@ const router = createBrowserRouter([
         index: true,
       },
     ],
+    loader: () => {
+      const userAuth = getAuthCookie();
+
+      if (!userAuth) {
+        return redirect("/login");
+      }
+
+      return null;
+    },
   },
   {
     path: "/report",
@@ -125,6 +187,15 @@ const router = createBrowserRouter([
         index: true,
       },
     ],
+    loader: () => {
+      const userAuth = getAuthCookie();
+
+      if (!userAuth) {
+        return redirect("/login");
+      }
+
+      return null;
+    },
   },
 ]);
 

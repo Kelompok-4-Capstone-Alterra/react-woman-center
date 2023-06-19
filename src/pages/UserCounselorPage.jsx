@@ -25,15 +25,37 @@ const UserCounselorPage = () => {
   const [isDelete, setIsDelete] = useState(false);
   const [isView, setisView] = useState(false);
   const [data, setData] = useState(null);
-  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
 
   const handleImageChange = (file) => {
+    setSelectedImage(file);
     const fileURL = URL.createObjectURL(file);
-    setSelectedImage(fileURL);
+    setImagePreview(fileURL);
   };
 
-  const onSubmit = (counselor) => {
-    alert(JSON.stringify(counselor));
+  const onSubmit = async (counselorData) => {
+    const formData = new FormData();
+        formData.append('name', counselorData.name);
+        formData.append('email', counselorData.email);
+        formData.append('username', counselorData.username);
+        formData.append('topic', counselorData.topic);
+        formData.append('description', counselorData.description);
+        formData.append('price', counselorData.price);
+        formData.append('profile_picture', selectedImage);
+
+      try {
+        const response = await axios.post('https://13.210.163.192:8080/admin/counselors', formData, {
+          headers: {
+            Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2ODczMjM2NjV9.qmH-MZg7YgO8O0D6o356Mi3qR3WNpoNMIOzcbkjpIpA',
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+  
+        console.log(response.data);
+      } catch (error) {
+        console.error(error.response.data.meta.message);
+      }
   };
 
   useEffect(() => {
@@ -56,7 +78,7 @@ const UserCounselorPage = () => {
   
     const fetchCounselorData = async () => {
       try {
-        const response = await axios.get('https://13.210.163.192:8080/admin/counselors?page=1&limit=5&search=ubah', {
+        const response = await axios.get('https://13.210.163.192:8080/admin/counselors', {
           headers: {
             Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2ODczMjM2NjV9.qmH-MZg7YgO8O0D6o356Mi3qR3WNpoNMIOzcbkjpIpA',
           },
@@ -84,7 +106,6 @@ const UserCounselorPage = () => {
     const dropdownValue = formData.pageStatus;
     setIsCounselor(dropdownValue.value);
     console.log("isCounselor : ", isCounselor);
-
     console.log("Value: ", dropdownValue.value);
   };
 
@@ -204,30 +225,35 @@ const UserCounselorPage = () => {
               <Modal.Title title={'New Counselor'} />
               <div>
               <form className="mb-3" onSubmit={handleSubmit(onSubmit)}>
-              <ImageUploader icon={<AddIcon />}  handleChange={handleImageChange}>
-                <ImageThumbnail src={selectedImage}/>
+              <ImageUploader
+              icon={<AddIcon />}
+              name="image"
+              handleChange={handleImageChange}
+              errors={errors}
+              register={register}>
+                <ImageThumbnail src={imagePreview}/>
               </ImageUploader>
               <InputField name="name" label="Name" type="text" placeholder="johndoe" errors={errors} register={register}  />
               <InputField name="email" label="Email" type="text" placeholder="johndoe" errors={errors} register={register}  />
               <InputField name="username" label="Username" type="text" placeholder="johndoe" errors={errors} register={register}  />
               <Dropdown
               control={control}
-              name={"topic"}
-              label={"Category "}
-              placeholder={"Choose counselor category"}
+              name="topic"
+              label="Category"
+              placeholder="Choose counselor category"
               errors={errors}
               register={register}
             >
-              <option value="Self Development" label="Self Development" />
-              <option value="Spiritual" label="Spiritual"  />
-              <option value="Family" label="Family"  />
-              <option value="Couples" label="Couples"  />
-              <option value="Career" label="Career"  />
-              <option value="Depression" label="Depression"  />
-              <option value="Discrimination" label="Discrimination"  />
-              <option value="Mental Disorder" label="Mental Disorder"  />
-              <option value="Sexual Abuse" label="Sexual Abuse"  />
-              <option value="Self Harming Behaviour" label="Self Harming Behaviour"  />
+              <option value="1" label="1. Self Development" />
+              <option value="2" label="2. Family/Relationship"  />
+              <option value="3" label="3. Spiritual"  />
+              <option value="4" label="4. Career"  />
+              <option value="5" label="5. Discrimination"  />
+              <option value="6" label="6. Sexual Abuse"  />
+              <option value="7" label="7. Couples"  />
+              <option value="8" label="8. Depression"  />
+              <option value="9" label="9. Mental Disorder"  />
+              <option value="10" label="10. Self Harming Behaviour"  />
             </Dropdown>
               <InputField name="description" label="Description" type="text" placeholder="Ex : Counselor work to empower women to make positive changes" errors={errors} register={register}  />
               <InputField name="price" label="Counseling Price" type="number" placeholder="johndoe" errors={errors} register={register}  />

@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
 function ButtonPrimary({
-  type = 'submit',
-  className = '',
+  type = "submit",
+  className = "",
   processing,
   onClick,
   children,
@@ -10,12 +10,7 @@ function ButtonPrimary({
   return (
     <button
       type={type}
-      className={
-        `bg-primaryMain border-primaryBorder hover:bg-primaryHover active:bg-primaryPressed hover:outline-primaryHover 
-        focus:outline-none h-9 w-[130.4px] rounded-[3px] text-white text-xs transition ${
-          processing && 'opacity-25'
-        } ` + className
-      }
+      className={`box-border min-h-[45px] bg-primaryMain hover:bg-primaryHover active:bg-primaryPressed py-3 px-3 rounded-[3px] text-white text-xs transition ${className}`}
       disabled={processing}
       onClick={onClick}
     >
@@ -24,4 +19,4 @@ function ButtonPrimary({
   );
 }
 
-export default ButtonPrimary
+export default ButtonPrimary;

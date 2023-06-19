@@ -15,16 +15,16 @@ function LandingPage() {
         <p className="text-[32px] mb-2 font-medium text-[#E3DDB2] ">
           Welcome to,
         </p>
-        <p className="text-[28px] mb-8 font-medium">
+        <p className="text-[28px] text-white mb-8 font-medium">
           Women Center's Admin Panel!
         </p>
-        <p className="text-base mb-16">
+        <p className="text-base text-white mb-16 ">
           As an administrator of a women's center, your role is to oversee the
           day-to-day operations of the center and ensure that it is fulfilling
           its mission of supporting and empowering women.
         </p>
-        <ButtonSecondary className="h-14" onClick={navigateToLogin}>
-          <LoginOutlinedIcon className="m-2.5 pb-0.5" /> Get into the dashboard
+        <ButtonSecondary onClick={navigateToLogin}>
+          <LoginOutlinedIcon /> Get into the dashboard
         </ButtonSecondary>
       </div>
       <div
