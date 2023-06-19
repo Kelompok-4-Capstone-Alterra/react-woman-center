@@ -22,6 +22,8 @@ import ViewModal from "../../components/Dashboard/Counseling/ViewModal/index";
 import DeleteModal from "../../components/Dashboard/Counseling/DeleteModal/index";
 import LinkModal from "../../components/Dashboard/Counseling/LinkModal";
 import CancelModal from "../../components/Dashboard/Counseling/CancelModal";
+import axios from "axios";
+import { getAuthCookie } from "../../utils/cookies";
 
 const CounselingPage = () => {
   const [isSchedule, setIsSchedule] = useState(true);
@@ -31,6 +33,9 @@ const CounselingPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+
+  const [selectedCounselor, setSelectedCounselor] = useState("");
+  const [counselors, setCounselors] = useState([]);
 
   const {
     register,
@@ -53,6 +58,21 @@ const CounselingPage = () => {
     console.log("clicked");
   };
 
+  useEffect(() => {
+    const token = getAuthCookie();
+    axios
+      .get(
+        "https://13.210.163.192:8080/admin/counselors?page=1&limit=5&sort_by=newest",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((response) => setCounselors(response.data.data.counselors))
+      .catch((error) => console.error(error));
+  }, []);
+
   return (
     <div className="">
       {/* SCHEDULE MODAL */}
@@ -62,8 +82,9 @@ const CounselingPage = () => {
           setShowScheduleModal(false);
         }}
       />
-      {/* VIEW MODA: */}
+      {/* VIEW MODAL */}
       <ViewModal
+        counselor={selectedCounselor}
         modalState={showViewModal}
         closeModal={() => {
           setShowViewModal(false);
@@ -83,6 +104,7 @@ const CounselingPage = () => {
         closeModal={() => {
           setShowDeleteModal(false);
         }}
+        counselor={selectedCounselor}
       />
 
       {/* Link Modal */}
@@ -100,24 +122,8 @@ const CounselingPage = () => {
         }}
       />
 
-      <div className="flex px-[40px] items-center py-[26px] justify-between border-b-primaryBorder border-b-[0.25px] mb-10">
-        <div className="flex items-center text-primaryMain">
-          <PersonIcon className="me-4" />
-          <p className="text-lg font-medium ">Admin</p>
-        </div>
-        {isSchedule && (
-          <ButtonPrimary
-            onClick={() => {
-              setShowScheduleModal(true);
-            }}
-            className="flex items-center justify-center text-sm"
-          >
-            <AddIcon /> Add Schedule
-          </ButtonPrimary>
-        )}
-      </div>
       <div className="px-[40px]">
-        <div>
+        <div className="flex flex-row justify-between items-center">
           <form className="w-[360px]">
             <Dropdown
               control={control}
@@ -130,7 +136,18 @@ const CounselingPage = () => {
               <option value={false} label="Counseling's Transaction" />
             </Dropdown>
           </form>
+          {isSchedule && (
+            <ButtonPrimary
+              onClick={() => {
+                setShowScheduleModal(true);
+              }}
+              className="flex items-center justify-center text-sm"
+            >
+              <AddIcon /> Add Schedule
+            </ButtonPrimary>
+          )}
         </div>
+
         <TableContainer>
           <TableTitle
             title={`Counseling's ${isSchedule ? "Schedule" : "Transaction"}`}
@@ -163,7 +180,54 @@ const CounselingPage = () => {
               </TableHeader>
             )}
 
-            <TableBody>
+            {isSchedule && (
+              <TableBody>
+                {counselors.map((counselor) => (
+                  <TableRow key={counselor.id}>
+                    <td className="w-[130px]">{counselor.id}</td>
+                    <td className="w-[130px]">{counselor.name}</td>
+                    <td className="w-[130px]">
+                      <StatusTag type={"available"} />
+                    </td>
+                    <td className="w-[130px]">{counselor.topic}</td>
+                    <td className="w-[130px]">
+                      <ButtonPrimary
+                        className="w-[90%]"
+                        onClick={() => {
+                          setShowUpdateModal(true);
+                        }}
+                      >
+                        Update
+                      </ButtonPrimary>
+                    </td>
+                    <td className="w-[130px]">
+                      <ButtonPrimary
+                        className="w-[90%]"
+                        onClick={() => {
+                          setShowViewModal(true);
+                          setSelectedCounselor(counselor);
+                        }}
+                      >
+                        View
+                      </ButtonPrimary>
+                    </td>
+                    <td className="w-[130px]">
+                      <ButtonOutline
+                        className="w-[90%]"
+                        onClick={() => {
+                          setShowDeleteModal(true);
+                        }}
+                      >
+                        Delete
+                      </ButtonOutline>
+                    </td>
+                  </TableRow>
+                ))}
+              </TableBody>
+            )}
+            {!isSchedule && <TableBody></TableBody>}
+
+            {/* <TableBody>
               {isSchedule ? (
                 <TableRow>
                   <td className="w-[130px]">123456</td>
@@ -236,7 +300,7 @@ const CounselingPage = () => {
                   </td>
                 </TableRow>
               )}
-            </TableBody>
+            </TableBody> */}
           </Tables>
         </TableContainer>
       </div>
