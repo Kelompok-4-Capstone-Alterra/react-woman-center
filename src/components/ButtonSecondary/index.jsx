@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
 function ButtonSecondary({
-  type = 'submit',
-  className = '',
+  type = "submit",
+  className = "",
   processing,
   onClick,
   children,
@@ -11,10 +11,9 @@ function ButtonSecondary({
     <button
       type={type}
       className={
-        `bg-secondaryMain border-secondaryBorder hover:bg-secondaryHover active:bg-secondaryPressed hover:outline-secondaryHover
-        focus:outline-none h-14 w-[152px] rounded-[3px] text-white text-base transition ${
-          processing && 'opacity-25'
-        } ` + className
+        `box-border min-h-[45px] bg-secondaryMain border-secondaryBorder hover:bg-secondaryHover active:bg-secondaryPressed hover:border-secondaryHover py-3 px-3 rounded-[3px] text-white text-base transition ${
+          processing ? "opacity-25" : ""
+        }` + className
       }
       disabled={processing}
       onClick={onClick}
@@ -24,4 +23,4 @@ function ButtonSecondary({
   );
 }
 
-export default ButtonSecondary
+export default ButtonSecondary;

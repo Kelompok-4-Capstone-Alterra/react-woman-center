@@ -1,4 +1,7 @@
 /** @type {import('tailwindcss').Config} */
+
+import plugin from "tailwindcss/plugin";
+
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
@@ -18,8 +21,29 @@ export default {
         secondaryBorder: "#EADB7D",
         successMain: "#0E9325",
         dangerMain: "#B3261E",
+        neutralMedium: "#6B6161",
+        neutralHigh: "#282424",
+        neutralMediumLow: "#9E9494",
       },
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [
+    require("@tailwindcss/typography"),
+    plugin(function ({ addUtilities }) {
+      addUtilities({
+        ".no-scrollbar::-webkit-scrollbar": {
+          display: "none",
+        },
+        ".no-scrollbar": {
+          "-ms-overflow-style": "none",
+          "scrollbar-width": "none",
+        },
+        ".no-appereance": {
+          appereance: "none",
+          "-webkit-appearance": "none",
+          "-moz-appearance": "none",
+        },
+      });
+    }),
+  ],
 };

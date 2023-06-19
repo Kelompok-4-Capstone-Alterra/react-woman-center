@@ -2,6 +2,7 @@ import React from "react";
 import loginImage from "../assets/login-image.png";
 import FormLogin from "../components/FormLogin";
 import ArrowBack from "@mui/icons-material/ArrowBack";
+import { NavLink } from "react-router-dom";
 
 const Login = () => {
   return (
@@ -11,7 +12,9 @@ const Login = () => {
         className="flex flex-col justify-center bg-white px-48 w-full h-full"
       >
         <div className="mb-12">
-          <ArrowBack />
+          <NavLink to="/">
+            <ArrowBack />
+          </NavLink>
         </div>
         <h2 className="font-medium text-2xl mb-3">Sign In as Admin</h2>
         <h2 className="font-normal text-base text-gray-400 mb-5">

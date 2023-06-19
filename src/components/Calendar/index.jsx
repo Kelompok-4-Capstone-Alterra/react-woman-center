@@ -8,7 +8,7 @@ import './index.css'
 import { Controller } from 'react-hook-form';
 import CalendarIcon from "@mui/icons-material/CalendarToday";
 
-const Calendar = ({control, name, label, type, placeholder, errors, register, handleSelect}) => {
+const Calendar = ({control, name, label, type, placeholder, errors, register, handleSelect, dateValue}) => {
   const [selected, setSelected] = useState();
   const [inputValue, setInputValue] = useState("");
   const [isPopperOpen, setIsPopperOpen] = useState(false);
@@ -31,7 +31,7 @@ const Calendar = ({control, name, label, type, placeholder, errors, register, ha
 
   const handleInputChange = (e) => {
     setInputValue(e.currentTarget.value);
-    const date = parse(e.currentTarget.value, "y-MM-dd", new Date());
+    const date = parse(e.currentTarget.value, "dd-MM-y", new Date());
     if (isValid(date)) {
       setSelected(date);
     } else {
@@ -46,7 +46,7 @@ const Calendar = ({control, name, label, type, placeholder, errors, register, ha
   const handleDaySelect = date => {
     setSelected(date)
     if (date) {
-      setInputValue(format(date, "y-MM-dd"));
+      setInputValue(format(date, "dd-MM-y"));
       handleSelect(date);
     } else {
       setInputValue("");
@@ -83,7 +83,7 @@ const Calendar = ({control, name, label, type, placeholder, errors, register, ha
       <div ref={popperRef} className="flex my-4 w-full focus:outline-none focus:ring-0 focus:border-primaryMain focus:shadow-md focus:shadow-primaryMain/15 py-4 px-4 border-solid border-2 rounded mt-2">
         <input
           type="text"
-          placeholder={format(new Date(), "y-MM-dd")}
+          placeholder={format(new Date(), "dd-MM-y")}
           value={inputValue}
           onChange={handleInputChange}
           className="w-full"
@@ -112,7 +112,7 @@ const Calendar = ({control, name, label, type, placeholder, errors, register, ha
           <div
             tabIndex={-1}
             style={popper.styles.popper}
-            className="dialog-sheet"
+            className="dialog-sheet w-[574px]"
             {...popper.attributes.popper}
             ref={setPopperElement}
             role="dialog"
@@ -140,6 +140,37 @@ const Calendar = ({control, name, label, type, placeholder, errors, register, ha
         </FocusTrap>
       )}
     </div>
+    )
+  }
+
+  else if (type === 'calendar-view') {
+    return(
+      <div className="relative mb-5 flex flex-col ">
+          <label>{label}</label>
+          <div className="border border-primaryMain flex justify-center mt-2">
+          <style>{css}</style>
+          <Controller
+          name={name}
+          control={control}
+          defaultValue={dateValue}
+          render={({ field }) => (
+            <DayPicker
+              showOutsideDays
+              initialFocus={isPopperOpen}
+              mode="multiple"
+              selected={dateValue}
+              modifiersClassNames={{
+                selected: 'my-selected',
+                today: 'my-today'
+              }}
+              styles={{
+                head: { color: '#AF1582' },
+              }}
+            />
+          )}
+        />
+          </div>
+        </div>
     )
   }
 

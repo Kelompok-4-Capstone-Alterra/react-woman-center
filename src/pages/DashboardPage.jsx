@@ -11,7 +11,7 @@ import ShoppingBagRoundedIcon from "@mui/icons-material/ShoppingBagRounded";
 const DashboardPage = () => {
   return (
     <>
-      <div className="flex flex-row">
+      <div className="flex gap-5 mb-10">
         <Card
           title="Total Users"
           amount="123.456.789"
