@@ -8,6 +8,8 @@ import ButtonOutline from "../../../ButtonOutline/index";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import { convertDate } from "../../../../helpers/convertDate";
+import { addSchedule } from "../../../../api/schedule";
+import { getAuthCookie } from "../../../../utils/cookies";
 
 const ScheduleModal = ({ modalState, closeModal }) => {
   const {
@@ -21,48 +23,34 @@ const ScheduleModal = ({ modalState, closeModal }) => {
   const [counselors, setCounselors] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("https://13.210.163.192:8080/admin/counselors?sort_by=newest", {
-        headers: {
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2ODcxNDgyMjZ9.iNS2kXRn0JF653IPfFxe0TgQzXT7gWRQEOlIS9sP6jw",
-        },
-      })
-      .then((response) => setCounselors(response.data.data.counselors))
-      .catch((error) => console.error(error));
-  }, []);
+    const token = getAuthCookie();
+    if (modalState) {
+      axios
+        .get("https://13.210.163.192:8080/admin/counselors?sort_by=newest", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => setCounselors(response.data.data.counselors))
+        .catch((error) => console.error(error));
+    }
+  }, [modalState]);
 
   return (
     <Modal isOpen={modalState} type={"addCounselor"}>
       <form
         onSubmit={handleSubmit((data) => {
           const counselorId = data.counselor.value;
-
-          const requestBody = {
-            dates: data.dates.map((date) => convertDate(date)),
-            times: [data.times.value],
-          };
+          const dates = data.dates.map((date) => convertDate(date));
+          const times = [data.times.value];
 
           console.log(counselorId);
-          console.log(requestBody);
+          console.log(dates);
+          console.log(times);
 
-          axios
-            .post(
-              `https://13.210.163.192:8080/admin/counselors/${counselorId}/schedules`,
-              requestBody,
-              {
-                headers: {
-                  Authorization:
-                    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2ODcxNDgyMjZ9.iNS2kXRn0JF653IPfFxe0TgQzXT7gWRQEOlIS9sP6jw",
-                },
-              }
-            )
-            .then((response) => {
-              console.log("Response:", response.data);
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
+          addSchedule({ counselorId, dates, times });
+
+          closeModal();
         })}
       >
         <Dropdown

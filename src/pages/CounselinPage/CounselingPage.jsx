@@ -23,6 +23,7 @@ import DeleteModal from "../../components/Dashboard/Counseling/DeleteModal/index
 import LinkModal from "../../components/Dashboard/Counseling/LinkModal";
 import CancelModal from "../../components/Dashboard/Counseling/CancelModal";
 import axios from "axios";
+import { getAuthCookie } from "../../utils/cookies";
 
 const CounselingPage = () => {
   const [isSchedule, setIsSchedule] = useState(true);
@@ -58,13 +59,13 @@ const CounselingPage = () => {
   };
 
   useEffect(() => {
+    const token = getAuthCookie();
     axios
       .get(
         "https://13.210.163.192:8080/admin/counselors?page=1&limit=5&sort_by=newest",
         {
           headers: {
-            Authorization:
-              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2ODcxNDgyMjZ9.iNS2kXRn0JF653IPfFxe0TgQzXT7gWRQEOlIS9sP6jw",
+            Authorization: `Bearer ${token}`,
           },
         }
       )

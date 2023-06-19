@@ -3,19 +3,20 @@ import Modal from "../../../Modal";
 import ButtonPrimary from "../../../ButtonPrimary";
 import ButtonOutline from "../../../ButtonOutline/index";
 import axios from "axios";
+import { deleteSchedule } from "../../../../api/schedule";
 
 const DeleteModal = ({ modalState, closeModal, counselor }) => {
-  const deleteSchedule = (id) => {
-    axios
-      .delete(`https://13.210.163.192:8080/admin/counselors/${id}/schedules`, {
-        headers: {
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2ODcxNDgyMjZ9.iNS2kXRn0JF653IPfFxe0TgQzXT7gWRQEOlIS9sP6jw",
-        },
-      })
-      .then((response) => console.log(response))
-      .catch((error) => console.error(error));
-  };
+  // const deleteSchedule = (id) => {
+  //   axios
+  //     .delete(`https://13.210.163.192:8080/admin/counselors/${id}/schedules`, {
+  //       headers: {
+  //         Authorization:
+  //           "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2ODcxNDgyMjZ9.iNS2kXRn0JF653IPfFxe0TgQzXT7gWRQEOlIS9sP6jw",
+  //       },
+  //     })
+  //     .then((response) => console.log(response))
+  //     .catch((error) => console.error(error));
+  // };
 
   return (
     <Modal isOpen={modalState} type={"link"}>

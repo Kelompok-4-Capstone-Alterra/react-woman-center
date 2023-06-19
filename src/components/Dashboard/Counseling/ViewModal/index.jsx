@@ -9,6 +9,7 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
 import axios from "axios";
+import { getSchedule } from "../../../../api/schedule";
 
 const ViewModal = ({ modalState, closeModal, counselor }) => {
   const {
@@ -22,26 +23,15 @@ const ViewModal = ({ modalState, closeModal, counselor }) => {
   const [dates, setDates] = useState([]);
   const [times, setTimes] = useState([]);
 
+  const getCounselorSchedule = async (id) => {
+    const { dates, times } = await getSchedule(id);
+    setDates(dates);
+    setTimes(times);
+  };
+
   useEffect(() => {
     if (counselor) {
-      axios
-        .get(
-          `https://13.210.163.192:8080/admin/counselors/${counselor.id}/schedules`,
-          {
-            headers: {
-              Authorization:
-                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2ODcxNDgyMjZ9.iNS2kXRn0JF653IPfFxe0TgQzXT7gWRQEOlIS9sP6jw",
-            },
-          }
-        )
-        .then((response) => {
-          let dates = response.data.data.schedule.dates.map(
-            (date) => new Date(date)
-          );
-          setDates(dates);
-          setTimes(response.data.data.schedule.times);
-        })
-        .catch((error) => console.error(error));
+      getCounselorSchedule(counselor.id);
     }
   }, [counselor]);
 
@@ -71,7 +61,7 @@ const ViewModal = ({ modalState, closeModal, counselor }) => {
 
           <div className="mb-6">
             <label className="font-medium">Counseling's Schedule Time</label>
-            {times.map((time) => (
+            {times?.map((time) => (
               <div
                 key={time}
                 className="w-full h-[48px] px-4 border-solid border-primaryBorder border rounded mt-2 flex items-center justify-start mb-2"
