@@ -122,24 +122,8 @@ const CounselingPage = () => {
         }}
       />
 
-      <div className="flex px-[40px] items-center py-[26px] justify-between border-b-primaryBorder border-b-[0.25px] mb-10">
-        <div className="flex items-center text-primaryMain">
-          <PersonIcon className="me-4" />
-          <p className="text-lg font-medium ">Admin</p>
-        </div>
-        {isSchedule && (
-          <ButtonPrimary
-            onClick={() => {
-              setShowScheduleModal(true);
-            }}
-            className="flex items-center justify-center text-sm"
-          >
-            <AddIcon /> Add Schedule
-          </ButtonPrimary>
-        )}
-      </div>
       <div className="px-[40px]">
-        <div>
+        <div className="flex flex-row justify-between items-center">
           <form className="w-[360px]">
             <Dropdown
               control={control}
@@ -152,7 +136,18 @@ const CounselingPage = () => {
               <option value={false} label="Counseling's Transaction" />
             </Dropdown>
           </form>
+          {isSchedule && (
+            <ButtonPrimary
+              onClick={() => {
+                setShowScheduleModal(true);
+              }}
+              className="flex items-center justify-center text-sm"
+            >
+              <AddIcon /> Add Schedule
+            </ButtonPrimary>
+          )}
         </div>
+
         <TableContainer>
           <TableTitle
             title={`Counseling's ${isSchedule ? "Schedule" : "Transaction"}`}
@@ -197,6 +192,7 @@ const CounselingPage = () => {
                     <td className="w-[130px]">{counselor.topic}</td>
                     <td className="w-[130px]">
                       <ButtonPrimary
+                        className="w-[90%]"
                         onClick={() => {
                           setShowUpdateModal(true);
                         }}
@@ -206,7 +202,7 @@ const CounselingPage = () => {
                     </td>
                     <td className="w-[130px]">
                       <ButtonPrimary
-                        className=""
+                        className="w-[90%]"
                         onClick={() => {
                           setShowViewModal(true);
                           setSelectedCounselor(counselor);
@@ -217,6 +213,7 @@ const CounselingPage = () => {
                     </td>
                     <td className="w-[130px]">
                       <ButtonOutline
+                        className="w-[90%]"
                         onClick={() => {
                           setShowDeleteModal(true);
                         }}
