@@ -22,6 +22,8 @@ import ViewModal from "../../components/Dashboard/Counseling/ViewModal/index";
 import DeleteModal from "../../components/Dashboard/Counseling/DeleteModal/index";
 import LinkModal from "../../components/Dashboard/Counseling/LinkModal";
 import CancelModal from "../../components/Dashboard/Counseling/CancelModal";
+import axios from "axios";
+import { getAuthCookie } from "../../utils/cookies";
 
 const CounselingPage = () => {
   const [isSchedule, setIsSchedule] = useState(true);
@@ -31,6 +33,9 @@ const CounselingPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+
+  const [selectedCounselor, setSelectedCounselor] = useState("");
+  const [counselors, setCounselors] = useState([]);
 
   const {
     register,
@@ -53,6 +58,21 @@ const CounselingPage = () => {
     console.log("clicked");
   };
 
+  useEffect(() => {
+    const token = getAuthCookie();
+    axios
+      .get(
+        "https://13.210.163.192:8080/admin/counselors?page=1&limit=5&sort_by=newest",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((response) => setCounselors(response.data.data.counselors))
+      .catch((error) => console.error(error));
+  }, []);
+
   return (
     <div className="">
       {/* SCHEDULE MODAL */}
@@ -62,8 +82,9 @@ const CounselingPage = () => {
           setShowScheduleModal(false);
         }}
       />
-      {/* VIEW MODA: */}
+      {/* VIEW MODAL */}
       <ViewModal
+        counselor={selectedCounselor}
         modalState={showViewModal}
         closeModal={() => {
           setShowViewModal(false);
@@ -83,6 +104,7 @@ const CounselingPage = () => {
         closeModal={() => {
           setShowDeleteModal(false);
         }}
+        counselor={selectedCounselor}
       />
 
       {/* Link Modal */}
@@ -163,7 +185,52 @@ const CounselingPage = () => {
               </TableHeader>
             )}
 
-            <TableBody>
+            {isSchedule && (
+              <TableBody>
+                {counselors.map((counselor) => (
+                  <TableRow key={counselor.id}>
+                    <td className="w-[130px]">{counselor.id}</td>
+                    <td className="w-[130px]">{counselor.name}</td>
+                    <td className="w-[130px]">
+                      <StatusTag type={"available"} />
+                    </td>
+                    <td className="w-[130px]">{counselor.topic}</td>
+                    <td className="w-[130px]">
+                      <ButtonPrimary
+                        onClick={() => {
+                          setShowUpdateModal(true);
+                        }}
+                      >
+                        Update
+                      </ButtonPrimary>
+                    </td>
+                    <td className="w-[130px]">
+                      <ButtonPrimary
+                        className=""
+                        onClick={() => {
+                          setShowViewModal(true);
+                          setSelectedCounselor(counselor);
+                        }}
+                      >
+                        View
+                      </ButtonPrimary>
+                    </td>
+                    <td className="w-[130px]">
+                      <ButtonOutline
+                        onClick={() => {
+                          setShowDeleteModal(true);
+                        }}
+                      >
+                        Delete
+                      </ButtonOutline>
+                    </td>
+                  </TableRow>
+                ))}
+              </TableBody>
+            )}
+            {!isSchedule && <TableBody></TableBody>}
+
+            {/* <TableBody>
               {isSchedule ? (
                 <TableRow>
                   <td className="w-[130px]">123456</td>
@@ -236,7 +303,7 @@ const CounselingPage = () => {
                   </td>
                 </TableRow>
               )}
-            </TableBody>
+            </TableBody> */}
           </Tables>
         </TableContainer>
       </div>
