@@ -23,6 +23,7 @@ const FilterDropdown = (props) => {
   );
 };
 
+// Option
 const FilterOption = (props) => {
   const { className, children } = props;
 
