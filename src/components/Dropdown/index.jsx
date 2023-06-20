@@ -24,11 +24,6 @@ const Dropdown = ({ control, name, placeholder, label, children, handleSelect })
     handleSelect();
   };
 
-  const handleFormSelect = (selected) => {
-    onChange(selected.value);
-    toggleDropdown();
-  };
-
   return (
     <div className="relative mb-5 flex flex-col">
       <label className="font-medium">{label}</label>
@@ -37,7 +32,7 @@ const Dropdown = ({ control, name, placeholder, label, children, handleSelect })
         name={name}
         render={({ field }) => (
           <div className="w-full h-[48px] focus:outline-none px-4 border-solid border-2 rounded mt-2 flex items-center" onClick={toggleDropdown}>
-            {field.value ? field.value : placeholder}
+            {field.value ? field.value.label : placeholder}
             {isOpen ? (
               <ExpandLess
                 className="absolute top-[44px] right-4 cursor-pointer"
@@ -56,7 +51,7 @@ const Dropdown = ({ control, name, placeholder, label, children, handleSelect })
             <li
               key={child.props.value}
               className="px-8 py-4 h-[44px] flex items-center hover:bg-primaryHover hover:text-white"
-              onClick={() => child.props.handleSelect ? handleOptionSelect(child.props) : handleFormSelect(child.props)}
+              onClick={() => handleOptionSelect(child.props)}
             >
               {child.props.label}
             </li>
