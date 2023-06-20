@@ -42,9 +42,6 @@ const CounselingPage = () => {
   const [selectedCounselor, setSelectedCounselor] = useState("");
   const [counselors, setCounselors] = useState([]);
 
-  const [dates, setDates] = useState([]);
-  const [times, setTimes] = useState([]);
-
   const {
     register,
     handleSubmit,
@@ -62,15 +59,11 @@ const CounselingPage = () => {
     console.log("Value: ", dropdownValue.value);
   };
 
-  const handleModal = () => {
-    console.log("clicked");
-  };
-
   useEffect(() => {
     const token = getAuthCookie();
     axios
       .get(
-        "https://13.210.163.192:8080/admin/counselors?page=1&limit=5&sort_by=newest",
+        "https://13.210.163.192:8080/admin/counselors?page=1&limit=5&sort_by=newest&has_schedule=true",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -110,8 +103,6 @@ const CounselingPage = () => {
         closeModal={() => {
           setShowUpdateModal(false);
         }}
-        dates={dates}
-        times={times}
       />
 
       {/* Delete Modal */}
@@ -221,7 +212,6 @@ const CounselingPage = () => {
                       className="w-[90%]"
                       onClick={() => {
                         setShowViewModal(true);
-
                         setSelectedCounselor(counselor);
                       }}
                     >
@@ -233,6 +223,7 @@ const CounselingPage = () => {
                       className="w-[90%]"
                       onClick={() => {
                         setShowDeleteModal(true);
+                        setSelectedCounselor(counselor);
                       }}
                     >
                       Delete
@@ -290,81 +281,6 @@ const CounselingPage = () => {
               ))}
             </TableBody>
           )}
-
-          {/* <TableBody>
-              {isSchedule ? (
-                <TableRow>
-                  <td className="w-[130px]">123456</td>
-                  <td className="w-[130px]">John Doe</td>
-                  <td className="w-[130px]">
-                    <StatusTag type={"available"} />
-                  </td>
-                  <td className="w-[130px]">Mental Health</td>
-                  <td className="w-[130px]">
-                    <ButtonPrimary
-                      onClick={() => {
-                        setShowUpdateModal(true);
-                      }}
-                    >
-                      Update
-                    </ButtonPrimary>
-                  </td>
-                  <td className="w-[130px]">
-                    <ButtonPrimary
-                      onClick={() => {
-                        setShowViewModal(true);
-                      }}
-                    >
-                      View
-                    </ButtonPrimary>
-                  </td>
-                  <td className="w-[130px]">
-                    <ButtonOutline
-                      onClick={() => {
-                        setShowDeleteModal(true);
-                      }}
-                    >
-                      Delete
-                    </ButtonOutline>
-                  </td>
-                </TableRow>
-              ) : (
-                <TableRow>
-                  <td className="w-[130px]">12 / 05 / 23</td>
-                  <td className="w-[130px]">1234567</td>
-                  <td className="w-[130px]">1234567</td>
-                  <td className="w-[130px]">1234567</td>
-                  <td className="w-[130px]">John Doe</td>
-                  <td className="w-[130px]">Chat</td>
-                  <td className="w-[130px]">Mental Health</td>
-                  <td className="w-[130px]">12 : 00</td>
-                  <td className="w-[130px]">Rp. 120.000</td>
-                  <td className="w-[130px]">
-                    <StatusTag type={"ongoing"} />
-                  </td>
-                  <td className="w-[130px]">
-                    <ButtonOutline
-                      onClick={() => {
-                        setShowLinkModal(true);
-                      }}
-                    >
-                      send Link
-                    </ButtonOutline>
-                  </td>
-                  <td className="w-[130px]">
-                    {" "}
-                    <span
-                      className="cursor-pointer text-dangerMain"
-                      onClick={() => {
-                        setShowCancelModal(true);
-                      }}
-                    >
-                      cancel
-                    </span>
-                  </td>
-                </TableRow>
-              )}
-            </TableBody> */}
         </Tables>
       </TableContainer>
     </div>
