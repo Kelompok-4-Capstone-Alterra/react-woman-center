@@ -10,6 +10,7 @@ const StatusTag = ({ type }) => {
       ${type == "ongoing" ? "bg-primaryMain" : ""}
       ${type == "completed" ? "bg-successMain" : ""}
       ${type == "waiting" ? "bg-secondaryMain" : ""}
+      ${type == "pending" ? "bg-secondaryMain" : ""}
       ${type == "canceled" ? "bg-dangerMain" : ""}
       ${type == "available" ? "bg-successMain" : ""}
       ${type == "unavailable" ? "bg-dangerMain" : ""}
