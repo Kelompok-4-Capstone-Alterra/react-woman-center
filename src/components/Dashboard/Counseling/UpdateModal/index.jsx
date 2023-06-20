@@ -1,5 +1,5 @@
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import Dropdown from "../../../Dropdown";
 import Modal from "../../../Modal";
 import Calendar from "../../../Calendar";
@@ -8,24 +8,24 @@ import ButtonOutline from "../../../ButtonOutline/index";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
+import { getSchedule, updateSchedule } from "../../../../api/schedule";
+import { convertDate } from "../../../../helpers/convertDate";
 
-const UpdateModal = ({ modalState, closeModal }) => {
+const UpdateModal = ({ modalState, closeModal, counselor, dates, times }) => {
   const {
     register,
     handleSubmit,
     getValues,
+    setValue,
     control,
     formState: { errors },
   } = useForm();
 
-  //   const handleSelect = () => {
-  //     const formData = getValues();
-  //     const dropdownValue = formData.pageStatus;
-  //     setIsSchedule(dropdownValue.value);
-  //     console.log("isShedule : ", isSchedule);
+  const { replace } = useFieldArray({ name: "dates", control });
 
-  //     console.log("Value: ", dropdownValue.value);
-  //   };
+  useEffect(() => {
+    replace(dates);
+  }, [dates]);
 
   return (
     <Modal isOpen={modalState} type={"viewUpdateCounselor"}>
@@ -37,38 +37,51 @@ const UpdateModal = ({ modalState, closeModal }) => {
           <p className="font-normal text-[14px] text-neutralMedium mb-6">
             Self Development
           </p>
-          <form>
+          <form
+            onSubmit={handleSubmit((data) => {
+              const counselorId = counselor.id;
+              const dates = data.dates.map((date) => convertDate(date));
+              const times = [data.time.value];
+
+              updateSchedule({ counselorId, dates, times });
+
+              closeModal();
+            })}
+          >
             <Calendar
               control={control}
-              name={"calendar"}
+              name={"dates"}
               label={"Choose Counseling’s Schedule Date"}
               errors={errors}
               register={register}
               placeholder={""}
-              handleSelect={""}
+              handleSelect={() => {
+                console.log("test");
+              }}
             />
             <Dropdown
               control={control}
               name={"time"}
               label={"Choose Time"}
               placeholder={"Select Time"}
-              handleSelect={""}
-            ></Dropdown>
+              handleSelect={() => {}}
+            >
+              <option value="09:00:00" label="09:00:00"></option>
+              <option value="12:00:00" label="12:00:00"></option>
+              <option value="15:00:00" label="15:00:00"></option>
+              <option value="18:00:00" label="18:00:00"></option>
+            </Dropdown>
 
             <div className="mb-6">
               <label className="font-medium">Counseling's Schedule Time</label>
-              <div className="w-full h-[48px] px-4 border-solid border-primaryBorder border rounded mt-2 flex items-center justify-between mb-2">
-                <p>18:00</p>
-                <button>
-                  <DeleteIcon />
-                </button>
-              </div>
-              <div className="w-full h-[48px] px-4 border-solid border-primaryBorder border rounded mt-2 flex items-center justify-between mb-2">
-                <p>18:00</p>
-                <button>
-                  <DeleteIcon />
-                </button>
-              </div>
+              {times?.map((time) => (
+                <div
+                  key={time}
+                  className="w-full h-[48px] px-4 border-solid border-primaryBorder border rounded mt-2 flex items-center justify-start mb-2"
+                >
+                  <p>{time}</p>
+                </div>
+              ))}
             </div>
 
             <ButtonPrimary
