@@ -25,6 +25,8 @@ import CancelModal from "../../components/Dashboard/Counseling/CancelModal";
 import axios from "axios";
 import { getAuthCookie } from "../../utils/cookies";
 import { getSchedule } from "../../api/schedule";
+import { getAllTransactions } from "../../api/transaction";
+import { formatCurrency } from "../../helpers/formatCurrency";
 
 const CounselingPage = () => {
   const [isSchedule, setIsSchedule] = useState(true);
@@ -34,6 +36,8 @@ const CounselingPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+
+  const [transactions, setTransactions] = useState([]);
 
   const [selectedCounselor, setSelectedCounselor] = useState("");
   const [counselors, setCounselors] = useState([]);
@@ -75,6 +79,11 @@ const CounselingPage = () => {
       )
       .then((response) => setCounselors(response.data.data.counselors))
       .catch((error) => console.error(error));
+
+    getAllTransactions().then((data) => {
+      setTransactions(data);
+      console.log(data);
+    });
   }, []);
 
   return (
@@ -233,7 +242,54 @@ const CounselingPage = () => {
               ))}
             </TableBody>
           )}
-          {!isSchedule && <TableBody></TableBody>}
+          {!isSchedule && (
+            <TableBody>
+              {transactions.map((transaction) => (
+                <TableRow>
+                  <td className="w-[130px]">12 / 05 / 23</td>
+                  <td className="w-[130px]">{transaction.id}</td>
+                  <td className="w-[130px]">{transaction.user_id}</td>
+                  <td className="w-[130px]">{transaction.counselor_id}</td>
+                  <td className="w-[130px]">
+                    {transaction.counselor_data.name}
+                  </td>
+                  <td className="w-[130px]">
+                    {transaction.consultation_method}
+                  </td>
+                  <td className="w-[130px]">
+                    {transaction.counselor_data.topic}
+                  </td>
+                  <td className="w-[130px]">12 : 00</td>
+                  <td className="w-[130px]">
+                    {formatCurrency(transaction.counselor_data.price)}
+                  </td>
+                  <td className="w-[130px]">
+                    <StatusTag type={transaction.status} />
+                  </td>
+                  <td className="w-[130px]">
+                    <ButtonOutline
+                      onClick={() => {
+                        setShowLinkModal(true);
+                      }}
+                    >
+                      send Link
+                    </ButtonOutline>
+                  </td>
+                  <td className="w-[130px]">
+                    {" "}
+                    <span
+                      className="cursor-pointer text-dangerMain"
+                      onClick={() => {
+                        setShowCancelModal(true);
+                      }}
+                    >
+                      cancel
+                    </span>
+                  </td>
+                </TableRow>
+              ))}
+            </TableBody>
+          )}
 
           {/* <TableBody>
               {isSchedule ? (
