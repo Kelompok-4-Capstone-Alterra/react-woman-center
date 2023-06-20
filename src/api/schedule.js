@@ -62,7 +62,7 @@ export const updateSchedule = async (payloads) => {
     const { counselorId, dates, times } = payloads;
 
     const config = {
-      method: "UPDATE",
+      method: "PUT",
       baseURL: VITE_API_BASE_URL,
       url: `/admin/counselors/${counselorId}/schedules`,
       headers: {

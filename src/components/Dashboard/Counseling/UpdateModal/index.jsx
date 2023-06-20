@@ -8,7 +8,8 @@ import ButtonOutline from "../../../ButtonOutline/index";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
-import { getSchedule } from "../../../../api/schedule";
+import { getSchedule, updateSchedule } from "../../../../api/schedule";
+import { convertDate } from "../../../../helpers/convertDate";
 
 const UpdateModal = ({ modalState, closeModal, counselor, dates, times }) => {
   const {
@@ -20,29 +21,11 @@ const UpdateModal = ({ modalState, closeModal, counselor, dates, times }) => {
     formState: { errors },
   } = useForm();
 
-  // const [dates, setDates] = useState([]);
-  // const [times, setTimes] = useState([]);
-
-  const { replace } = useFieldArray({ name: "calendar", control });
-
-  // const getCounselorSchedule = async (id) => {
-  //   const { dates, times } = await getSchedule(id);
-  //   setDates(dates);
-  //   setTimes(times);
-  // };
+  const { replace } = useFieldArray({ name: "dates", control });
 
   useEffect(() => {
     replace(dates);
   }, [dates]);
-
-  //   const handleSelect = () => {
-  //     const formData = getValues();
-  //     const dropdownValue = formData.pageStatus;
-  //     setIsSchedule(dropdownValue.value);
-  //     console.log("isShedule : ", isSchedule);
-
-  //     console.log("Value: ", dropdownValue.value);
-  //   };
 
   return (
     <Modal isOpen={modalState} type={"viewUpdateCounselor"}>
@@ -56,12 +39,18 @@ const UpdateModal = ({ modalState, closeModal, counselor, dates, times }) => {
           </p>
           <form
             onSubmit={handleSubmit((data) => {
-              console.log(data);
+              const counselorId = counselor.id;
+              const dates = data.dates.map((date) => convertDate(date));
+              const times = [data.time.value];
+
+              updateSchedule({ counselorId, dates, times });
+
+              closeModal();
             })}
           >
             <Calendar
               control={control}
-              name={"calendar"}
+              name={"dates"}
               label={"Choose Counseling’s Schedule Date"}
               errors={errors}
               register={register}
@@ -75,8 +64,13 @@ const UpdateModal = ({ modalState, closeModal, counselor, dates, times }) => {
               name={"time"}
               label={"Choose Time"}
               placeholder={"Select Time"}
-              handleSelect={""}
-            ></Dropdown>
+              handleSelect={() => {}}
+            >
+              <option value="09:00:00" label="09:00:00"></option>
+              <option value="12:00:00" label="12:00:00"></option>
+              <option value="15:00:00" label="15:00:00"></option>
+              <option value="18:00:00" label="18:00:00"></option>
+            </Dropdown>
 
             <div className="mb-6">
               <label className="font-medium">Counseling's Schedule Time</label>

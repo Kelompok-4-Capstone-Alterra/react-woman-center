@@ -129,114 +129,113 @@ const CounselingPage = () => {
         }}
       />
 
-      <div className="px-[40px]">
-        <div className="flex flex-row justify-between items-center">
-          <form className="w-[360px]">
-            <Dropdown
-              control={control}
-              name={"pageStatus"}
-              label={"Choose Sub Menu : "}
-              placeholder={"Counseling's Schedule"}
-              handleSelect={handleSelect}
-            >
-              <option value={true} label="Counseling's Schedule" />
-              <option value={false} label="Counseling's Transaction" />
-            </Dropdown>
-          </form>
-          {isSchedule && (
-            <ButtonPrimary
-              onClick={() => {
-                setShowScheduleModal(true);
-              }}
-              className="flex items-center justify-center text-sm"
-            >
-              <AddIcon /> Add Schedule
-            </ButtonPrimary>
+      <div className="flex flex-row justify-between items-center">
+        <form className="w-[360px]">
+          <Dropdown
+            control={control}
+            name={"pageStatus"}
+            label={"Choose Sub Menu : "}
+            placeholder={"Counseling's Schedule"}
+            handleSelect={handleSelect}
+          >
+            <option value={true} label="Counseling's Schedule" />
+            <option value={false} label="Counseling's Transaction" />
+          </Dropdown>
+        </form>
+        {isSchedule && (
+          <ButtonPrimary
+            onClick={() => {
+              setShowScheduleModal(true);
+            }}
+            className="flex items-center justify-center text-sm"
+          >
+            <AddIcon /> Add Schedule
+          </ButtonPrimary>
+        )}
+      </div>
+
+      <TableContainer>
+        <TableTitle
+          title={`Counseling's ${isSchedule ? "Schedule" : "Transaction"}`}
+        />
+        <Tables scroll={!isSchedule}>
+          {isSchedule ? (
+            <TableHeader>
+              <th className="w-[130px]">Counselor Id</th>
+              <th className="w-[130px]">Counselor's Name</th>
+              <th className="w-[130px]">Topic</th>
+              <th className="w-[130px]">Update</th>
+              <th className="w-[130px]">View</th>
+              <th className="w-[130px]">Delete</th>
+            </TableHeader>
+          ) : (
+            <TableHeader>
+              <th className="w-[130px]">Date</th>
+              <th className="w-[130px]">Transaction Id</th>
+              <th className="w-[130px]">User Id</th>
+              <th className="w-[130px]">Counselor Id</th>
+              <th className="w-[130px]">Counselor's Name</th>
+              <th className="w-[130px]">Method</th>
+              <th className="w-[130px]">Topic</th>
+              <th className="w-[130px]">Time</th>
+              <th className="w-[130px]">Price</th>
+              <th className="w-[130px]">Status</th>
+              <th className="w-[130px]">Link</th>
+              <th className="w-[130px]">Cancel</th>
+            </TableHeader>
           )}
-        </div>
 
-        <TableContainer>
-          <TableTitle
-            title={`Counseling's ${isSchedule ? "Schedule" : "Transaction"}`}
-          />
-          <Tables scroll={!isSchedule}>
-            {isSchedule ? (
-              <TableHeader>
-                <th className="w-[130px]">Counselor Id</th>
-                <th className="w-[130px]">Counselor's Name</th>
-                <th className="w-[130px]">Topic</th>
-                <th className="w-[130px]">Update</th>
-                <th className="w-[130px]">View</th>
-                <th className="w-[130px]">Delete</th>
-              </TableHeader>
-            ) : (
-              <TableHeader>
-                <th className="w-[130px]">Date</th>
-                <th className="w-[130px]">Transaction Id</th>
-                <th className="w-[130px]">User Id</th>
-                <th className="w-[130px]">Counselor Id</th>
-                <th className="w-[130px]">Counselor's Name</th>
-                <th className="w-[130px]">Method</th>
-                <th className="w-[130px]">Topic</th>
-                <th className="w-[130px]">Time</th>
-                <th className="w-[130px]">Price</th>
-                <th className="w-[130px]">Status</th>
-                <th className="w-[130px]">Link</th>
-                <th className="w-[130px]">Cancel</th>
-              </TableHeader>
-            )}
+          {isSchedule && (
+            <TableBody>
+              {counselors.map((counselor) => (
+                <TableRow key={counselor.id}>
+                  <td className="w-[130px]">{counselor.id}</td>
+                  <td className="w-[130px]">{counselor.name}</td>
+                  <td className="w-[130px]">{counselor.topic}</td>
+                  <td className="w-[130px]">
+                    <ButtonPrimary
+                      className="w-[90%]"
+                      onClick={() => {
+                        setShowUpdateModal(true);
+                        setSelectedCounselor(counselor);
+                        getSchedule(counselor.id).then(({ dates, times }) => {
+                          setTimes(times);
+                          setDates(dates);
+                        });
+                      }}
+                    >
+                      Update
+                    </ButtonPrimary>
+                  </td>
+                  <td className="w-[130px]">
+                    <ButtonPrimary
+                      className="w-[90%]"
+                      onClick={() => {
+                        setShowViewModal(true);
 
-            {isSchedule && (
-              <TableBody>
-                {counselors.map((counselor) => (
-                  <TableRow key={counselor.id}>
-                    <td className="w-[130px]">{counselor.id}</td>
-                    <td className="w-[130px]">{counselor.name}</td>
-                    <td className="w-[130px]">{counselor.topic}</td>
-                    <td className="w-[130px]">
-                      <ButtonPrimary
-                        className="w-[90%]"
-                        onClick={() => {
-                          setShowUpdateModal(true);
-                          setSelectedCounselor(counselor);
-                          getSchedule(counselor.id).then(({ dates, times }) => {
-                            setTimes(times);
-                            setDates(dates);
-                          });
-                        }}
-                      >
-                        Update
-                      </ButtonPrimary>
-                    </td>
-                    <td className="w-[130px]">
-                      <ButtonPrimary
-                        className="w-[90%]"
-                        onClick={() => {
-                          setShowViewModal(true);
+                        setSelectedCounselor(counselor);
+                      }}
+                    >
+                      View
+                    </ButtonPrimary>
+                  </td>
+                  <td className="w-[130px]">
+                    <ButtonOutline
+                      className="w-[90%]"
+                      onClick={() => {
+                        setShowDeleteModal(true);
+                      }}
+                    >
+                      Delete
+                    </ButtonOutline>
+                  </td>
+                </TableRow>
+              ))}
+            </TableBody>
+          )}
+          {!isSchedule && <TableBody></TableBody>}
 
-                          setSelectedCounselor(counselor);
-                        }}
-                      >
-                        View
-                      </ButtonPrimary>
-                    </td>
-                    <td className="w-[130px]">
-                      <ButtonOutline
-                        className="w-[90%]"
-                        onClick={() => {
-                          setShowDeleteModal(true);
-                        }}
-                      >
-                        Delete
-                      </ButtonOutline>
-                    </td>
-                  </TableRow>
-                ))}
-              </TableBody>
-            )}
-            {!isSchedule && <TableBody></TableBody>}
-
-            {/* <TableBody>
+          {/* <TableBody>
               {isSchedule ? (
                 <TableRow>
                   <td className="w-[130px]">123456</td>
@@ -310,9 +309,8 @@ const CounselingPage = () => {
                 </TableRow>
               )}
             </TableBody> */}
-          </Tables>
-        </TableContainer>
-      </div>
+        </Tables>
+      </TableContainer>
     </div>
   );
 };
