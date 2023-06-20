@@ -157,6 +157,9 @@ const CounselingPage = () => {
       <TableContainer>
         <TableTitle
           title={`Counseling's ${isSchedule ? "Schedule" : "Transaction"}`}
+          onChange={(e) => {
+            // console.log(e.target.value);
+          }}
         />
         <Tables scroll={!isSchedule}>
           {isSchedule ? (
