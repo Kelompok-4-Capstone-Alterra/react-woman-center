@@ -15,8 +15,11 @@ import ImageThumbnail from "../components/ImageUploader/ImageThumbnail";
 import ButtonPrimary from "../components/ButtonPrimary";
 import ButtonOutline from "../components/ButtonOutline/index.jsx";
 import { useForm } from "react-hook-form";
-import PersonIcon from "@mui/icons-material/Person";
 import AddIcon from "@mui/icons-material/Add";
+import { getAllCounselors, getAllUsers, deleteCounselorById, deleteUserById, getUserById, getCounselorById } from "../api/usercounselor";
+import { getAuthCookie } from "../utils/cookies";
+import { Alert, MenuItem, Select, Skeleton, Snackbar } from "@mui/material";
+const { VITE_API_BASE_URL } = import.meta.env;
 
 const UserCounselorPage = () => {
   const { control, getValues, register, handleSubmit, formState: { errors } } = useForm();
@@ -27,78 +30,112 @@ const UserCounselorPage = () => {
   const [data, setData] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
-
-  const handleImageChange = (file) => {
-    setSelectedImage(file);
-    const fileURL = URL.createObjectURL(file);
-    setImagePreview(fileURL);
-  };
+  const [user, setUser] = useState(null);
+  const [counselor, setCounselor] = useState(null);
+  const [sortBy, setSortBy] = useState("newest");
 
   const onSubmit = async (counselorData) => {
     const formData = new FormData();
         formData.append('name', counselorData.name);
         formData.append('email', counselorData.email);
         formData.append('username', counselorData.username);
-        formData.append('topic', counselorData.topic);
+        formData.append('topic', counselorData.topic.value);
         formData.append('description', counselorData.description);
         formData.append('price', counselorData.price);
         formData.append('profile_picture', selectedImage);
 
-      try {
-        const response = await axios.post('https://13.210.163.192:8080/admin/counselors', formData, {
-          headers: {
-            Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2ODczMjM2NjV9.qmH-MZg7YgO8O0D6o356Mi3qR3WNpoNMIOzcbkjpIpA',
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-  
-        console.log(response.data);
+        try {
+          const token = getAuthCookie();
+      
+          const config = {
+            method: "POST",
+            baseURL: VITE_API_BASE_URL,
+            url: `/admin/counselors`,
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data'
+            },
+            data: formData
+          };
+      
+          const response = await axios(config);
+      
+          return response.data.meta;
       } catch (error) {
-        console.error(error.response.data.meta.message);
+        throw error.response.meta;
       }
   };
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchDataCounselors = async () => {
       try {
-        const response = await axios.get('https://13.210.163.192:8080/admin/users', {
-          headers: {
-            Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2ODczMjM2NjV9.qmH-MZg7YgO8O0D6o356Mi3qR3WNpoNMIOzcbkjpIpA',
-          },
-        });
-  
-        const responseData = response.data;
-        if (responseData?.data?.users) {
-          setData(responseData.data.users);
-        }
+        const counselorsData = await getAllCounselors();
+        setData(counselorsData);
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.log('Error:', error);
       }
     };
-  
-    const fetchCounselorData = async () => {
+
+    const fetchDataUsers = async () => {
       try {
-        const response = await axios.get('https://13.210.163.192:8080/admin/counselors', {
-          headers: {
-            Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE2ODczMjM2NjV9.qmH-MZg7YgO8O0D6o356Mi3qR3WNpoNMIOzcbkjpIpA',
-          },
-        });
-  
-        const responseData = response.data;
-        if (responseData?.data?.counselors) {
-          setData(responseData.data.counselors);
-        }
+        const usersData = await getAllUsers();
+        setData(usersData);
       } catch (error) {
-        console.error('Error fetching counselor data:', error);
+        console.log('Error:', error);
       }
     };
-  
+
     if (isCounselor) {
-      fetchCounselorData();
+      fetchDataCounselors();
     } else {
-      fetchUserData();
+      fetchDataUsers();
     }
   }, [isCounselor]);
+
+  const deleteCounselor = async (counselorId) => {
+    try {
+      const response = await deleteCounselorById(counselorId);
+      getAllCounselors();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const deleteUser = async (userId) => {
+    try {
+      const response = await deleteUserById(userId);
+      getAllUsers();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getUser = async (userId) => {
+    setisView(!isView);
+    try {
+      const userData = await getUserById(userId);
+      setUser(userData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getCounselor = async (userId) => {
+    setisView(!isView);
+    try {
+      const counselorData = await getCounselorById(userId);
+      setCounselor(counselorData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+  const handleImageChange = (file) => {
+    setSelectedImage(file);
+    const fileURL = URL.createObjectURL(file);
+    setImagePreview(fileURL);
+  };
 
 
   const handleSelect = () => {
@@ -117,25 +154,17 @@ const UserCounselorPage = () => {
     setisView(!isView);
   }
 
-  const handleDelete = () =>  {
-    setIsDelete(!isDelete);
-  }
+  const handleSearchCounselor= (event) => {
+    const keyword = event.target.value;
+
+    getAllCounselors({ search: keyword });
+  };
 
   return(
     <>
-      <div className="flex px-[40px] items-center py-[26px] justify-between border-b-primaryBorder border-b-[0.25px] mb-10">
-        <div className="flex items-center text-primaryMain">
-          <PersonIcon className="me-4" />{" "}
-          <p className="text-lg font-medium ">Admin</p>
-        </div>
-        {isCounselor && (
-          <ButtonPrimary className="flex items-center justify-center text-sm" onClick={handleEdit}>
-            <AddIcon /> Add Counselor
-          </ButtonPrimary>
-        )}
-      </div>
-      <div className="mx-6">
-          <form className="w-[360px]">
+    <div className="px-[40px]">
+    <div className="flex flex-row justify-between items-center">
+    <form className="w-[360px]">
             <Dropdown
               control={control}
               name={"pageStatus"}
@@ -147,8 +176,59 @@ const UserCounselorPage = () => {
               <option value={false} label="Users" />
             </Dropdown>
           </form>
+          <div>
+          {isCounselor && (
+          <ButtonPrimary className="flex items-center justify-center text-sm" onClick={handleEdit}>
+            <AddIcon /> Add Counselor
+          </ButtonPrimary>
+          )}
+          </div>
+    </div>
+    <div className="flex justify-end items-center gap-4 mb-4">
+          <span className="text-base">Sort By</span>
+          <Select
+            value={sortBy}
+            onChange={(event) => setSortBy(event.target.value)}
+            sx={{
+              ".MuiSelect-select": {
+                padding: "0.325rem 0.75rem",
+              },
+              ".MuiOutlinedInput-notchedOutline": {
+                borderColor: "#9E9494 !important",
+                borderWidth: "1px",
+              },
+            }}
+            MenuProps={{
+              sx: {
+                "&& .Mui-selected": {
+                  backgroundColor: "#AF1582 !important",
+                  color: "#FFF",
+                },
+                "&& .Mui-selected:hover": {
+                  backgroundColor: "#954E80 !important",
+                },
+              },
+            }}
+          >
+            <MenuItem
+              value="newest"
+              sx={{
+                "&:checked": {
+                  backgroundColor: "#AF1582 !important",
+                  color: "#FFF",
+                },
+              }}
+            >
+              Newest
+            </MenuItem>
+            <MenuItem value="oldest">Oldest</MenuItem>
+          </Select>
+          {/* <span className="text-base">Sort By</span>
+          <FilterDropdown>
+            <FilterDropdown.Option>Newest</FilterDropdown.Option>
+            <FilterDropdown.Option>Oldest</FilterDropdown.Option>
+          </FilterDropdown> */}
         </div>
-    <div className="ms-6">
     <TableContainer>
       <TableTitle title={`${isCounselor ? "Counselors" : "Users"}`}/>
         <Tables>
@@ -183,10 +263,10 @@ const UserCounselorPage = () => {
                 <td>{item.email}</td>
                 <td>{item.topic}</td>
                 <td>
-                  <ButtonPrimary onClick={handleView}>View</ButtonPrimary>
+                <ButtonPrimary onClick={() => getCounselor(item.id)}>View</ButtonPrimary>
                 </td>
                 <td>
-                  <ButtonOutline onClick={handleDelete}>Delete</ButtonOutline>
+                  <ButtonOutline onClick={() => deleteCounselor(item.id)}>Delete</ButtonOutline>
                 </td>
               </TableRow>
             ))
@@ -204,10 +284,10 @@ const UserCounselorPage = () => {
                 <td>{item.username}</td>
                 <td>{item.email}</td>
                 <td>
-                  <ButtonPrimary onClick={handleView}>View</ButtonPrimary>
+                  <ButtonPrimary onClick={() => getUser(item.id)}>View</ButtonPrimary>
                 </td>
                 <td>
-                  <ButtonOutline onClick={handleDelete}>Delete</ButtonOutline>
+                  <ButtonOutline onClick={() => deleteUser(item.id)}>Delete</ButtonOutline>
                 </td>
               </TableRow>
             ))
@@ -266,46 +346,43 @@ const UserCounselorPage = () => {
         <Modal isOpen={isView} type={'viewUpdateCounselor'}>
               <Modal.Title title={'View & Update Counselor'} />
               <div>
-              <form className="mb-3">
+              <form className="mb-3" onSubmit={handleSubmit(updateCounselor)}>
               <ImageUploader>
-                <ImageThumbnail/>
-                <AddIcon />
+                <ImageThumbnail src={counselor?.profile_picture}/>
               </ImageUploader>
-              <InputField name="username" label="Name" type="text" placeholder="johndoe" errors={errors} register={register}  />
-              <InputField name="username" label="Email" type="text" placeholder="johndoe" errors={errors} register={register}  />
-              <InputField name="username" label="Username" type="text" placeholder="johndoe" errors={errors} register={register}  />
-              <InputField name="username" label="Topic" type="text" placeholder="Choose counselor's topic" errors={errors} register={register}  />
-              <InputField name="username" label="Description" type="text" placeholder="Ex : Counselor work to empower women to make positive changes" errors={errors} register={register}  />
-              <InputField name="username" label="Counseling Price" type="number" placeholder="johndoe" errors={errors} register={register}  />
+              <InputField name="username" label="ID" type="preview" value={counselor?.id} errors={errors} register={register}  />
+              <InputField name="username" label="Name" type="text" placeholder={counselor?.name} errors={errors} register={register}  />
+              <InputField name="username" label="Email" type="text" placeholder={counselor?.email} errors={errors} register={register}  />
+              <InputField name="username" label="Username" type="text" placeholder={counselor?.username} errors={errors} register={register}  />
+              <InputField name="username" label="Topic" type="text" placeholder={counselor?.topic} errors={errors} register={register}  />
+              <InputField name="username" label="Description" type="text" placeholder={counselor?.description} errors={errors} register={register}  />
+              <InputField name="username" label="Counseling Price" type="number" placeholder={counselor?.price} errors={errors} register={register}  />
+              <ButtonPrimary onClick={handleView}>Save</ButtonPrimary>
               </form>
-              <ButtonPrimary onClick={handleView}>Close</ButtonPrimary>
+              <ButtonOutline onClick={handleView}>Close</ButtonOutline>
               </div>
       </Modal>
             ) : (
               <Modal isOpen={isView} type={'viewUser'}>
-              <Modal.Title title={'View User'} />
+      <Modal.Title title={'View User'} />
               <div>
               <form className="mb-3">
               <ImageUploader>
-                <ImageThumbnail/>
-                <AddIcon />
+                <ImageThumbnail src={user?.profile_picture}/>
               </ImageUploader>
-              <InputField name="username" label="User ID" type="text" placeholder="johndoe" errors={errors} register={register}  />
-              <InputField name="username" label="Name" type="text" placeholder="johndoe" errors={errors} register={register}  />
-              <InputField name="username" label="Email" type="text" placeholder="johndoe" errors={errors} register={register}  />
-              <InputField name="username" label="Username" type="text" placeholder="Choose counselor's topic" errors={errors} register={register}  />
-              <InputField name="username" label="Phone Number" type="text" placeholder="Ex : Counselor work to empower women to make positive changes" errors={errors} register={register}  />
-              <InputField name="username" label="Birthdate" type="number" placeholder="johndoe" errors={errors} register={register}  />
+              <InputField name="username" label="User ID" type="preview" value={user?.id}  />
+              <InputField name="username" label="Name" type="preview" value={user?.name} />
+              <InputField name="username" label="Email" type="preview" value={user?.email}  />
+              <InputField name="username" label="Username" type="preview" value={user?.username} />
+              <InputField name="username" label="Phone Number" type="preview" value={user?.phone_number} />
               </form>
               <ButtonPrimary onClick={handleView}>Close</ButtonPrimary>
               </div>
-      </Modal>
+       </Modal>
             )}
       <ModalConfirm
       isConfirm={isDelete}
       messages="Are you sure you want to delete this item?"
-      onSure={handleDelete}
-      onClose={handleDelete}
       />
     </>
   )
