@@ -11,7 +11,7 @@ import UpdateIcon from "@mui/icons-material/Update";
 import { getSchedule, updateSchedule } from "../../../../api/schedule";
 import { convertDate } from "../../../../helpers/convertDate";
 
-const UpdateModal = ({ modalState, closeModal, counselor, dates, times }) => {
+const UpdateModal = ({ modalState, closeModal, counselor }) => {
   const {
     register,
     handleSubmit,
@@ -21,11 +21,29 @@ const UpdateModal = ({ modalState, closeModal, counselor, dates, times }) => {
     formState: { errors },
   } = useForm();
 
+  const [times, setTimes] = useState([]);
+
   const { replace } = useFieldArray({ name: "dates", control });
 
   useEffect(() => {
-    replace(dates);
-  }, [dates]);
+    if (counselor && modalState == true) {
+      getSchedule(counselor.id).then(({ dates, times }) => {
+        replace(dates);
+        setTimes(times);
+      });
+    }
+  }, [modalState]);
+
+  const handleTimeSelect = () => {
+    const selectedTime = getValues().times.value;
+    if (!times.includes(selectedTime)) {
+      setTimes([...times, selectedTime]);
+    }
+  };
+
+  const handleRemoveTime = (time) => {
+    setTimes((prevTimes) => prevTimes.filter((prevTime) => prevTime !== time));
+  };
 
   return (
     <Modal isOpen={modalState} type={"viewUpdateCounselor"}>
@@ -41,7 +59,6 @@ const UpdateModal = ({ modalState, closeModal, counselor, dates, times }) => {
             onSubmit={handleSubmit((data) => {
               const counselorId = counselor.id;
               const dates = data.dates.map((date) => convertDate(date));
-              const times = [data.time.value];
 
               updateSchedule({ counselorId, dates, times });
 
@@ -55,21 +72,22 @@ const UpdateModal = ({ modalState, closeModal, counselor, dates, times }) => {
               errors={errors}
               register={register}
               placeholder={""}
-              handleSelect={() => {
-                console.log("test");
-              }}
+              handleSelect={() => {}}
             />
             <Dropdown
               control={control}
-              name={"time"}
+              name={"times"}
               label={"Choose Time"}
               placeholder={"Select Time"}
-              handleSelect={() => {}}
+              handleSelect={() => handleTimeSelect()}
             >
               <option value="09:00:00" label="09:00:00"></option>
+              <option value="10:00:00" label="10:00:00"></option>
+              <option value="11:00:00" label="11:00:00"></option>
               <option value="12:00:00" label="12:00:00"></option>
+              <option value="13:00:00" label="13:00:00"></option>
+              <option value="14:00:00" label="14:00:00"></option>
               <option value="15:00:00" label="15:00:00"></option>
-              <option value="18:00:00" label="18:00:00"></option>
             </Dropdown>
 
             <div className="mb-6">
@@ -77,9 +95,12 @@ const UpdateModal = ({ modalState, closeModal, counselor, dates, times }) => {
               {times?.map((time) => (
                 <div
                   key={time}
-                  className="w-full h-[48px] px-4 border-solid border-primaryBorder border rounded mt-2 flex items-center justify-start mb-2"
+                  className="w-full h-[48px] px-4 border-solid border-primaryBorder border rounded mt-2 flex items-center justify-between mb-2"
                 >
                   <p>{time}</p>
+                  <button onClick={() => handleRemoveTime(time)}>
+                    <DeleteIcon />
+                  </button>
                 </div>
               ))}
             </div>
