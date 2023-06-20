@@ -24,6 +24,7 @@ import LinkModal from "../../components/Dashboard/Counseling/LinkModal";
 import CancelModal from "../../components/Dashboard/Counseling/CancelModal";
 import axios from "axios";
 import { getAuthCookie } from "../../utils/cookies";
+import { getSchedule } from "../../api/schedule";
 
 const CounselingPage = () => {
   const [isSchedule, setIsSchedule] = useState(true);
@@ -36,6 +37,9 @@ const CounselingPage = () => {
 
   const [selectedCounselor, setSelectedCounselor] = useState("");
   const [counselors, setCounselors] = useState([]);
+
+  const [dates, setDates] = useState([]);
+  const [times, setTimes] = useState([]);
 
   const {
     register,
@@ -92,10 +96,13 @@ const CounselingPage = () => {
       />
       {/* Update Modal */}
       <UpdateModal
+        counselor={selectedCounselor}
         modalState={showUpdateModal}
         closeModal={() => {
           setShowUpdateModal(false);
         }}
+        dates={dates}
+        times={times}
       />
 
       {/* Delete Modal */}
@@ -157,7 +164,6 @@ const CounselingPage = () => {
               <TableHeader>
                 <th className="w-[130px]">Counselor Id</th>
                 <th className="w-[130px]">Counselor's Name</th>
-                <th className="w-[130px]">Status</th>
                 <th className="w-[130px]">Topic</th>
                 <th className="w-[130px]">Update</th>
                 <th className="w-[130px]">View</th>
@@ -186,15 +192,17 @@ const CounselingPage = () => {
                   <TableRow key={counselor.id}>
                     <td className="w-[130px]">{counselor.id}</td>
                     <td className="w-[130px]">{counselor.name}</td>
-                    <td className="w-[130px]">
-                      <StatusTag type={"available"} />
-                    </td>
                     <td className="w-[130px]">{counselor.topic}</td>
                     <td className="w-[130px]">
                       <ButtonPrimary
                         className="w-[90%]"
                         onClick={() => {
                           setShowUpdateModal(true);
+                          setSelectedCounselor(counselor);
+                          getSchedule(counselor.id).then(({ dates, times }) => {
+                            setTimes(times);
+                            setDates(dates);
+                          });
                         }}
                       >
                         Update
@@ -205,6 +213,7 @@ const CounselingPage = () => {
                         className="w-[90%]"
                         onClick={() => {
                           setShowViewModal(true);
+
                           setSelectedCounselor(counselor);
                         }}
                       >

@@ -1,5 +1,5 @@
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import Dropdown from "../../../Dropdown";
 import Modal from "../../../Modal";
 import Calendar from "../../../Calendar";
@@ -8,15 +8,32 @@ import ButtonOutline from "../../../ButtonOutline/index";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
+import { getSchedule } from "../../../../api/schedule";
 
-const UpdateModal = ({ modalState, closeModal }) => {
+const UpdateModal = ({ modalState, closeModal, counselor, dates, times }) => {
   const {
     register,
     handleSubmit,
     getValues,
+    setValue,
     control,
     formState: { errors },
   } = useForm();
+
+  // const [dates, setDates] = useState([]);
+  // const [times, setTimes] = useState([]);
+
+  const { replace } = useFieldArray({ name: "calendar", control });
+
+  // const getCounselorSchedule = async (id) => {
+  //   const { dates, times } = await getSchedule(id);
+  //   setDates(dates);
+  //   setTimes(times);
+  // };
+
+  useEffect(() => {
+    replace(dates);
+  }, [dates]);
 
   //   const handleSelect = () => {
   //     const formData = getValues();
@@ -37,7 +54,11 @@ const UpdateModal = ({ modalState, closeModal }) => {
           <p className="font-normal text-[14px] text-neutralMedium mb-6">
             Self Development
           </p>
-          <form>
+          <form
+            onSubmit={handleSubmit((data) => {
+              console.log(data);
+            })}
+          >
             <Calendar
               control={control}
               name={"calendar"}
@@ -45,7 +66,9 @@ const UpdateModal = ({ modalState, closeModal }) => {
               errors={errors}
               register={register}
               placeholder={""}
-              handleSelect={""}
+              handleSelect={() => {
+                console.log("test");
+              }}
             />
             <Dropdown
               control={control}
@@ -57,18 +80,14 @@ const UpdateModal = ({ modalState, closeModal }) => {
 
             <div className="mb-6">
               <label className="font-medium">Counseling's Schedule Time</label>
-              <div className="w-full h-[48px] px-4 border-solid border-primaryBorder border rounded mt-2 flex items-center justify-between mb-2">
-                <p>18:00</p>
-                <button>
-                  <DeleteIcon />
-                </button>
-              </div>
-              <div className="w-full h-[48px] px-4 border-solid border-primaryBorder border rounded mt-2 flex items-center justify-between mb-2">
-                <p>18:00</p>
-                <button>
-                  <DeleteIcon />
-                </button>
-              </div>
+              {times?.map((time) => (
+                <div
+                  key={time}
+                  className="w-full h-[48px] px-4 border-solid border-primaryBorder border rounded mt-2 flex items-center justify-start mb-2"
+                >
+                  <p>{time}</p>
+                </div>
+              ))}
             </div>
 
             <ButtonPrimary
