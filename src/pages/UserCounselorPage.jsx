@@ -412,9 +412,9 @@ const UserCounselorPage = () => {
             </Dropdown>
               <InputField name="description" label="Description" type="text" placeholder="Ex : Counselor work to empower women to make positive changes" errors={errors} register={register}  />
               <InputField name="price" label="Counseling Price" type="number" placeholder="johndoe" errors={errors} register={register}  />
-              <ButtonPrimary>+ Add New Counselor</ButtonPrimary>
+              <ButtonPrimary className="h-fit w-full px-3 py-3 flex items-center justify-center">+ Add New Counselor</ButtonPrimary>
               </form>
-              <ButtonOutline onClick={handleAdd}>Not Now</ButtonOutline>
+              <ButtonOutline className="h-fit w-full px-3 py-3 flex items-center justify-center" onClick={handleAdd}>Not Now</ButtonOutline>
               </div>
       </Modal>
       {isCounselor ? (
@@ -456,9 +456,9 @@ const UserCounselorPage = () => {
             </Dropdown>
               <InputField name="description" label="Description" type="text" value={counselor?.description} errors={errors} register={register}  />
               <InputField name="price" label="Counseling Price" type="number" value={counselor?.price} errors={errors} register={register}  />
-              <ButtonPrimary>Save</ButtonPrimary>
+              <ButtonPrimary className="h-fit w-full px-3 py-3 flex items-center justify-center">Save</ButtonPrimary>
               </form>
-              <ButtonOutline onClick={handleView}>Close</ButtonOutline>
+              <ButtonOutline className="h-fit w-full px-3 py-3 flex items-center justify-center" onClick={handleView}>Close</ButtonOutline>
               </div>
       </Modal>
             ) : (
