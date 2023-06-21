@@ -6,6 +6,7 @@ import Calendar from "../../../Calendar";
 import ButtonPrimary from "../../../ButtonPrimary";
 import ButtonOutline from "../../../ButtonOutline/index";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { convertDate } from "../../../../helpers/convertDate";
 import { addSchedule } from "../../../../api/schedule";
@@ -21,20 +22,35 @@ const ScheduleModal = ({ modalState, closeModal }) => {
   } = useForm();
 
   const [counselors, setCounselors] = useState([]);
+  const [times, setTimes] = useState([]);
 
   useEffect(() => {
     const token = getAuthCookie();
-    if (modalState) {
+    if (modalState == true) {
       axios
-        .get("https://13.210.163.192:8080/admin/counselors?sort_by=newest", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+        .get(
+          "https://13.210.163.192:8080/admin/counselors?sort_by=newest&has_schedule=false",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
         .then((response) => setCounselors(response.data.data.counselors))
         .catch((error) => console.error(error));
     }
   }, [modalState]);
+
+  const handleTimeSelect = () => {
+    const selectedTime = getValues().times.value;
+    if (!times.includes(selectedTime)) {
+      setTimes([...times, selectedTime]);
+    }
+  };
+
+  const handleRemoveTime = (time) => {
+    setTimes((prevTimes) => prevTimes.filter((prevTime) => prevTime !== time));
+  };
 
   return (
     <Modal isOpen={modalState} type={"addCounselor"}>
@@ -42,11 +58,6 @@ const ScheduleModal = ({ modalState, closeModal }) => {
         onSubmit={handleSubmit((data) => {
           const counselorId = data.counselor.value;
           const dates = data.dates.map((date) => convertDate(date));
-          const times = [data.times.value];
-
-          console.log(counselorId);
-          console.log(dates);
-          console.log(times);
 
           addSchedule({ counselorId, dates, times });
 
@@ -83,13 +94,29 @@ const ScheduleModal = ({ modalState, closeModal }) => {
           name={"times"}
           label={"Choose Time"}
           placeholder={"Select Time"}
-          handleSelect={() => {}}
+          handleSelect={() => {
+            handleTimeSelect();
+          }}
         >
           <option value="09:00:00" label="09:00:00"></option>
+          <option value="10:00:00" label="10:00:00"></option>
+          <option value="11:00:00" label="11:00:00"></option>
           <option value="12:00:00" label="12:00:00"></option>
+          <option value="13:00:00" label="13:00:00"></option>
+          <option value="14:00:00" label="14:00:00"></option>
           <option value="15:00:00" label="15:00:00"></option>
-          <option value="18:00:00" label="18:00:00"></option>
         </Dropdown>
+        {times?.map((time) => (
+          <div
+            key={time}
+            className="w-full h-[48px] px-4 border-solid border-primaryBorder border rounded mt-2 flex items-center justify-between mb-2"
+          >
+            <p>{time}</p>
+            <button onClick={() => handleRemoveTime(time)}>
+              <DeleteIcon />
+            </button>
+          </div>
+        ))}
         <ButtonPrimary
           onClick={() => {}}
           className="flex items-center justify-center w-full h-[56px] mb-5 text-[17px]"

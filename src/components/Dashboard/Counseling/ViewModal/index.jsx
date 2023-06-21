@@ -30,10 +30,10 @@ const ViewModal = ({ modalState, closeModal, counselor }) => {
   };
 
   useEffect(() => {
-    if (counselor) {
+    if (counselor && modalState == true) {
       getCounselorSchedule(counselor.id);
     }
-  }, [counselor]);
+  }, [modalState]);
 
   return (
     <Modal isOpen={modalState} type={"viewUpdateCounselor"}>
