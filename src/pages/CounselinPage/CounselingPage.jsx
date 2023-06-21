@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import PersonIcon from "@mui/icons-material/Person";
-import AddIcon from "@mui/icons-material/Add";
 import TableTitle from "../../components/Dashboard/Tables/TableTitle";
 import TableContainer from "../../components/Dashboard/Tables/TableContainer";
 import TableHeader from "../../components/Dashboard/Tables/TableHeader";
@@ -18,12 +16,15 @@ import ViewModal from "../../components/Dashboard/Counseling/ViewModal/index";
 import DeleteModal from "../../components/Dashboard/Counseling/DeleteModal/index";
 import LinkModal from "../../components/Dashboard/Counseling/LinkModal";
 import CancelModal from "../../components/Dashboard/Counseling/CancelModal";
+
 import axios from "axios";
 import { getAuthCookie } from "../../utils/cookies";
 import { getSchedule } from "../../api/schedule";
 import { getAllTransactions } from "../../api/transaction";
 import { formatCurrency } from "../../helpers/formatCurrency";
 import { convertDate } from "../../helpers/convertDate";
+
+import { Delete, Edit, Visibility, Add, Link } from "@mui/icons-material";
 
 const CounselingPage = () => {
   const [isSchedule, setIsSchedule] = useState(true);
@@ -146,7 +147,8 @@ const CounselingPage = () => {
             }}
             className="flex items-center justify-center text-sm"
           >
-            <AddIcon /> Add Schedule
+            <Add className="mr-1" style={{ fontSize: "1.125rem" }} />
+            <span>Add Schedule</span>
           </ButtonPrimary>
         )}
       </div>
@@ -199,7 +201,7 @@ const CounselingPage = () => {
                   <td className="w-[130px]">{counselor.topic}</td>
                   <td className="w-[130px]">
                     <ButtonPrimary
-                      className="w-[90%]"
+                      className="max-w-[130px] w-[90%]"
                       onClick={() => {
                         setShowUpdateModal(true);
                         setSelectedCounselor(counselor);
@@ -209,29 +211,38 @@ const CounselingPage = () => {
                         });
                       }}
                     >
-                      Update
+                      <Edit className="mr-1" style={{ fontSize: "1.125rem" }} />
+                      <span>Update</span>
                     </ButtonPrimary>
                   </td>
                   <td className="w-[130px]">
                     <ButtonPrimary
-                      className="w-[90%]"
+                      className="max-w-[130px] w-[90%]"
                       onClick={() => {
                         setShowViewModal(true);
                         setSelectedCounselor(counselor);
                       }}
                     >
-                      View
+                      <Visibility
+                        className="mr-1"
+                        style={{ fontSize: "1.125rem" }}
+                      />
+                      <span>View</span>
                     </ButtonPrimary>
                   </td>
                   <td className="w-[130px]">
                     <ButtonOutline
-                      className="w-[90%]"
+                      className="max-w-[130px] w-[90%]"
                       onClick={() => {
                         setShowDeleteModal(true);
                         setSelectedCounselor(counselor);
                       }}
                     >
-                      Delete
+                      <Delete
+                        className="mr-1"
+                        style={{ fontSize: "1.125rem" }}
+                      />
+                      <span>Delete</span>
                     </ButtonOutline>
                   </td>
                 </TableRow>
@@ -266,12 +277,14 @@ const CounselingPage = () => {
                   </td>
                   <td className="w-[130px]">
                     <ButtonOutline
+                      className="max-w-[130px] w-[90%]"
                       onClick={() => {
                         setShowLinkModal(true);
                         setSelectedTransactionId(transaction.id);
                       }}
                     >
-                      send Link
+                      <Link className="mr-1" style={{ fontSize: "1.125rem" }} />
+                      <span>Send Link</span>
                     </ButtonOutline>
                   </td>
                   <td className="w-[130px]">
