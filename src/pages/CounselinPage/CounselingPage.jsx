@@ -7,15 +7,11 @@ import TableHeader from "../../components/Dashboard/Tables/TableHeader";
 import Tables from "../../components/Dashboard/Tables/Tables";
 import TableBody from "../../components/Dashboard/Tables/TableBody";
 import TableRow from "../../components/Dashboard/Tables/TableRow";
-import Button from "../../components/Button";
 import { useForm } from "react-hook-form";
 import Dropdown from "../../components/Dropdown";
 import StatusTag from "../../components/StatusTag/index";
-import Modal from "../../components/Modal/index";
-import InputField from "../../components/InputField";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline/index";
-import Calendar from "../../components/Calendar/index";
 import ScheduleModal from "../../components/Dashboard/Counseling/ScheduleModal";
 import UpdateModal from "../../components/Dashboard/Counseling/UpdateModal/index";
 import ViewModal from "../../components/Dashboard/Counseling/ViewModal/index";
@@ -41,6 +37,7 @@ const CounselingPage = () => {
 
   const [selectedCounselor, setSelectedCounselor] = useState("");
   const [counselors, setCounselors] = useState([]);
+  const [sortBy, setSortBy] = useState("newest");
 
   const {
     register,
@@ -63,7 +60,7 @@ const CounselingPage = () => {
     const token = getAuthCookie();
     axios
       .get(
-        "https://13.210.163.192:8080/admin/counselors?page=1&limit=5&sort_by=newest&has_schedule=true",
+        `https://13.210.163.192:8080/admin/counselors?page=1&limit=5&sort_by=${sortBy}&has_schedule=true`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -77,7 +74,7 @@ const CounselingPage = () => {
       setTransactions(data);
       console.log(data);
     });
-  }, []);
+  }, [sortBy]);
 
   return (
     <div className="">
@@ -160,7 +157,10 @@ const CounselingPage = () => {
           onChange={(e) => {
             // console.log(e.target.value);
           }}
+          sortBy={sortBy}
+          onSelect={(event) => setSortBy(event.target.value)}
         />
+
         <Tables scroll={!isSchedule}>
           {isSchedule ? (
             <TableHeader>
