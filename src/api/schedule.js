@@ -55,6 +55,32 @@ export const addSchedule = async (payloads) => {
   }
 };
 
+export const updateSchedule = async (payloads) => {
+  try {
+    const token = getAuthCookie();
+
+    const { counselorId, dates, times } = payloads;
+
+    const config = {
+      method: "PUT",
+      baseURL: VITE_API_BASE_URL,
+      url: `/admin/counselors/${counselorId}/schedules`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: {
+        dates,
+        times,
+      },
+    };
+
+    const response = await axios(config);
+    console.log("Response:", response.data);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+
 export const deleteSchedule = async (id) => {
   try {
     const token = getAuthCookie();
