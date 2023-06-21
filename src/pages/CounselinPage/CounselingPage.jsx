@@ -36,6 +36,7 @@ const CounselingPage = () => {
   const [transactions, setTransactions] = useState([]);
 
   const [selectedCounselor, setSelectedCounselor] = useState("");
+  const [selectedTransactionId, setSelectedTransactionId] = useState("");
   const [counselors, setCounselors] = useState([]);
   const [sortBy, setSortBy] = useState("newest");
 
@@ -51,9 +52,6 @@ const CounselingPage = () => {
     const formData = getValues();
     const dropdownValue = formData.pageStatus;
     setIsSchedule(dropdownValue.value);
-    console.log("isShedule : ", isSchedule);
-
-    console.log("Value: ", dropdownValue.value);
   };
 
   useEffect(() => {
@@ -72,7 +70,6 @@ const CounselingPage = () => {
 
     getAllTransactions({ sort_by: sortBy }).then((data) => {
       setTransactions(data);
-      console.log(data);
     });
   }, [sortBy]);
 
@@ -104,15 +101,16 @@ const CounselingPage = () => {
 
       {/* Delete Modal */}
       <DeleteModal
+        counselor={selectedCounselor}
         modalState={showDeleteModal}
         closeModal={() => {
           setShowDeleteModal(false);
         }}
-        counselor={selectedCounselor}
       />
 
       {/* Link Modal */}
       <LinkModal
+        transactionId={selectedTransactionId}
         modalState={showLinkModal}
         closeModal={() => {
           setShowLinkModal(false);
@@ -120,6 +118,7 @@ const CounselingPage = () => {
       />
       {/* Cancel Modal */}
       <CancelModal
+        transactionId={selectedTransactionId}
         modalState={showCancelModal}
         closeModal={() => {
           setShowCancelModal(false);
@@ -241,7 +240,7 @@ const CounselingPage = () => {
           {!isSchedule && (
             <TableBody>
               {transactions.map((transaction) => (
-                <TableRow>
+                <TableRow key={transaction.id}>
                   <td className="w-[130px]">12 / 05 / 23</td>
                   <td className="w-[130px]">{transaction.id}</td>
                   <td className="w-[130px]">{transaction.user_id}</td>
@@ -266,6 +265,7 @@ const CounselingPage = () => {
                     <ButtonOutline
                       onClick={() => {
                         setShowLinkModal(true);
+                        setSelectedTransactionId(transaction.id);
                       }}
                     >
                       send Link
@@ -277,6 +277,7 @@ const CounselingPage = () => {
                       className="cursor-pointer text-dangerMain"
                       onClick={() => {
                         setShowCancelModal(true);
+                        setSelectedTransactionId(transaction.id);
                       }}
                     >
                       cancel
