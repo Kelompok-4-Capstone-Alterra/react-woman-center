@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PersonIcon from '@mui/icons-material/Person';
-import AddIcon from '@mui/icons-material/Add';
+import { useDispatch, useSelector } from 'react-redux';
+import { AddRounded } from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
 import SearchIcon from '@mui/icons-material/Search';
 import ButtonPrimary from '../components/ButtonPrimary';
@@ -12,22 +13,157 @@ import EditArticleModal from '../components/ArticleForumPage/EditArticleModal';
 import CommentModal from '../components/ArticleForumPage/CommentModal';
 import LinkModal from '../components/ArticleForumPage/LinkModal';
 import DeleteModal from '../components/ArticleForumPage/DeleteModal';
+import axios from 'axios';
+import { Alert, MenuItem, Select, Skeleton, Snackbar } from '@mui/material';
+
+import { deleteArticleById, getAllArticles } from '../api/article';
+import { updateArticle } from '../features/article/articleSlice';
+import SearchBar from '../components/SearchBar';
+import { deleteForumById, getAllForums } from '../api/forum';
+import { updateForum } from '../features/forum/forumSlice';
 
 const ArticleForumPage = () => {
+  const articles = useSelector((store) => store.articleReducer.articles);
+  const forums = useSelector((store) => store.forumReducer.forums);
+
+  const dispatch = useDispatch();
   const [isArticle, setIsArticle] = useState(true);
-  const [showIsAdd, setShowIsAdd] = useState(false);
-  const [showIsEdit, setShowIsEdit] = useState(false);
-  const [showIsComment, setShowIsComment] = useState(false);
+  const [isShowModalAdd, setIsShowModalAdd] = useState(false);
+  const [isShowModalEdit, setIsShowModalEdit] = useState(false);
+  const [isShowModalComment, setIsShowModalComment] = useState(false);
   const [showIsViewLink, setShowIsViewLink] = useState(false);
   const [showIsDelete, setShowIsDelete] = useState(false);
+  const [isShowToast, setIsShowToast] = useState({
+    isOpen: false,
+    variant: 'info',
+    duration: 5000,
+    message: '',
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [sortBy, setSortBy] = useState('newest');
+  const [articleId, setArticleId] = useState('');
+  const [notFoundMsg, setNotFoundMsg] = useState('');
 
   const {
     register,
-    handleSubmit,
     formState: { errors },
     control,
     getValues,
   } = useForm();
+
+  useEffect(() => {
+    fetchAllArticles();
+  }, [isArticle]);
+
+  const fetchAllArticles = async (params = {}) => {
+    setIsLoading(true);
+
+    if (isArticle) {
+      try {
+        const response = await getAllArticles(params);
+        dispatch(updateArticle(response));
+        setIsLoading(false);
+
+        if (response.length < 1) {
+          setNotFoundMsg("What you are looking for doesn't exist");
+        }
+      } catch (error) {
+        setIsShowToast({
+          ...isShowToast,
+          isOpen: true,
+          variant: 'error',
+          message: error.message,
+        });
+        setIsLoading(false);
+      }
+    } else {
+      try {
+        const response = await getAllForums(params);
+        dispatch(updateForum(response));
+        setIsLoading(false);
+
+        if (response.length < 1) {
+          setNotFoundMsg("What you are looking for doesn't exist");
+        }
+      } catch (error) {
+        setIsShowToast({
+          ...isShowToast,
+          isOpen: true,
+          variant: 'error',
+          message: error.message,
+        });
+        setIsLoading(false);
+      }
+    }
+
+    setNotFoundMsg("What you are looking for doesn't exist");
+  };
+
+  const deleteArticle = async (articleId) => {
+    try {
+      const response = await deleteArticleById(articleId);
+      setIsShowToast({
+        ...isShowToast,
+        isOpen: true,
+        variant: 'success',
+        message: response.message,
+      });
+      fetchAllArticles();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSearchArticle = (event) => {
+    const keyword = event.target.value;
+
+    // Masih BUG
+    fetchAllArticles({ search: keyword });
+  };
+
+  // useEffect(() => {
+  //   fetchAllForums();
+  // }, []);
+
+  // const fetchAllForums = async (params = {}) => {
+  //   setIsLoading(true);
+
+  //   try {
+  //     const response = await getAllArticles(params);
+  //     dispatch(updateArticle(response));
+  //     setIsLoading(false);
+
+  //     if (response.length < 1) {
+  //       setNotFoundMsg("What you are looking for doesn't exist");
+  //     }
+  //   } catch (error) {
+  //     setIsShowToast({
+  //       ...isShowToast,
+  //       isOpen: true,
+  //       variant: 'error',
+  //       message: error.message,
+  //     });
+  //     setIsLoading(false);
+  //   }
+
+  //   setNotFoundMsg("What you are looking for doesn't exist");
+  // };
+
+  const deleteForum = async (forumId) => {
+    try {
+      const response = await deleteForumById(forumId);
+      setIsShowToast({
+        ...isShowToast,
+        isOpen: true,
+        variant: 'success',
+        message: response.message,
+      });
+      fetchAllArticles();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleSelectPage = () => {
     const formData = getValues();
@@ -38,14 +174,32 @@ const ArticleForumPage = () => {
     console.log('Value: ', dropdownValue.value);
   };
 
+  const handleOpenModalComment = (articleId) => {
+    setIsShowModalComment(true);
+    setArticleId(articleId);
+  };
+
+  const handleShowModalComment = (showModal) => {
+    setIsShowModalComment(showModal);
+  };
+
+  const handleOpenModalEdit = (articleId) => {
+    setIsShowModalEdit(true);
+    setArticleId(articleId);
+  };
+
+  const handleShowModalEdit = (showModal) => {
+    setIsShowModalEdit(showModal);
+  };
+
   return (
     <div>
-      <div className="flex px-[40px] items-center py-[26px] border-b-primaryBorder border-b-[0.25px] mb-4">
-        <div className="flex items-center text-primaryMain">
-          <PersonIcon className="me-4" /> <p className="text-lg font-medium ">Admin</p>
-        </div>
-      </div>
-      <div className="px-[40px]">
+      <Snackbar open={isShowToast.isOpen} autoHideDuration={isShowToast.duration} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} onClose={() => setIsShowToast({ ...isShowToast, isOpen: false })}>
+        <Alert onClose={() => setIsShowToast({ ...isShowToast, isOpen: false })} severity={isShowToast.variant} sx={{ width: '100%' }} className="capitalize">
+          {isShowToast.message}
+        </Alert>
+      </Snackbar>
+      <div className="">
         <div className="flex justify-between items-center">
           <form className="w-[360px]">
             <Dropdown control={control} name={'pageStatus'} label={'Choose Sub Menu : '} placeholder={'Article'} handleSelect={handleSelectPage}>
@@ -57,64 +211,131 @@ const ArticleForumPage = () => {
             <ButtonPrimary
               className="flex items-center justify-center text-sm"
               onClick={() => {
-                setShowIsAdd(true);
+                setIsShowModalAdd(true);
               }}
             >
-              <AddIcon /> New Article
+              <AddRounded className="mr-1" style={{ fontSize: '1.125rem' }} />
+              <span className="text-[1rem]">New Article</span>
             </ButtonPrimary>
           )}
         </div>
-        <div className="h-14 w-full relative rounded-[3px] overflow-hidden mb-4 border border-solid">
-          <SearchIcon fontSize="large" className="absolute left-4 top-2" />
-          <input className="w-full py-4 ps-16 text-[16px] tracking-[0.5px] placeholder:text-[16px] placeholder:tracking-[0.5px] placeholder:font-normal" type="text" name="" id="" placeholder="Search what you need here..." />
+        <div className="h-14 relative rounded-[3px] flex flex-row justify-between overflow-hidden mb-4">
+          <SearchBar className="focus:outline-none w-72 text-neutralMediumLow" placeholder="Find something here ..." onChange={handleSearchArticle} />
+          <div className="flex justify-end items-center gap-4">
+            <span className="text-base">Sort By</span>
+            <Select
+              value={sortBy}
+              // label="Age"
+              onChange={(event) => {
+                setSortBy(event.target.value);
+                fetchAllArticles({ sort_by: sortBy });
+              }}
+              sx={{
+                '.MuiSelect-select': {
+                  padding: '0.325rem 0.75rem',
+                },
+                '.MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#9E9494 !important',
+                  borderWidth: '1px',
+                },
+              }}
+              MenuProps={{
+                sx: {
+                  '&& .Mui-selected': {
+                    backgroundColor: '#AF1582 !important',
+                    color: '#FFF',
+                  },
+                  '&& .Mui-selected:hover': {
+                    backgroundColor: '#954E80 !important',
+                  },
+                },
+              }}
+            >
+              <MenuItem
+                value="newest"
+                sx={{
+                  '&:checked': {
+                    backgroundColor: '#AF1582 !important',
+                    color: '#FFF',
+                  },
+                }}
+              >
+                Newest
+              </MenuItem>
+              <MenuItem value="oldest">Oldest</MenuItem>
+            </Select>
+            {/* <span className="text-base">Sort By</span>
+          <FilterDropdown>
+            <FilterDropdown.Option>Newest</FilterDropdown.Option>
+            <FilterDropdown.Option>Oldest</FilterDropdown.Option>
+          </FilterDropdown> */}
+          </div>
         </div>
-        <div className="w-full max-h-[100vh] overflow-auto">
+        <div className="flex w-full flex-col justify-center gap-4 min-h-[10rem]">
           {isArticle ? (
-            <>
-              <ArticleCard
-                title={'How women need to empower herself?'}
-                name={'Kaia Michelle'}
-                date={'12 October 2022'}
-                totalView={123}
-                totalComment={123}
-                openComment={() => {
-                  setShowIsComment(true);
-                }}
-                openEdit={() => {
-                  setShowIsEdit(true);
-                }}
-              />
-              <ArticleCard title={'How women need to empower herself?'} name={'Kaia Michelle'} date={'12 October 2022'} totalView={123} totalComment={123} />
-              <ArticleCard title={'How women need to empower herself?'} name={'Kaia Michelle'} date={'12 October 2022'} totalView={123} totalComment={123} />
-              <ArticleCard title={'How women need to empower herself?'} name={'Kaia Michelle'} date={'12 October 2022'} totalView={123} totalComment={123} />
-              <ArticleCard title={'How women need to empower herself?'} name={'Kaia Michelle'} date={'12 October 2022'} totalView={123} totalComment={123} />
-            </>
+            <div>
+              {articles.length >= 1 ? (
+                articles.map((article) =>
+                  isLoading ? (
+                    <Skeleton key={article.id} animation="wave" variant="rounded" width="100%" height={150} />
+                  ) : (
+                    <ArticleCard
+                      key={article.id}
+                      payloads={article}
+                      openModalComment={() => handleOpenModalComment(article.id)}
+                      openModalEdit={() => handleOpenModalEdit(article.id)}
+                      deleteArticle={deleteArticle}
+                    />
+                  )
+                )
+              ) : (
+                <h3 className="flex justify-center items-center font-semibold">{notFoundMsg}</h3>
+              )}
+            </div>
           ) : (
-            <ForumCard
-              openLink={() => {
-                setShowIsViewLink(true);
-              }}
-              openDelete={() => {
-                setShowIsDelete(true);
-              }}
-            />
+            <div>
+              {forums.length >= 1 ? (
+                forums.map((forum) =>
+                  isLoading ? (
+                    <Skeleton key={forum.id} animation="wave" variant="rounded" width="100%" height={150} />
+                  ) : (
+                    <ForumCard
+                      key={forum.id}
+                      payloads={forum}
+                      openModalComment={() => handleOpenModalComment(forum.id)}
+                      // openModal={handleShowModal}
+                      deleteforum={deleteForum}
+                    />
+                  )
+                )
+              ) : (
+                <h3 className="flex justify-center items-center font-semibold">{notFoundMsg}</h3>
+              )}
+            </div>
           )}
-        </div>{' '}
+        </div>
       </div>
 
+      <CommentModal openModal={isShowModalComment} onClose={handleShowModalComment} articleId={articleId} />
+      
       <AddArticleModal
-        modalState={showIsAdd}
-        closeModal={() => {
-          setShowIsAdd(false);
+        openModal={isShowModalAdd}
+        onClose={() => {
+          setIsShowModalAdd(false);
         }}
       />
 
       <EditArticleModal
-        modalState={showIsEdit}
-        closeModal={() => {
-          setShowIsEdit(false);
+        openModal={isShowModalEdit}
+        onClose={() => {
+          setIsShowModalEdit(false);
         }}
+        articleId={articleId}
       />
+      {/* 
+
+
+      
 
       <CommentModal
         modalState={showIsComment}
@@ -135,7 +356,7 @@ const ArticleForumPage = () => {
         closeModal={() => {
           setShowIsDelete(false);
         }}
-      />
+      /> */}
     </div>
   );
 };

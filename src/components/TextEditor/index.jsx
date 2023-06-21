@@ -15,9 +15,6 @@ import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
-import FormatSizeIcon from '@mui/icons-material/FormatSize';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
 import { useState } from 'react';
 import Placeholder from '@tiptap/extension-placeholder';
 import { Controller, useController, useForm, useFormContext } from 'react-hook-form';
@@ -44,7 +41,7 @@ const ColorPicker = ({ editor }) => {
   };
 
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row items-center justify-content">
       <button onClick={handleShowColorPicker}>
         <FormatColorFillIcon className="h-[50%]" style={{ color }} />
       </button>
@@ -57,12 +54,6 @@ const MenuBar = ({ editor }) => {
   if (!editor) {
     return null;
   }
-
-  const [fontSize, setFontSize] = useState('');
-  const handleFontSizeChange = (event) => {
-    setFontSize(event.target.value);
-    editor.chain().focus().setMark('fontSize', event.target.value).run();
-  };
 
   const handleClick = (event, action) => {
     event.preventDefault();
@@ -139,16 +130,6 @@ const MenuBar = ({ editor }) => {
 
       <div className="flex">
         <ColorPicker editor={editor} />
-
-        <button onClick={(event) => handleClick(event, () => editor.chain().focus().toggleBlockquote().run())} className={editor.isActive('blockquote') ? 'is_active text-primaryMain' : ''}>
-          <FormatSizeIcon />
-        </button>
-        <Select value={fontSize} onChange={handleFontSizeChange} className="text-primaryMain">
-          <MenuItem value={''}>Font Size</MenuItem>
-          <MenuItem value={'18px'}>18</MenuItem>
-          <MenuItem value={'24px'}>24</MenuItem>
-          <MenuItem value={'36px'}>36</MenuItem>
-        </Select>
       </div>
     </div>
   );
