@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-const InputField = ({ name, label, type, placeholder, errors, register }) => {
+const InputField = ({ name, label, type, placeholder, errors, register, value, disabled }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -40,6 +40,23 @@ const InputField = ({ name, label, type, placeholder, errors, register }) => {
     );
   }
 
+  if (type === "preview") {
+    return (
+      <div className="relative mb-5 flex flex-col">
+      <label>{label}</label>
+      <input
+        className="w-full focus:outline-none focus:ring-0 focus:border-primaryMain focus:shadow-md focus:shadow-primaryMain/15 py-4 px-4 border-solid border-2 rounded mt-2"
+        id={name}
+        name={name}
+        type="text"
+        placeholder={placeholder}
+        defaultValue={value}
+        disabled
+      />
+    </div>
+    );
+  }
+
   return (
     <div className="relative mb-5 flex flex-col">
       <label>{label}</label>
@@ -49,6 +66,7 @@ const InputField = ({ name, label, type, placeholder, errors, register }) => {
         name={name}
         type={type}
         placeholder={placeholder}
+        disabled={disabled}
         {...register(name, {
           required: `The ${name} field is required`,
         })}

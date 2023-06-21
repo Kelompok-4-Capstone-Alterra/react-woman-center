@@ -6,6 +6,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 
 const Dropdown = ({ control, name, placeholder, label, children, handleSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedLabel, setSelectedLabel] = useState(placeholder);
 
   const {
     field: { value, onChange },
@@ -21,6 +22,7 @@ const Dropdown = ({ control, name, placeholder, label, children, handleSelect })
   const handleOptionSelect = (selected) => {
     onChange(selected);
     toggleDropdown();
+    setSelectedLabel(selected.label);
     handleSelect();
   };
 
@@ -32,7 +34,7 @@ const Dropdown = ({ control, name, placeholder, label, children, handleSelect })
         name={name}
         render={({ field }) => (
           <div className="w-full h-[48px] focus:outline-none px-4 border-solid border-2 rounded mt-2 flex items-center" onClick={toggleDropdown}>
-            {field.value ? field.value.label : placeholder}
+            {field.value ? selectedLabel : placeholder}
             {isOpen ? (
               <ExpandLess
                 className="absolute top-[44px] right-4 cursor-pointer"
