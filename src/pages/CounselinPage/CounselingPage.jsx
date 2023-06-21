@@ -70,7 +70,7 @@ const CounselingPage = () => {
       .then((response) => setCounselors(response.data.data.counselors))
       .catch((error) => console.error(error));
 
-    getAllTransactions().then((data) => {
+    getAllTransactions({ sort_by: sortBy }).then((data) => {
       setTransactions(data);
       console.log(data);
     });
@@ -154,9 +154,11 @@ const CounselingPage = () => {
       <TableContainer>
         <TableTitle
           title={`Counseling's ${isSchedule ? "Schedule" : "Transaction"}`}
+          // Search
           onChange={(e) => {
             // console.log(e.target.value);
           }}
+          // SortBy
           sortBy={sortBy}
           onSelect={(event) => setSortBy(event.target.value)}
         />
