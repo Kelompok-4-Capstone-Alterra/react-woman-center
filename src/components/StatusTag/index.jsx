@@ -9,6 +9,7 @@ const StatusTag = ({ type }) => {
       className={`w-[90%] text-white capitalize text-center mx-auto rounded py-3 cursor-default outline-none border-none
       ${type == "ongoing" ? "bg-primaryMain" : ""}
       ${type == "completed" ? "bg-successMain" : ""}
+      ${type == "success" ? "bg-successMain" : ""}
       ${type == "waiting" ? "bg-secondaryMain" : ""}
       ${type == "pending" ? "bg-secondaryMain" : ""}
       ${type == "canceled" ? "bg-dangerMain" : ""}
