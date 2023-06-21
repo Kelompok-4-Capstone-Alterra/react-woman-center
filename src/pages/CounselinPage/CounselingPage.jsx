@@ -23,6 +23,7 @@ import { getAuthCookie } from "../../utils/cookies";
 import { getSchedule } from "../../api/schedule";
 import { getAllTransactions } from "../../api/transaction";
 import { formatCurrency } from "../../helpers/formatCurrency";
+import { convertDate } from "../../helpers/convertDate";
 
 const CounselingPage = () => {
   const [isSchedule, setIsSchedule] = useState(true);
@@ -241,7 +242,9 @@ const CounselingPage = () => {
             <TableBody>
               {transactions.map((transaction) => (
                 <TableRow key={transaction.id}>
-                  <td className="w-[130px]">12 / 05 / 23</td>
+                  <td className="w-[130px]">
+                    {convertDate(transaction.created_at)}
+                  </td>
                   <td className="w-[130px]">{transaction.id}</td>
                   <td className="w-[130px]">{transaction.user_id}</td>
                   <td className="w-[130px]">{transaction.counselor_id}</td>
@@ -254,7 +257,7 @@ const CounselingPage = () => {
                   <td className="w-[130px]">
                     {transaction.counselor_data.topic}
                   </td>
-                  <td className="w-[130px]">12 : 00</td>
+                  <td className="w-[130px]">{transaction.time_start}</td>
                   <td className="w-[130px]">
                     {formatCurrency(transaction.counselor_data.price)}
                   </td>
