@@ -9,8 +9,9 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
 import InputField from "../../../InputField";
+import { sendTransactionLink } from "../../../../api/transaction";
 
-const LinkModal = ({ modalState, closeModal }) => {
+const LinkModal = ({ modalState, closeModal, transactionId }) => {
   const {
     register,
     handleSubmit,
@@ -26,7 +27,13 @@ const LinkModal = ({ modalState, closeModal }) => {
       <p className="font-medium text-[16px] text-neutralHigh mb-6">
         Video Call
       </p>
-      <form>
+      <form
+        onSubmit={handleSubmit(({ link }) => {
+          console.log(link);
+          sendTransactionLink(transactionId, link);
+          closeModal();
+        })}
+      >
         <InputField
           name={"link"}
           label={"Insert Counseling's Link"}

@@ -1,44 +1,45 @@
-import { ExpandMoreRounded } from "@mui/icons-material";
+import { MenuItem, Select } from "@mui/material";
 
-const FilterDropdown = (props) => {
-  const { className, children } = props;
-
-  console.log(props);
-
+const FilterDropdown = ({ value, handleChange }) => {
   return (
-    <div className="flex justify-center items-center relative border border-neutral border-neutralMediumLow min-w-[6rem] rounded-[3px] overflow-hidden ">
-      {/*  focus:outline-none  */}
-      <select
-        className={`border-none no-appereance bg-white  focus:outline-none w-full py-1 px-2 ${
-          className || ""
-        }`}
-        {...props}
-      >
-        {children}
-      </select>
-      <div className="absolute right-0 w-8">
-        <ExpandMoreRounded />
-      </div>
-    </div>
-  );
-};
-
-// Option
-const FilterOption = (props) => {
-  const { className, children } = props;
-
-  return (
-    <option
-      className={`w-full checked:bg-primaryMain hover:bg-primaryHover active:bg-primaryHover focus:bg-primaryHover no-appereance outline-none ${
-        className || ""
-      }`}
-      {...props}
+    <Select
+      value={value}
+      onChange={handleChange}
+      sx={{
+        ".MuiSelect-select": {
+          padding: "0.325rem 0.75rem",
+        },
+        ".MuiOutlinedInput-notchedOutline": {
+          borderColor: "#9E9494 !important",
+          borderWidth: "1px",
+        },
+      }}
+      MenuProps={{
+        sx: {
+          "&& .Mui-selected": {
+            backgroundColor: "#AF1582 !important",
+            color: "#FFF",
+          },
+          "&& .Mui-selected:hover": {
+            backgroundColor: "#954E80 !important",
+          },
+        },
+      }}
     >
-      {children}
-    </option>
+      <MenuItem
+        value="newest"
+        sx={{
+          "&:checked": {
+            backgroundColor: "#AF1582 !important",
+            color: "#FFF",
+          },
+        }}
+      >
+        Newest
+      </MenuItem>
+      <MenuItem value="oldest">Oldest</MenuItem>
+    </Select>
   );
 };
-
-FilterDropdown.Option = FilterOption;
 
 export default FilterDropdown;
