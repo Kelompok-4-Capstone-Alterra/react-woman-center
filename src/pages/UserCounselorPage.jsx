@@ -70,6 +70,13 @@ const UserCounselorPage = () => {
       
           const response = await axios(config);
 
+          setIsShowToast({
+            ...isShowToast,
+            isOpen: true,
+            variant: "success",
+            message: "Counselor successfully added",
+          });
+
           handleAdd();
           const counselorsData = await getAllCounselors();
           setData(counselorsData);
@@ -106,6 +113,13 @@ const UserCounselorPage = () => {
           };
       
           const response = await axios(config);
+
+          setIsShowToast({
+            ...isShowToast,
+            isOpen: true,
+            variant: "success",
+            message: "Counselor successfully updated",
+          });
 
           handleView();
           const counselorsData = await getAllCounselors();
@@ -206,6 +220,7 @@ const UserCounselorPage = () => {
       setValue('description', counselor?.description);
       setValue('price', counselor?.price);
     }
+
   }, [counselor, setValue]);
 
   const handleImageChange = (file) => {
@@ -334,22 +349,22 @@ const UserCounselorPage = () => {
         <Tables>
         {isCounselor ? (
           <TableHeader>
-            <th>Counselor ID</th>
-            <th>Name</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Topic</th>
-            <th>View</th>
-            <th>Delete</th>
+            <th className="w-[130px]">Counselor ID</th>
+            <th className="w-[130px]">Name</th>
+            <th className="w-[130px]">Username</th>
+            <th className="w-[130px]">Email</th>
+            <th className="w-[130px]">Topic</th>
+            <th className="w-[130px]">View</th>
+            <th className="w-[130px]">Delete</th>
           </TableHeader>
         ) : (
           <TableHeader>
-            <th>User ID</th>
-            <th>Name</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>View</th>
-            <th>Delete</th>
+            <th className="w-[130px]">User ID</th>
+            <th className="w-[130px]">Name</th>
+            <th className="w-[130px]">Username</th>
+            <th className="w-[130px]">Email</th>
+            <th className="w-[130px]">View</th>
+            <th className="w-[130px]">Delete</th>
           </TableHeader>
         )}
           <TableBody>
@@ -357,16 +372,16 @@ const UserCounselorPage = () => {
           data && Array.isArray(data) ? (
             data.map((counselor) => (
               <TableRow key={counselor.id}>
-                <td>{counselor.id}</td>
-                <td>{counselor.name}</td>
-                <td>{counselor.username}</td>
-                <td>{counselor.email}</td>
-                <td>{counselor.topic}</td>
-                <td>
-                <ButtonPrimary onClick={() => getCounselor(counselor.id)}>View</ButtonPrimary>
+                <td className="w-[130px]">{counselor.id}</td>
+                <td className="w-[130px]">{counselor.name}</td>
+                <td className="w-[130px]">{counselor.username}</td>
+                <td className="w-[130px]">{counselor.email}</td>
+                <td className="w-[130px]">{counselor.topic}</td>
+                <td className="w-[130px]">
+                <ButtonPrimary className="w-[90%]" onClick={() => getCounselor(counselor.id)}>View</ButtonPrimary>
                 </td>
-                <td>
-                  <ButtonOutline onClick={() => openModalConfirmCounselor(counselor.id)}>Delete</ButtonOutline>
+                <td className="w-[130px]">
+                  <ButtonOutline className="w-[90%]" onClick={() => openModalConfirmCounselor(counselor.id)}>Delete</ButtonOutline>
                 </td>
               </TableRow>
             ))
@@ -379,15 +394,15 @@ const UserCounselorPage = () => {
           data && Array.isArray(data) ? (
             data.map((user) => (
               <TableRow key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.name}</td>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>
-                  <ButtonPrimary onClick={() => getUser(user.id)}>View</ButtonPrimary>
+                <td className="w-[130px]">{user.id}</td>
+                <td className="w-[130px]">{user.name}</td>
+                <td className="w-[130px]">{user.username}</td>
+                <td className="w-[130px]">{user.email}</td>
+                <td className="w-[130px]">
+                  <ButtonPrimary className="w-[90%]" onClick={() => getUser(user.id)}>View</ButtonPrimary>
                 </td>
-                <td>
-                  <ButtonOutline onClick={() => openModalConfirmUser(user.id)}>Delete</ButtonOutline>
+                <td className="w-[130px]">
+                  <ButtonOutline className="w-[90%]" onClick={() => openModalConfirmUser(user.id)}>Delete</ButtonOutline>
                 </td>
               </TableRow>
             ))
@@ -463,6 +478,7 @@ const UserCounselorPage = () => {
               control={control}
               name="topic"
               label="Category"
+              type="edit"
               placeholder={counselor?.topic}
               errors={errors}
               register={register}
@@ -519,6 +535,21 @@ const UserCounselorPage = () => {
               messages="Are you sure want to delete this item?"
             />
           )}
+          <Snackbar
+        open={isShowToast.isOpen}
+        autoHideDuration={isShowToast.duration}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        onClose={() => setIsShowToast({ ...isShowToast, isOpen: false })}
+      >
+        <Alert
+          onClose={() => setIsShowToast({ ...isShowToast, isOpen: false })}
+          severity={isShowToast.variant}
+          sx={{ width: "100%" }}
+          className="capitalize"
+        >
+          {isShowToast.message}
+        </Alert>
+      </Snackbar>
     </>
   )
 }
