@@ -1,7 +1,7 @@
 import React from "react";
 import SearchIcon from "@mui/icons-material/Search";
 
-const TableTitle = ({ title }) => {
+const TableTitle = ({ title, onChange }) => {
   return (
     <div className="flex items-center justify-between px-8 py-4 bg-primaryPressed">
       <h2 className="text-2xl text-white">{title}</h2>
@@ -12,6 +12,7 @@ const TableTitle = ({ title }) => {
           name=""
           id=""
           placeholder="Search what you need here..."
+          onChange={onChange}
         />
         <SearchIcon fontSize="large" className="absolute z-[1] left-4 top-2" />
       </div>
