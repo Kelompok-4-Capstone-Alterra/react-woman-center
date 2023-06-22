@@ -1,12 +1,10 @@
-import React from "react";
-
-function ButtonSecondary({
+const ButtonSecondary = ({
   type = "submit",
   className = "",
   processing,
   onClick,
   children,
-}) {
+}) => {
   return (
     <button
       type={type}
@@ -21,6 +19,6 @@ function ButtonSecondary({
       {children}
     </button>
   );
-}
+};
 
 export default ButtonSecondary;

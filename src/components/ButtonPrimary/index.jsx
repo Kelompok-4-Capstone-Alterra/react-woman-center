@@ -1,12 +1,10 @@
-import React from "react";
-
-function ButtonPrimary({
+const ButtonPrimary = ({
   type = "submit",
   className = "",
   processing,
   onClick,
   children,
-}) {
+}) => {
   return (
     <button
       type={type}
@@ -17,6 +15,6 @@ function ButtonPrimary({
       {children}
     </button>
   );
-}
+};
 
 export default ButtonPrimary;
