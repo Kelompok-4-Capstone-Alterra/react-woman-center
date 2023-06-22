@@ -26,6 +26,7 @@ import { convertDate } from "../../helpers/convertDate";
 
 import { Delete, Edit, Visibility, Add, Link } from "@mui/icons-material";
 import { getAllCounselors } from "../../api/usercounselor";
+import { Skeleton } from "@mui/material";
 
 const CounselingPage = () => {
   // Table State
@@ -53,7 +54,6 @@ const CounselingPage = () => {
 
   // Helper State
   const [isLoading, setIsLoading] = useState(false);
-  const [isNotFound, setIsNotFound] = useState(false);
   const [isShowToast, setIsShowToast] = useState({
     isOpen: false,
     variant: "info",
@@ -76,10 +76,6 @@ const CounselingPage = () => {
       const response = await getAllCounselors(params);
       setCounselors(response);
       setIsLoading(false);
-
-      if (response.length < 1) {
-        setIsNotFound(true);
-      }
     } catch (error) {
       setIsShowToast({
         ...isShowToast,
@@ -89,8 +85,24 @@ const CounselingPage = () => {
       });
       setIsLoading(false);
     }
+  };
 
-    setIsNotFound(true);
+  const fetchAllTransactions = async (params = {}) => {
+    setIsLoading(true);
+
+    try {
+      const response = await getAllTransactions(params);
+      setTransactions(response);
+      setIsLoading(false);
+    } catch (error) {
+      setIsShowToast({
+        ...isShowToast,
+        isOpen: true,
+        variant: "error",
+        message: error.message,
+      });
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -102,11 +114,9 @@ const CounselingPage = () => {
   }, [scheduleSortBy, scheduleSearchParams]);
 
   useEffect(() => {
-    getAllTransactions({
+    fetchAllTransactions({
       sort_by: transactionSortBy,
       search: transactionSearchParams,
-    }).then((data) => {
-      setTransactions(data);
     });
   }, [transactionSortBy, transactionSearchParams]);
 
@@ -235,113 +245,161 @@ const CounselingPage = () => {
 
           {isSchedule && (
             <TableBody>
-              {counselors.map((counselor) => (
-                <TableRow key={counselor.id}>
-                  <td className="w-[130px]">{counselor.id}</td>
-                  <td className="w-[130px]">{counselor.name}</td>
-                  <td className="w-[130px]">{counselor.topic}</td>
-                  <td className="w-[130px]">
-                    <ButtonPrimary
-                      className="max-w-[130px] w-[90%]"
-                      onClick={() => {
-                        setShowUpdateModal(true);
-                        setSelectedCounselor(counselor);
-                        getSchedule(counselor.id).then(({ dates, times }) => {
-                          setTimes(times);
-                          setDates(dates);
-                        });
-                      }}
-                    >
-                      <Edit className="mr-1" style={{ fontSize: "1.125rem" }} />
-                      <span>Update</span>
-                    </ButtonPrimary>
-                  </td>
-                  <td className="w-[130px]">
-                    <ButtonPrimary
-                      className="max-w-[130px] w-[90%]"
-                      onClick={() => {
-                        setShowViewModal(true);
-                        setSelectedCounselor(counselor);
-                      }}
-                    >
-                      <Visibility
-                        className="mr-1"
-                        style={{ fontSize: "1.125rem" }}
-                      />
-                      <span>View</span>
-                    </ButtonPrimary>
-                  </td>
-                  <td className="w-[130px]">
-                    <ButtonOutline
-                      className="max-w-[130px] w-[90%]"
-                      onClick={() => {
-                        setShowDeleteModal(true);
-                        setSelectedCounselor(counselor);
-                      }}
-                    >
-                      <Delete
-                        className="mr-1"
-                        style={{ fontSize: "1.125rem" }}
-                      />
-                      <span>Delete</span>
-                    </ButtonOutline>
-                  </td>
+              {counselors.length >= 1 ? (
+                counselors.map((counselor) => (
+                  <TableRow key={counselor.id}>
+                    {isLoading ? (
+                      <td colSpan={6}>
+                        <Skeleton
+                          animation="wave"
+                          variant="rounded"
+                          width="100%"
+                          height={50}
+                        />
+                      </td>
+                    ) : (
+                      <>
+                        <td className="w-[130px]">{counselor.id}</td>
+                        <td className="w-[130px]">{counselor.name}</td>
+                        <td className="w-[130px]">{counselor.topic}</td>
+                        <td className="w-[130px]">
+                          <ButtonPrimary
+                            className="max-w-[130px] w-[90%]"
+                            onClick={() => {
+                              setShowUpdateModal(true);
+                              setSelectedCounselor(counselor);
+                              getSchedule(counselor.id).then(
+                                ({ dates, times }) => {
+                                  setTimes(times);
+                                  setDates(dates);
+                                }
+                              );
+                            }}
+                          >
+                            <Edit
+                              className="mr-1"
+                              style={{ fontSize: "1.125rem" }}
+                            />
+                            <span>Update</span>
+                          </ButtonPrimary>
+                        </td>
+                        <td className="w-[130px]">
+                          <ButtonPrimary
+                            className="max-w-[130px] w-[90%]"
+                            onClick={() => {
+                              setShowViewModal(true);
+                              setSelectedCounselor(counselor);
+                            }}
+                          >
+                            <Visibility
+                              className="mr-1"
+                              style={{ fontSize: "1.125rem" }}
+                            />
+                            <span>View</span>
+                          </ButtonPrimary>
+                        </td>
+                        <td className="w-[130px]">
+                          <ButtonOutline
+                            className="max-w-[130px] w-[90%]"
+                            onClick={() => {
+                              setShowDeleteModal(true);
+                              setSelectedCounselor(counselor);
+                            }}
+                          >
+                            <Delete
+                              className="mr-1"
+                              style={{ fontSize: "1.125rem" }}
+                            />
+                            <span>Delete</span>
+                          </ButtonOutline>
+                        </td>
+                      </>
+                    )}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <td colSpan={6}>What you are looking for doesn't exist</td>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           )}
           {!isSchedule && (
             <TableBody>
-              {transactions.map((transaction) => (
-                <TableRow key={transaction.id}>
-                  <td className="w-[130px]">
-                    {convertDate(transaction.created_at)}
-                  </td>
-                  <td className="w-[130px]">{transaction.id}</td>
-                  <td className="w-[130px]">{transaction.user_id}</td>
-                  <td className="w-[130px]">{transaction.counselor_id}</td>
-                  <td className="w-[130px]">
-                    {transaction.counselor_data.name}
-                  </td>
-                  <td className="w-[130px]">
-                    {transaction.consultation_method}
-                  </td>
-                  <td className="w-[130px]">
-                    {transaction.counselor_data.topic}
-                  </td>
-                  <td className="w-[130px]">{transaction.time_start}</td>
-                  <td className="w-[130px]">
-                    {formatCurrency(transaction.counselor_data.price)}
-                  </td>
-                  <td className="w-[130px]">
-                    <StatusTag type={transaction.status} />
-                  </td>
-                  <td className="w-[130px]">
-                    <ButtonOutline
-                      className="max-w-[130px] w-[90%]"
-                      onClick={() => {
-                        setShowLinkModal(true);
-                        setSelectedTransactionId(transaction.id);
-                      }}
-                    >
-                      <Link className="mr-1" style={{ fontSize: "1.125rem" }} />
-                      <span>Send Link</span>
-                    </ButtonOutline>
-                  </td>
-                  <td className="w-[130px]">
-                    {" "}
-                    <span
-                      className="cursor-pointer text-dangerMain"
-                      onClick={() => {
-                        setShowCancelModal(true);
-                        setSelectedTransactionId(transaction.id);
-                      }}
-                    >
-                      cancel
-                    </span>
-                  </td>
+              {transactions.length >= 1 ? (
+                transactions.map((transaction) => (
+                  <TableRow key={transaction.id}>
+                    {isLoading ? (
+                      <td colSpan={12}>
+                        <Skeleton
+                          animation="wave"
+                          variant="rounded"
+                          width="100%"
+                          height={50}
+                        />
+                      </td>
+                    ) : (
+                      <>
+                        <td className="w-[130px]">
+                          {convertDate(transaction.created_at)}
+                        </td>
+                        <td className="w-[130px]">{transaction.id}</td>
+                        <td className="w-[130px]">{transaction.user_id}</td>
+                        <td className="w-[130px]">
+                          {transaction.counselor_id}
+                        </td>
+                        <td className="w-[130px]">
+                          {transaction.counselor_data.name}
+                        </td>
+                        <td className="w-[130px]">
+                          {transaction.consultation_method}
+                        </td>
+                        <td className="w-[130px]">
+                          {transaction.counselor_data.topic}
+                        </td>
+                        <td className="w-[130px]">{transaction.time_start}</td>
+                        <td className="w-[130px]">
+                          {formatCurrency(transaction.counselor_data.price)}
+                        </td>
+                        <td className="w-[130px]">
+                          <StatusTag type={transaction.status} />
+                        </td>
+                        <td className="w-[130px]">
+                          <ButtonOutline
+                            className="max-w-[130px] w-[90%]"
+                            onClick={() => {
+                              setShowLinkModal(true);
+                              setSelectedTransactionId(transaction.id);
+                            }}
+                          >
+                            <Link
+                              className="mr-1"
+                              style={{ fontSize: "1.125rem" }}
+                            />
+                            <span>Send Link</span>
+                          </ButtonOutline>
+                        </td>
+                        <td className="w-[130px]">
+                          {" "}
+                          <span
+                            className="cursor-pointer text-dangerMain"
+                            onClick={() => {
+                              setShowCancelModal(true);
+                              setSelectedTransactionId(transaction.id);
+                            }}
+                          >
+                            cancel
+                          </span>
+                        </td>
+                      </>
+                    )}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <td colSpan={9}>What you are looking for doesn't exist</td>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           )}
         </Tables>
