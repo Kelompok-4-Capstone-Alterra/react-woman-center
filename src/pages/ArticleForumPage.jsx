@@ -119,17 +119,23 @@ const ArticleForumPage = () => {
 
   const handleSearchArticle = (event) => {
     const keyword = event.target.value;
-
+    setSearchKeyword(keyword);
     if (isArticle) {
-      fetchAllArticles({ search: keyword });
+      fetchAllArticles({ search: keyword, sort_by: sortBy });
     } else {
-      fetchAllArticles({ topic: keyword });
+      fetchAllArticles({ topic: keyword, sort_by: sortBy });
     }
   };
 
   const handleSortBy = (event) => {
-    setSortBy(event.target.value);
-    fetchAllArticles({ sort_by: sortBy });
+    const sortByValue = event.target.value;
+
+    setSortBy(sortByValue);
+    if (isArticle) {
+      fetchAllArticles({ sort_by: sortByValue, search: searchKeyword });
+    } else {
+      fetchAllArticles({ sort_by: sortByValue, topic: searchKeyword });
+    }
   };
 
   // useEffect(() => {
