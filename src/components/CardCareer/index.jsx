@@ -7,10 +7,9 @@ import ModalConfirm from "../ModalConfirm";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
-const CardCareer = ({ openModal, payloads, deleteCareer }) => {
+const CardCareer = ({ payloads, handleEditCareer, deleteCareer }) => {
   const [isShowModalConfirm, setIsShowModalConfirm] = useState(false);
-  const dispatch = useDispatch();
-  const { image, job_position, company_name, location, salary } = payloads;
+  const { id, image, job_position, company_name, location, salary } = payloads;
 
   const handleImageError = (event) => {
     event.currentTarget.src = jobSeekerImg;
@@ -50,7 +49,7 @@ const CardCareer = ({ openModal, payloads, deleteCareer }) => {
       <div className="flex gap-4 items-end">
         <ButtonPrimary
           className="w-auto flex items-center justify-center"
-          onClick={openModal}
+          onClick={() => handleEditCareer(id)}
         >
           <Edit className="mr-1" style={{ fontSize: "1.125rem" }} />
           <span className="text-[1rem]">Edit</span>

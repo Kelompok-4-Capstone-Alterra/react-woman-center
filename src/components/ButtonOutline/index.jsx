@@ -1,12 +1,10 @@
-import React from "react";
-
-export default function ButtonOutline({
+const ButtonOutline = ({
   type = "submit",
   className = "",
   processing,
   onClick,
   children,
-}) {
+}) => {
   return (
     <button
       type={type}
@@ -21,4 +19,6 @@ export default function ButtonOutline({
       {children}
     </button>
   );
-}
+};
+
+export default ButtonOutline;
