@@ -9,12 +9,8 @@ import Report from "./pages/Report";
 import Login from "./pages/Login";
 import Career from "./pages/Career";
 import UserCounselorPage from "./pages/UserCounselorPage";
+import ArticleForumPage from "./pages/ArticleForumPage";
 import "./App.css";
-
-const ArticleAndForum = () => {
-  return <h1>ArticleAndForum Page</h1>;
-  // return <ArticleAndForumPage/>
-};
 
 const router = createBrowserRouter([
   {
@@ -112,10 +108,10 @@ const router = createBrowserRouter([
   },
   {
     path: "/article-forum",
-    element: <Dashboard />,
+    element: <Dashboard page="Article & Discussion" />,
     children: [
       {
-        element: <ArticleAndForum />,
+        element: <ArticleForumPage />,
         index: true,
       },
     ],
