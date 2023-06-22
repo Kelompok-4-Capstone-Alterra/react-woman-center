@@ -4,10 +4,11 @@ const ImageUploader = ({
   handleChange,
   width = "100px",
   height = "100px",
+  className = "",
 }) => {
   return (
     <div
-      className={`bg-[#E7E4E4] rounded-full relative flex`}
+      className={`bg-[#E7E4E4] rounded-full relative flex ${className}`}
       style={{ width, height }}
     >
       <div className="m-auto flex overflow-hidden absolute w-full h-full rounded-full ">
@@ -22,7 +23,13 @@ const ImageUploader = ({
           {children}
         </div>
       </div>
-      <div className="absolute w-7 h-7 bottom-0 right-0 p-1 text-white bg-primaryMain rounded-full flex" style={{width: `calc(${width} / ${4})`, height: `calc(${height} / ${4})`}}>
+      <div
+        className="absolute w-7 h-7 bottom-0 right-0 p-1 text-white bg-primaryMain rounded-full flex justify-center items-center"
+        style={{
+          width: `calc(${width} / ${4})`,
+          height: `calc(${height} / ${4})`,
+        }}
+      >
         {icon}
       </div>
     </div>

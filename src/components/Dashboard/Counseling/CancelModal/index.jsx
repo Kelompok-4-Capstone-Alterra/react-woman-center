@@ -2,8 +2,9 @@ import React from "react";
 import Modal from "../../../Modal";
 import ButtonPrimary from "../../../ButtonPrimary";
 import ButtonOutline from "../../../ButtonOutline/index";
+import { cancelTransaction } from "../../../../api/transaction";
 
-const CancelModal = ({ modalState, closeModal }) => {
+const CancelModal = ({ modalState, closeModal, transactionId }) => {
   return (
     <Modal isOpen={modalState} type={"link"}>
       <p className="font-medium text-[22px] text-neutralHigh mb-8">
@@ -11,7 +12,10 @@ const CancelModal = ({ modalState, closeModal }) => {
       </p>
       <ButtonPrimary
         className="flex items-center justify-center w-full h-[56px] mb-5 text-[22px]"
-        onClick={() => {}}
+        onClick={() => {
+          cancelTransaction(transactionId);
+          closeModal();
+        }}
       >
         Sure
       </ButtonPrimary>

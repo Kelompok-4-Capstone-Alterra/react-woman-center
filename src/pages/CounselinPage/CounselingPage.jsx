@@ -7,15 +7,11 @@ import TableHeader from "../../components/Dashboard/Tables/TableHeader";
 import Tables from "../../components/Dashboard/Tables/Tables";
 import TableBody from "../../components/Dashboard/Tables/TableBody";
 import TableRow from "../../components/Dashboard/Tables/TableRow";
-import Button from "../../components/Button";
 import { useForm } from "react-hook-form";
 import Dropdown from "../../components/Dropdown";
 import StatusTag from "../../components/StatusTag/index";
-import Modal from "../../components/Modal/index";
-import InputField from "../../components/InputField";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline/index";
-import Calendar from "../../components/Calendar/index";
 import ScheduleModal from "../../components/Dashboard/Counseling/ScheduleModal";
 import UpdateModal from "../../components/Dashboard/Counseling/UpdateModal/index";
 import ViewModal from "../../components/Dashboard/Counseling/ViewModal/index";
@@ -40,10 +36,9 @@ const CounselingPage = () => {
   const [transactions, setTransactions] = useState([]);
 
   const [selectedCounselor, setSelectedCounselor] = useState("");
+  const [selectedTransactionId, setSelectedTransactionId] = useState("");
   const [counselors, setCounselors] = useState([]);
-
-  const [dates, setDates] = useState([]);
-  const [times, setTimes] = useState([]);
+  const [sortBy, setSortBy] = useState("newest");
 
   const {
     register,
@@ -57,20 +52,13 @@ const CounselingPage = () => {
     const formData = getValues();
     const dropdownValue = formData.pageStatus;
     setIsSchedule(dropdownValue.value);
-    console.log("isShedule : ", isSchedule);
-
-    console.log("Value: ", dropdownValue.value);
-  };
-
-  const handleModal = () => {
-    console.log("clicked");
   };
 
   useEffect(() => {
     const token = getAuthCookie();
     axios
       .get(
-        "https://13.210.163.192:8080/admin/counselors?page=1&limit=5&sort_by=newest",
+        `https://13.210.163.192:8080/admin/counselors?page=1&limit=5&sort_by=${sortBy}&has_schedule=true`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -80,11 +68,10 @@ const CounselingPage = () => {
       .then((response) => setCounselors(response.data.data.counselors))
       .catch((error) => console.error(error));
 
-    getAllTransactions().then((data) => {
+    getAllTransactions({ sort_by: sortBy }).then((data) => {
       setTransactions(data);
-      console.log(data);
     });
-  }, []);
+  }, [sortBy]);
 
   return (
     <div className="">
@@ -110,21 +97,20 @@ const CounselingPage = () => {
         closeModal={() => {
           setShowUpdateModal(false);
         }}
-        dates={dates}
-        times={times}
       />
 
       {/* Delete Modal */}
       <DeleteModal
+        counselor={selectedCounselor}
         modalState={showDeleteModal}
         closeModal={() => {
           setShowDeleteModal(false);
         }}
-        counselor={selectedCounselor}
       />
 
       {/* Link Modal */}
       <LinkModal
+        transactionId={selectedTransactionId}
         modalState={showLinkModal}
         closeModal={() => {
           setShowLinkModal(false);
@@ -132,6 +118,7 @@ const CounselingPage = () => {
       />
       {/* Cancel Modal */}
       <CancelModal
+        transactionId={selectedTransactionId}
         modalState={showCancelModal}
         closeModal={() => {
           setShowCancelModal(false);
@@ -166,7 +153,15 @@ const CounselingPage = () => {
       <TableContainer>
         <TableTitle
           title={`Counseling's ${isSchedule ? "Schedule" : "Transaction"}`}
+          // Search
+          onChange={(e) => {
+            // console.log(e.target.value);
+          }}
+          // SortBy
+          sortBy={sortBy}
+          onSelect={(event) => setSortBy(event.target.value)}
         />
+
         <Tables scroll={!isSchedule}>
           {isSchedule ? (
             <TableHeader>
@@ -221,7 +216,6 @@ const CounselingPage = () => {
                       className="w-[90%]"
                       onClick={() => {
                         setShowViewModal(true);
-
                         setSelectedCounselor(counselor);
                       }}
                     >
@@ -233,6 +227,7 @@ const CounselingPage = () => {
                       className="w-[90%]"
                       onClick={() => {
                         setShowDeleteModal(true);
+                        setSelectedCounselor(counselor);
                       }}
                     >
                       Delete
@@ -245,7 +240,7 @@ const CounselingPage = () => {
           {!isSchedule && (
             <TableBody>
               {transactions.map((transaction) => (
-                <TableRow>
+                <TableRow key={transaction.id}>
                   <td className="w-[130px]">12 / 05 / 23</td>
                   <td className="w-[130px]">{transaction.id}</td>
                   <td className="w-[130px]">{transaction.user_id}</td>
@@ -270,6 +265,7 @@ const CounselingPage = () => {
                     <ButtonOutline
                       onClick={() => {
                         setShowLinkModal(true);
+                        setSelectedTransactionId(transaction.id);
                       }}
                     >
                       send Link
@@ -281,6 +277,7 @@ const CounselingPage = () => {
                       className="cursor-pointer text-dangerMain"
                       onClick={() => {
                         setShowCancelModal(true);
+                        setSelectedTransactionId(transaction.id);
                       }}
                     >
                       cancel
@@ -290,81 +287,6 @@ const CounselingPage = () => {
               ))}
             </TableBody>
           )}
-
-          {/* <TableBody>
-              {isSchedule ? (
-                <TableRow>
-                  <td className="w-[130px]">123456</td>
-                  <td className="w-[130px]">John Doe</td>
-                  <td className="w-[130px]">
-                    <StatusTag type={"available"} />
-                  </td>
-                  <td className="w-[130px]">Mental Health</td>
-                  <td className="w-[130px]">
-                    <ButtonPrimary
-                      onClick={() => {
-                        setShowUpdateModal(true);
-                      }}
-                    >
-                      Update
-                    </ButtonPrimary>
-                  </td>
-                  <td className="w-[130px]">
-                    <ButtonPrimary
-                      onClick={() => {
-                        setShowViewModal(true);
-                      }}
-                    >
-                      View
-                    </ButtonPrimary>
-                  </td>
-                  <td className="w-[130px]">
-                    <ButtonOutline
-                      onClick={() => {
-                        setShowDeleteModal(true);
-                      }}
-                    >
-                      Delete
-                    </ButtonOutline>
-                  </td>
-                </TableRow>
-              ) : (
-                <TableRow>
-                  <td className="w-[130px]">12 / 05 / 23</td>
-                  <td className="w-[130px]">1234567</td>
-                  <td className="w-[130px]">1234567</td>
-                  <td className="w-[130px]">1234567</td>
-                  <td className="w-[130px]">John Doe</td>
-                  <td className="w-[130px]">Chat</td>
-                  <td className="w-[130px]">Mental Health</td>
-                  <td className="w-[130px]">12 : 00</td>
-                  <td className="w-[130px]">Rp. 120.000</td>
-                  <td className="w-[130px]">
-                    <StatusTag type={"ongoing"} />
-                  </td>
-                  <td className="w-[130px]">
-                    <ButtonOutline
-                      onClick={() => {
-                        setShowLinkModal(true);
-                      }}
-                    >
-                      send Link
-                    </ButtonOutline>
-                  </td>
-                  <td className="w-[130px]">
-                    {" "}
-                    <span
-                      className="cursor-pointer text-dangerMain"
-                      onClick={() => {
-                        setShowCancelModal(true);
-                      }}
-                    >
-                      cancel
-                    </span>
-                  </td>
-                </TableRow>
-              )}
-            </TableBody> */}
         </Tables>
       </TableContainer>
     </div>

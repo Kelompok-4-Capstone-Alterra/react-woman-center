@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -13,9 +13,11 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import sidebarLogo from "../../assets/logo.png";
 import avatar from "../../assets/profile/avatar.png";
 import { removeAuthCookie } from "../../utils/cookies";
+import ModalConfirm from "../ModalConfirm";
 
 const Sidebar = ({ expand, handleExpandSidebar }) => {
   const navigate = useNavigate();
+  const [isShowModalConfirm, setIsShowModalConfirm] = useState(false);
   const activelink = "text-primaryMain";
   const normalLink = "hover:text-primaryMain";
 
@@ -26,6 +28,10 @@ const Sidebar = ({ expand, handleExpandSidebar }) => {
   const onLogout = () => {
     navigate("/");
     removeAuthCookie();
+  };
+
+  const handleShowModalConfirm = (showModalConfirm) => {
+    setIsShowModalConfirm(showModalConfirm);
   };
 
   return (
@@ -56,7 +62,6 @@ const Sidebar = ({ expand, handleExpandSidebar }) => {
             : "items-center gap-6 mb-6 box-content w-full overflow-y-auto no-scrollbar"
         }`}
       >
-        {/* <NavLink to={"/profile"}> */}
         <div
           className={`flex items-center text-center ${
             expand
@@ -67,7 +72,6 @@ const Sidebar = ({ expand, handleExpandSidebar }) => {
           <img src={avatar} alt="" />
           <p className="text-sm">Admin</p>
         </div>
-        {/* </NavLink> */}
         <NavLink
           to={"/dashboard"}
           className={({ isActive }) => (isActive ? activelink : normalLink)}
@@ -159,23 +163,25 @@ const Sidebar = ({ expand, handleExpandSidebar }) => {
           </div>
         </NavLink>
       </div>
-      {/* <NavLink
-        to={"/"}
-        className={({ isActive }) => (isActive ? activelink : normalLink)}
-        style={{ marginTop: "auto" }}
-      > */}
       <div
         className={`flex items-center text-center mt-auto hover:text-primaryMain cursor-pointer ${
           expand
             ? "flex-row justify-start gap-2 gap"
             : "flex-col justify-center gap-1"
         }`}
-        onClick={onLogout}
+        onClick={() => handleShowModalConfirm(true)}
       >
         <ExitToAppIcon />
         <p className="text-sm">Logout</p>
       </div>
-      {/* </NavLink> */}
+      {isShowModalConfirm && (
+        <ModalConfirm
+          onSure={onLogout}
+          onClose={handleShowModalConfirm}
+          isConfirm={isShowModalConfirm}
+          messages="Are you sure want to out from the admin dashboard?"
+        />
+      )}
     </div>
   );
 };

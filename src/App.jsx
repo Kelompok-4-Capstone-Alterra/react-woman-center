@@ -28,10 +28,10 @@ const Profile = () => {
   // return <ProfilePage/>
 };
 
-const UserAndCounselor = () => {
-  return <h1>User and Counselor Page</h1>;
+//const UserAndCounselor = () => {
+  //return <h1>User and Counselor Page</h1>;
   // return <UserAndCounselorPage/>
-};
+//};
 
 // const Counseling = () => {
 //   return <h1>Counseling Page</h1>;
@@ -42,11 +42,6 @@ const UserAndCounselor = () => {
 //   return <h1>Career Page</h1>;
 // return <CareerPage/>
 // };
-
-const ArticleAndForum = () => {
-  return <h1>ArticleAndForum Page</h1>;
-  // return <ArticleAndForumPage/>
-};
 
 const router = createBrowserRouter([
   {
@@ -106,7 +101,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/user-counselor",
-    element: <Dashboard />,
+    element: <Dashboard page="UserAndCounselor" />,
     children: [
       {
         element: <UserAndCounselor />,
