@@ -25,9 +25,13 @@ import { formatCurrency } from "../../helpers/formatCurrency";
 import { convertDate } from "../../helpers/convertDate";
 
 import { Delete, Edit, Visibility, Add, Link } from "@mui/icons-material";
+import { getAllCounselors } from "../../api/usercounselor";
 
 const CounselingPage = () => {
+  // Table State
   const [isSchedule, setIsSchedule] = useState(true);
+
+  // Modal State
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
@@ -35,12 +39,17 @@ const CounselingPage = () => {
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
 
+  // Data State
   const [transactions, setTransactions] = useState([]);
+  const [counselors, setCounselors] = useState([]);
 
+  // Feature State
   const [selectedCounselor, setSelectedCounselor] = useState("");
   const [selectedTransactionId, setSelectedTransactionId] = useState("");
-  const [counselors, setCounselors] = useState([]);
-  const [sortBy, setSortBy] = useState("newest");
+  const [scheduleSortBy, setScheduleSortBy] = useState("newest");
+  const [transactionSortBy, setTransactionSortBy] = useState("newest");
+  const [scheduleSearchParams, setScheduleSearchParams] = useState("");
+  const [transactionSearchParams, setTransactionSearchParams] = useState("");
 
   const {
     register,
@@ -57,23 +66,23 @@ const CounselingPage = () => {
   };
 
   useEffect(() => {
-    const token = getAuthCookie();
-    axios
-      .get(
-        `https://13.210.163.192:8080/admin/counselors?page=1&limit=5&sort_by=${sortBy}&has_schedule=true`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then((response) => setCounselors(response.data.data.counselors))
-      .catch((error) => console.error(error));
+    getAllCounselors({
+      has_schedule: true,
+      sort_by: scheduleSortBy,
+      search: scheduleSearchParams,
+    }).then((data) => {
+      setCounselors(data);
+    });
+  }, [scheduleSortBy, scheduleSearchParams]);
 
-    getAllTransactions({ sort_by: sortBy }).then((data) => {
+  useEffect(() => {
+    getAllTransactions({
+      sort_by: transactionSortBy,
+      search: transactionSearchParams,
+    }).then((data) => {
       setTransactions(data);
     });
-  }, [sortBy]);
+  }, [transactionSortBy, transactionSearchParams]);
 
   return (
     <div className="">
@@ -157,12 +166,18 @@ const CounselingPage = () => {
         <TableTitle
           title={`Counseling's ${isSchedule ? "Schedule" : "Transaction"}`}
           // Search
-          onChange={(e) => {
-            // console.log(e.target.value);
-          }}
+          onChange={
+            isSchedule
+              ? (e) => setScheduleSearchParams(e.target.value)
+              : (e) => setTransactionSearchParams(e.target.value)
+          }
           // SortBy
-          sortBy={sortBy}
-          onSelect={(event) => setSortBy(event.target.value)}
+          sortBy={isSchedule ? scheduleSortBy : transactionSortBy}
+          onSelect={
+            isSchedule
+              ? (e) => setScheduleSortBy(e.target.value)
+              : (e) => setTransactionSortBy(e.target.value)
+          }
         />
 
         <Tables scroll={!isSchedule}>
