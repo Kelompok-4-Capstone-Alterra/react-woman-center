@@ -10,6 +10,7 @@ import CounselingPage from "./pages/CounselinPage/CounselingPage";
 import Career from "./pages/Career";
 import ArticleForumPage from "./pages/ArticleForumPage";
 import { getAuthCookie } from "./utils/cookies";
+import UserCounselorPage from "./pages/UserCounselorPage";
 
 // element router bisa diganti ke component sesuai page
 
@@ -109,7 +110,7 @@ const router = createBrowserRouter([
     element: <Dashboard page="UserAndCounselor" />,
     children: [
       {
-        element: <UserAndCounselor />,
+        element: <UserCounselorPage />,
         index: true,
       },
     ],

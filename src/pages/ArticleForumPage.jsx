@@ -42,7 +42,9 @@ const ArticleForumPage = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [sortBy, setSortBy] = useState('newest');
+  const [searchKeyword, setSearchKeyword] = useState('');
   const [articleId, setArticleId] = useState('');
+  const [totalComment, setTotalComment] = useState('');
   const [notFoundMsg, setNotFoundMsg] = useState('');
 
   const {
@@ -118,8 +120,16 @@ const ArticleForumPage = () => {
   const handleSearchArticle = (event) => {
     const keyword = event.target.value;
 
-    // Masih BUG
-    fetchAllArticles({ search: keyword });
+    if (isArticle) {
+      fetchAllArticles({ search: keyword });
+    } else {
+      fetchAllArticles({ topic: keyword });
+    }
+  };
+
+  const handleSortBy = (event) => {
+    setSortBy(event.target.value);
+    fetchAllArticles({ sort_by: sortBy });
   };
 
   // useEffect(() => {
@@ -174,9 +184,10 @@ const ArticleForumPage = () => {
     console.log('Value: ', dropdownValue.value);
   };
 
-  const handleOpenModalComment = (articleId) => {
+  const handleOpenModalComment = (articleId, commentCount) => {
     setIsShowModalComment(true);
     setArticleId(articleId);
+    setTotalComment(commentCount);
   };
 
   const handleShowModalComment = (showModal) => {
@@ -190,6 +201,7 @@ const ArticleForumPage = () => {
 
   const handleShowModalEdit = (showModal) => {
     setIsShowModalEdit(showModal);
+    setArticleId('')
   };
 
   return (
@@ -226,10 +238,7 @@ const ArticleForumPage = () => {
             <Select
               value={sortBy}
               // label="Age"
-              onChange={(event) => {
-                setSortBy(event.target.value);
-                fetchAllArticles({ sort_by: sortBy });
-              }}
+              onChange={handleSortBy}
               sx={{
                 '.MuiSelect-select': {
                   padding: '0.325rem 0.75rem',
@@ -279,13 +288,7 @@ const ArticleForumPage = () => {
                   isLoading ? (
                     <Skeleton key={article.id} animation="wave" variant="rounded" width="100%" height={150} />
                   ) : (
-                    <ArticleCard
-                      key={article.id}
-                      payloads={article}
-                      openModalComment={() => handleOpenModalComment(article.id)}
-                      openModalEdit={() => handleOpenModalEdit(article.id)}
-                      deleteArticle={deleteArticle}
-                    />
+                    <ArticleCard key={article.id} payloads={article} openModalComment={() => handleOpenModalComment(article.id, article.comment_count)} openModalEdit={() => handleOpenModalEdit(article.id)} deleteArticle={deleteArticle} />
                   )
                 )
               ) : (
@@ -316,13 +319,14 @@ const ArticleForumPage = () => {
         </div>
       </div>
 
-      <CommentModal openModal={isShowModalComment} onClose={handleShowModalComment} articleId={articleId} />
-      
+      <CommentModal openModal={isShowModalComment} onClose={handleShowModalComment} articleId={articleId} totalComment={totalComment} updateData={fetchAllArticles} />
+
       <AddArticleModal
         openModal={isShowModalAdd}
         onClose={() => {
           setIsShowModalAdd(false);
         }}
+        updateData={fetchAllArticles}
       />
 
       <EditArticleModal
@@ -331,18 +335,14 @@ const ArticleForumPage = () => {
           setIsShowModalEdit(false);
         }}
         articleId={articleId}
+        updateData={fetchAllArticles}
       />
       {/* 
 
 
       
 
-      <CommentModal
-        modalState={showIsComment}
-        closeModal={() => {
-          setShowIsComment(false);
-        }}
-      />
+
 
       <LinkModal
         modalState={showIsViewLink}
@@ -350,13 +350,7 @@ const ArticleForumPage = () => {
           setShowIsViewLink(false);
         }}
       />
-
-      <DeleteModal
-        modalState={showIsDelete}
-        closeModal={() => {
-          setShowIsDelete(false);
-        }}
-      /> */}
+ */}
     </div>
   );
 };
