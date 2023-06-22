@@ -51,13 +51,17 @@ const CounselingPage = () => {
   const [scheduleSearchParams, setScheduleSearchParams] = useState("");
   const [transactionSearchParams, setTransactionSearchParams] = useState("");
 
-  const {
-    register,
-    handleSubmit,
-    getValues,
-    control,
-    formState: { errors },
-  } = useForm();
+  // Helper State
+  const [isLoading, setIsLoading] = useState(false);
+  const [isNotFound, setIsNotFound] = useState(false);
+  const [isShowToast, setIsShowToast] = useState({
+    isOpen: false,
+    variant: "info",
+    duration: 5000,
+    message: "",
+  });
+
+  const { getValues, control } = useForm();
 
   const handleSelect = () => {
     const formData = getValues();
@@ -65,13 +69,35 @@ const CounselingPage = () => {
     setIsSchedule(dropdownValue.value);
   };
 
+  const fetchAllCounselors = async (params = {}) => {
+    setIsLoading(true);
+
+    try {
+      const response = await getAllCounselors(params);
+      setCounselors(response);
+      setIsLoading(false);
+
+      if (response.length < 1) {
+        setIsNotFound(true);
+      }
+    } catch (error) {
+      setIsShowToast({
+        ...isShowToast,
+        isOpen: true,
+        variant: "error",
+        message: error.message,
+      });
+      setIsLoading(false);
+    }
+
+    setIsNotFound(true);
+  };
+
   useEffect(() => {
-    getAllCounselors({
+    fetchAllCounselors({
       has_schedule: true,
       sort_by: scheduleSortBy,
       search: scheduleSearchParams,
-    }).then((data) => {
-      setCounselors(data);
     });
   }, [scheduleSortBy, scheduleSearchParams]);
 
