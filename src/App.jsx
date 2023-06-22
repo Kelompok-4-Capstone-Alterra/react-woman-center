@@ -8,6 +8,8 @@ import { RouterProvider, redirect } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import CounselingPage from "./pages/CounselinPage/CounselingPage";
 import Career from "./pages/Career";
+import ArticleForumPage from "./pages/ArticleForumPage";
+import { getAuthCookie } from "./utils/cookies";
 
 // element router bisa diganti ke component sesuai page
 
@@ -40,11 +42,6 @@ const Profile = () => {
 //   return <h1>Career Page</h1>;
 // return <CareerPage/>
 // };
-
-const ArticleAndForum = () => {
-  return <h1>ArticleAndForum Page</h1>;
-  // return <ArticleAndForumPage/>
-};
 
 const router = createBrowserRouter([
   {
@@ -161,10 +158,10 @@ const router = createBrowserRouter([
   },
   {
     path: "/article-forum",
-    element: <Dashboard />,
+    element: <Dashboard page="Article & Discussion" />,
     children: [
       {
-        element: <ArticleAndForum />,
+        element: <ArticleForumPage />,
         index: true,
       },
     ],
