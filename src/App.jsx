@@ -44,11 +44,6 @@ const Profile = () => {
 // return <CareerPage/>
 // };
 
-const ArticleAndForum = () => {
-  return <h1>ArticleAndForum Page</h1>;
-  // return <ArticleAndForumPage/>
-};
-
 const router = createBrowserRouter([
   {
     path: "/",
