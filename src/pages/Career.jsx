@@ -4,20 +4,33 @@ import { updateCareer } from "../features/career/careerSlice";
 import CardCareer from "../components/CardCareer";
 import SearchBar from "../components/SearchBar";
 import ButtonPrimary from "../components/ButtonPrimary";
-import { AddRounded } from "@mui/icons-material";
+import { AddRounded, EditRounded, SaveAltRounded } from "@mui/icons-material";
 import Modal from "../components/Modal";
 import InputField from "../components/InputField";
 import { useForm } from "react-hook-form";
 import ButtonOutline from "../components/ButtonOutline";
 import FilterDropdown from "../components/FilterDropdown";
-import { Alert, MenuItem, Select, Skeleton, Snackbar } from "@mui/material";
-import { deleteCareerById, getAllCareers } from "../api/career";
+import { Alert, Skeleton, Snackbar } from "@mui/material";
+import {
+  addCareer,
+  deleteCareerById,
+  getAllCareers,
+  getCareerById,
+  updateCareerById,
+} from "../api/career";
+import Dropdown from "../components/Dropdown";
+import ImageUploader from "../components/ImageUploader";
+import ImageThumbnail from "../components/ImageUploader/ImageThumbnail";
 
 const Career = () => {
   const careers = useSelector((store) => store.careerReducer.careers);
   const dispatch = useDispatch();
   const {
     register,
+    handleSubmit,
+    control,
+    getValues,
+    reset,
     formState: { errors },
   } = useForm();
   const [isShowModal, setIsShowModal] = useState(false);
@@ -29,7 +42,12 @@ const Career = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [sortBy, setSortBy] = useState("newest");
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [notFoundMsg, setNotFoundMsg] = useState("");
+  const [pictureCareer, setPictureCareer] = useState({});
+  const [lastEducation, setLastEducation] = useState("");
+  const [createOrUpdate, setCreateOrUpdate] = useState(0);
+  const [selectedCareerId, setSelectedCareerId] = useState("");
 
   useEffect(() => {
     fetchAllCareers();
@@ -59,7 +77,7 @@ const Career = () => {
     setNotFoundMsg("What you are looking for doesn't exist");
   };
 
-  const deleteCareer = async (careerId) => {
+  const handleDeleteCareer = async (careerId) => {
     try {
       const response = await deleteCareerById(careerId);
       setIsShowToast({
@@ -74,14 +92,132 @@ const Career = () => {
     }
   };
 
+  const handleSearchCareer = (event) => {
+    const keyword = event.target.value;
+
+    setSearchKeyword(keyword);
+    fetchAllCareers({ search: keyword, sort_by: sortBy });
+  };
+
+  const handleSubmitCareer = async (values) => {
+    const {
+      jobPosition,
+      company,
+      location,
+      salary,
+      minExperience,
+      description,
+      companyEmail,
+    } = values;
+    const formData = new FormData();
+    formData.append("job_position", jobPosition);
+    formData.append("company_name", company);
+    formData.append("location", location);
+    formData.append("salary", salary);
+    formData.append("min_experience", minExperience);
+    formData.append("last_education", lastEducation);
+    formData.append("description", description);
+    formData.append("company_email", companyEmail);
+    formData.append("image", pictureCareer.file);
+
+    if (createOrUpdate === 0) {
+      try {
+        const response = await addCareer(formData);
+        setIsShowToast({
+          ...isShowToast,
+          isOpen: true,
+          variant: "success",
+          message: response.message,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      try {
+        const response = await updateCareerById(selectedCareerId, formData);
+        setIsShowToast({
+          ...isShowToast,
+          isOpen: true,
+          variant: "success",
+          message: response.message,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    setPictureCareer({});
+    reset({
+      jobPosition: "",
+      company: "",
+      location: "",
+      salary: "",
+      minExperience: "",
+      lastEducation: "",
+      description: "",
+      companyEmail: "",
+    });
+    handleShowModal(false);
+    fetchAllCareers();
+  };
+
+  const handleCreateCareer = () => {
+    handleShowModal(true);
+    reset({
+      jobPosition: "",
+      company: "",
+      location: "",
+      salary: "",
+      minExperience: "",
+      lastEducation: "",
+      description: "",
+      companyEmail: "",
+    });
+    setCreateOrUpdate(0);
+    setPictureCareer({});
+  };
+
+  const handleEditCareer = async (careerId) => {
+    handleShowModal(true);
+    try {
+      const career = await getCareerById(careerId);
+      setPictureCareer({ ...pictureCareer, url: career.image });
+      reset({
+        jobPosition: career.job_position,
+        company: career.company_name,
+        location: career.location,
+        minExperience: career.min_experience,
+        // lastEducation: career.last_education,
+        salary: career.salary,
+        description: career.description,
+        companyEmail: career.company_email,
+      });
+      setLastEducation(career.last_education);
+      setCreateOrUpdate(1);
+      setSelectedCareerId(careerId);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleShowModal = (showModal) => {
     setIsShowModal(showModal);
   };
 
-  const handleSearchCareer = (event) => {
-    const keyword = event.target.value;
+  const handleLastEducation = () => {
+    const { lastEducation } = getValues();
+    setLastEducation(lastEducation.value);
+  };
 
-    fetchAllCareers({ search: keyword });
+  const handleChangeImage = (file) => {
+    const objectUrl = URL.createObjectURL(file);
+    setPictureCareer({ ...pictureCareer, file, url: objectUrl });
+  };
+
+  const handleSortBy = (event) => {
+    const sortByValue = event.target.value;
+
+    setSortBy(sortByValue);
+    fetchAllCareers({ sort_by: sortByValue, search: searchKeyword });
   };
 
   return (
@@ -103,7 +239,18 @@ const Career = () => {
       </Snackbar>
       <Modal isOpen={isShowModal} type="addCareer" onClose={handleShowModal}>
         <Modal.Title title="New Career" />
-        <form>
+        <form onSubmit={handleSubmit(handleSubmitCareer)}>
+          <ImageUploader
+            handleChange={handleChangeImage}
+            icon={<EditRounded fontSize="12px" />}
+            className="mb-5"
+          >
+            {!pictureCareer.url ? (
+              <AddRounded />
+            ) : (
+              <ImageThumbnail src={pictureCareer.url} />
+            )}
+          </ImageUploader>
           <InputField
             label="Job Position"
             placeholder="Ex : Junior UI Designer"
@@ -128,6 +275,35 @@ const Career = () => {
             register={register}
             errors={errors}
           />
+          <InputField
+            label="Min. Experience"
+            placeholder="Ex : 5"
+            type="text"
+            name="minExperience"
+            register={register}
+            errors={errors}
+            suffix={<span>Year</span>}
+          />
+          <Dropdown
+            control={control}
+            name={"lastEducation"}
+            label={"Last Education"}
+            placeholder={
+              createOrUpdate === 0
+                ? "Choose Your Last Education"
+                : lastEducation
+            }
+            handleSelect={handleLastEducation}
+          >
+            <option value="High School" label="High School (SMP)" />
+            <option
+              value="Senior High School"
+              label="Senior High School (SMA)"
+            />
+            <option value="Bachelor's degree" label="Bachelor's degree (S1)" />
+            <option value="Master's degree" label="Master's degree (S2)" />
+            <option value="Doctorate degree" label="Doctorate degree (S3)" />
+          </Dropdown>
           <InputField
             label="Salary"
             placeholder="Ex : 3,500,000 ++"
@@ -154,14 +330,25 @@ const Career = () => {
           />
           <div className="flex flex-col gap-4">
             <ButtonPrimary className="h-fit w-full px-3 py-3 flex items-center justify-center">
-              <AddRounded className="mr-1" style={{ fontSize: "1.125rem" }} />
-              <span className="text-[1rem]">Add New Career</span>
+              {createOrUpdate === 0 ? (
+                <AddRounded className="mr-1" style={{ fontSize: "1.125rem" }} />
+              ) : (
+                <SaveAltRounded
+                  className="mr-1"
+                  style={{ fontSize: "1.125rem" }}
+                />
+              )}
+              <span className="text-[1rem]">
+                {createOrUpdate === 0 ? "Add New Career" : "Save"}
+              </span>
             </ButtonPrimary>
             <ButtonOutline
               className="h-fit w-full px-3 py-3 flex items-center justify-center"
               onClick={() => handleShowModal(false)}
             >
-              <span className="text-[1rem]">Not Now</span>
+              <span className="text-[1rem]">
+                {createOrUpdate === 0 ? "Not Now" : "Discard"}
+              </span>
             </ButtonOutline>
           </div>
         </form>
@@ -175,7 +362,7 @@ const Career = () => {
           />
           <ButtonPrimary
             className="h-fit w-auto flex items-center justify-center"
-            onClick={handleShowModal}
+            onClick={handleCreateCareer}
           >
             <AddRounded className="mr-1" style={{ fontSize: "1.125rem" }} />
             <span className="text-[1rem]">New Career</span>
@@ -183,49 +370,7 @@ const Career = () => {
         </div>
         <div className="flex justify-end items-center gap-4">
           <span className="text-base">Sort By</span>
-          <Select
-            value={sortBy}
-            // label="Age"
-            onChange={(event) => setSortBy(event.target.value)}
-            sx={{
-              ".MuiSelect-select": {
-                padding: "0.325rem 0.75rem",
-              },
-              ".MuiOutlinedInput-notchedOutline": {
-                borderColor: "#9E9494 !important",
-                borderWidth: "1px",
-              },
-            }}
-            MenuProps={{
-              sx: {
-                "&& .Mui-selected": {
-                  backgroundColor: "#AF1582 !important",
-                  color: "#FFF",
-                },
-                "&& .Mui-selected:hover": {
-                  backgroundColor: "#954E80 !important",
-                },
-              },
-            }}
-          >
-            <MenuItem
-              value="newest"
-              sx={{
-                "&:checked": {
-                  backgroundColor: "#AF1582 !important",
-                  color: "#FFF",
-                },
-              }}
-            >
-              Newest
-            </MenuItem>
-            <MenuItem value="oldest">Oldest</MenuItem>
-          </Select>
-          {/* <span className="text-base">Sort By</span>
-          <FilterDropdown>
-            <FilterDropdown.Option>Newest</FilterDropdown.Option>
-            <FilterDropdown.Option>Oldest</FilterDropdown.Option>
-          </FilterDropdown> */}
+          <FilterDropdown value={sortBy} handleChange={handleSortBy} />
         </div>
         <div className="flex flex-col justify-center gap-4 min-h-[10rem]">
           {careers.length >= 1 ? (
@@ -242,8 +387,8 @@ const Career = () => {
                 <CardCareer
                   key={career.id}
                   payloads={career}
-                  openModal={handleShowModal}
-                  deleteCareer={deleteCareer}
+                  handleEditCareer={handleEditCareer}
+                  deleteCareer={handleDeleteCareer}
                 />
               )
             )

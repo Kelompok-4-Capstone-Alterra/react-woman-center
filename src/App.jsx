@@ -1,48 +1,16 @@
-import "./App.css";
+import { RouterProvider, redirect } from "react-router";
+import { createBrowserRouter } from "react-router-dom";
+import { getAuthCookie } from "./utils/cookies";
+import CounselingPage from "./pages/CounselinPage/CounselingPage";
 import Dashboard from "./layouts/Dashboard";
 import LandingPage from "./pages/LandingPage";
 import DashboardPage from "./pages/DashboardPage";
 import Report from "./pages/Report";
 import Login from "./pages/Login";
-import { RouterProvider, redirect } from "react-router";
-import { createBrowserRouter } from "react-router-dom";
-import CounselingPage from "./pages/CounselinPage/CounselingPage";
 import Career from "./pages/Career";
-import ArticleForumPage from "./pages/ArticleForumPage";
-import { getAuthCookie } from "./utils/cookies";
 import UserCounselorPage from "./pages/UserCounselorPage";
-
-// element router bisa diganti ke component sesuai page
-
-// const LandingPage = () => {
-//   return <h1>Landing Page</h1>;
-//   // return <LandingPage />;
-// };
-
-// const Login = () => {
-//   return <h1>Login Page</h1>;
-//   // return <LoginPage />;
-// };
-
-const Profile = () => {
-  return <h1>Profile Page</h1>;
-  // return <ProfilePage/>
-};
-
-//const UserAndCounselor = () => {
-  //return <h1>User and Counselor Page</h1>;
-  // return <UserAndCounselorPage/>
-//};
-
-// const Counseling = () => {
-//   return <h1>Counseling Page</h1>;
-//   // return <CounselingPage/>
-// };
-
-// const Career = () => {
-//   return <h1>Career Page</h1>;
-// return <CareerPage/>
-// };
+import ArticleForumPage from "./pages/ArticleForumPage";
+import "./App.css";
 
 const router = createBrowserRouter([
   {
@@ -82,27 +50,8 @@ const router = createBrowserRouter([
     },
   },
   {
-    path: "/profile",
-    element: <Dashboard />,
-    children: [
-      {
-        element: <Profile />,
-        index: true,
-      },
-    ],
-    loader: () => {
-      const userAuth = getAuthCookie();
-
-      if (!userAuth) {
-        return redirect("/login");
-      }
-
-      return null;
-    },
-  },
-  {
     path: "/user-counselor",
-    element: <Dashboard page="UserAndCounselor" />,
+    element: <Dashboard page="User & Counselor" />,
     children: [
       {
         element: <UserCounselorPage />,
@@ -121,7 +70,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/counseling",
-    element: <Dashboard />,
+    element: <Dashboard page="Counseling" />,
     children: [
       {
         element: <CounselingPage />,
