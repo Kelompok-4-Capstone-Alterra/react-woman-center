@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
+
 import TableTitle from "../../components/Dashboard/Tables/TableTitle";
 import TableContainer from "../../components/Dashboard/Tables/TableContainer";
 import TableHeader from "../../components/Dashboard/Tables/TableHeader";
 import Tables from "../../components/Dashboard/Tables/Tables";
 import TableBody from "../../components/Dashboard/Tables/TableBody";
 import TableRow from "../../components/Dashboard/Tables/TableRow";
-import { useForm } from "react-hook-form";
 import Dropdown from "../../components/Dropdown";
 import StatusTag from "../../components/StatusTag/index";
 import ButtonPrimary from "../../components/ButtonPrimary";
@@ -17,15 +17,14 @@ import DeleteModal from "../../components/Dashboard/Counseling/DeleteModal/index
 import LinkModal from "../../components/Dashboard/Counseling/LinkModal";
 import CancelModal from "../../components/Dashboard/Counseling/CancelModal";
 
-import axios from "axios";
-import { getAuthCookie } from "../../utils/cookies";
 import { getSchedule } from "../../api/schedule";
 import { getAllTransactions } from "../../api/transaction";
+import { getAllCounselors } from "../../api/usercounselor";
 import { formatCurrency } from "../../helpers/formatCurrency";
 import { convertDate } from "../../helpers/convertDate";
 
+import { useForm } from "react-hook-form";
 import { Delete, Edit, Visibility, Add, Link } from "@mui/icons-material";
-import { getAllCounselors } from "../../api/usercounselor";
 import { Skeleton } from "@mui/material";
 
 const CounselingPage = () => {
@@ -245,7 +244,7 @@ const CounselingPage = () => {
 
           {isSchedule && (
             <TableBody>
-              {counselors.length >= 1 ? (
+              {counselors && Array.isArray(counselors) ? (
                 counselors.map((counselor) => (
                   <TableRow key={counselor.id}>
                     {isLoading ? (
@@ -326,7 +325,7 @@ const CounselingPage = () => {
           )}
           {!isSchedule && (
             <TableBody>
-              {transactions.length >= 1 ? (
+              {transactions && Array.isArray(transactions) ? (
                 transactions.map((transaction) => (
                   <TableRow key={transaction.id}>
                     {isLoading ? (
