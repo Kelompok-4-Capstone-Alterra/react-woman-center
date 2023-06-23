@@ -31,7 +31,7 @@ const Calendar = ({control, name, label, type, placeholder, errors, register, ha
 
   const handleInputChange = (e) => {
     setInputValue(e.currentTarget.value);
-    const date = parse(e.currentTarget.value, "dd-MM-y", new Date());
+    const date = parse(e.currentTarget.value, "y-MM-dd", new Date());
     if (isValid(date)) {
       setSelected(date);
     } else {
@@ -46,7 +46,7 @@ const Calendar = ({control, name, label, type, placeholder, errors, register, ha
   const handleDaySelect = date => {
     setSelected(date)
     if (date) {
-      setInputValue(format(date, "dd-MM-y"));
+      setInputValue(format(date, "dd/MM/y"));
       handleSelect(date);
     } else {
       setInputValue("");
@@ -83,7 +83,7 @@ const Calendar = ({control, name, label, type, placeholder, errors, register, ha
       <div ref={popperRef} className="flex my-4 w-full focus:outline-none focus:ring-0 focus:border-primaryMain focus:shadow-md focus:shadow-primaryMain/15 py-4 px-4 border-solid border-2 rounded mt-2">
         <input
           type="text"
-          placeholder={format(new Date(), "dd-MM-y")}
+          placeholder={format(new Date(), "dd/MM/y")}
           value={inputValue}
           onChange={handleInputChange}
           className="w-full"
