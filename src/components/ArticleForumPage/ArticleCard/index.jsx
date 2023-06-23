@@ -47,7 +47,7 @@ const ArticleCard = ({ openModalEdit, openModalComment, payloads, deleteArticle 
           </div>
           <div className="flex flex-row h-[72px] py-[8px] gap-x-4 justify-end">
             <div className="columns">
-              <ButtonSecondary onClick={openModalComment}>
+              <ButtonSecondary className="h-full flex justify-center items-center" onClick={openModalComment}>
                 <CommentIcon /> Comment
               </ButtonSecondary>
             </div>
