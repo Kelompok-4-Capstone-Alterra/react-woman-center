@@ -25,7 +25,6 @@ const UserCounselorPage = () => {
   const { control, getValues, register, handleSubmit, setValue, formState: { errors } } = useForm();
   const [isCounselor, setIsCounselor] = useState(true);
   const [isAdd, setisAdd] = useState(false);
-  const [isDelete, setIsDelete] = useState(false);
   const [isView, setisView] = useState(false);
   const [counselorsData, setCounselorsData] = useState(null);
   const [usersData, setUsersData] = useState(null);
@@ -366,7 +365,7 @@ const UserCounselorPage = () => {
             ))
           ) : (
               <tr>
-                <td colSpan="7">Loading...</td>
+                <td colSpan={9}>What you are looking for doesn't exist</td>
               </tr>
           )
         ) : (
@@ -387,7 +386,7 @@ const UserCounselorPage = () => {
             ))
           ) : (
               <tr>
-                <td colSpan="7">Loading...</td>
+                <td colSpan={9}>What you are looking for doesn't exist</td>
               </tr>
           )
         )}
