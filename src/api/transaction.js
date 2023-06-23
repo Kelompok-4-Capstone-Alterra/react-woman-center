@@ -17,7 +17,29 @@ export const getAllTransactions = async (params) => {
       params,
     };
 
-    const response = await axios(config);
+    const response = await axios(config, params);
+
+    return response.data.data.transaction;
+  } catch (error) {
+    throw error.response.data.meta;
+  }
+};
+
+export const getReport = async (params) => {
+  try {
+    const token = getAuthCookie();
+
+    const config = {
+      method: "GET",
+      baseURL: VITE_API_BASE_URL,
+      url: "/admin/transactions/report",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params,
+    };
+
+    const response = await axios(config, params);
 
     return response.data.data.transaction;
   } catch (error) {
