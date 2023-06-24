@@ -134,6 +134,14 @@ const CounselingPage = () => {
         closeModal={() => {
           setShowScheduleModal(false);
         }}
+        onSubmit={() => {
+          setScheduleSearchParams("");
+          fetchAllCounselors({
+            has_schedule: true,
+            sort_by: scheduleSortBy,
+            search: scheduleSearchParams,
+          });
+        }}
       />
       {/* VIEW MODAL */}
       <ViewModal
@@ -150,6 +158,14 @@ const CounselingPage = () => {
         closeModal={() => {
           setShowUpdateModal(false);
         }}
+        onSubmit={() => {
+          setScheduleSearchParams("");
+          fetchAllCounselors({
+            has_schedule: true,
+            sort_by: scheduleSortBy,
+            search: scheduleSearchParams,
+          });
+        }}
       />
 
       {/* Delete Modal */}
@@ -158,6 +174,14 @@ const CounselingPage = () => {
         modalState={showDeleteModal}
         closeModal={() => {
           setShowDeleteModal(false);
+        }}
+        onSubmit={() => {
+          setScheduleSearchParams("");
+          fetchAllCounselors({
+            has_schedule: true,
+            sort_by: scheduleSortBy,
+            search: scheduleSearchParams,
+          });
         }}
       />
 
@@ -168,6 +192,13 @@ const CounselingPage = () => {
         closeModal={() => {
           setShowLinkModal(false);
         }}
+        onSubmit={() => {
+          setTransactionSearchParams("");
+          fetchAllTransactions({
+            sort_by: scheduleSortBy,
+            search: scheduleSearchParams,
+          });
+        }}
       />
       {/* Cancel Modal */}
       <CancelModal
@@ -175,6 +206,13 @@ const CounselingPage = () => {
         modalState={showCancelModal}
         closeModal={() => {
           setShowCancelModal(false);
+        }}
+        onSubmit={() => {
+          setTransactionSearchParams("");
+          fetchAllTransactions({
+            sort_by: scheduleSortBy,
+            search: scheduleSearchParams,
+          });
         }}
       />
 

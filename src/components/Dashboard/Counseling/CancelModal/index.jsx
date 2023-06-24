@@ -5,14 +5,16 @@ import ButtonOutline from "../../../ButtonOutline/index";
 import { cancelTransaction } from "../../../../api/transaction";
 import ModalConfirm from "../../../ModalConfirm";
 
-const CancelModal = ({ modalState, closeModal, transactionId }) => {
+const CancelModal = ({ modalState, closeModal, transactionId, onSubmit }) => {
   return (
     <ModalConfirm
       isConfirm={modalState}
       onClose={closeModal}
       messages={"Are you sure want to cancel this counseling’s appoinment?"}
       onSure={() => {
-        cancelTransaction(transactionId);
+        cancelTransaction(transactionId).then((data) => {
+          onSubmit();
+        });
         closeModal();
       }}
     />

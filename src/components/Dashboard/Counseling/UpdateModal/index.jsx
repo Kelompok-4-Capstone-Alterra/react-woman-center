@@ -12,7 +12,7 @@ import { getSchedule, updateSchedule } from "../../../../api/schedule";
 import { convertDate } from "../../../../helpers/convertDate";
 import { getCounselorById } from "../../../../api/usercounselor";
 
-const UpdateModal = ({ modalState, closeModal, counselor }) => {
+const UpdateModal = ({ modalState, closeModal, counselor, onSubmit }) => {
   const {
     register,
     handleSubmit,
@@ -70,8 +70,9 @@ const UpdateModal = ({ modalState, closeModal, counselor }) => {
             const counselorId = counselor.id;
             const dates = data.dates.map((date) => convertDate(date));
 
-            updateSchedule({ counselorId, dates, times });
-
+            updateSchedule({ counselorId, dates, times }).then((res) => {
+              onSubmit();
+            });
             closeModal();
           })}
         >

@@ -31,7 +31,6 @@ const ViewModal = ({ modalState, closeModal, counselor }) => {
     setDates(dates);
     setTimes(times);
     setCounselorImage(counselorData.profile_picture);
-    console.log(counselorImage);
   };
 
   useEffect(() => {

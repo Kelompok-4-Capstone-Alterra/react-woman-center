@@ -13,7 +13,7 @@ import { addSchedule } from "../../../../api/schedule";
 import { getAuthCookie } from "../../../../utils/cookies";
 import { getAllCounselors } from "../../../../api/usercounselor";
 
-const ScheduleModal = ({ modalState, closeModal }) => {
+const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
   const {
     register,
     handleSubmit,
@@ -52,7 +52,9 @@ const ScheduleModal = ({ modalState, closeModal }) => {
           const counselorId = data.counselor.value;
           const dates = data.dates.map((date) => convertDate(date));
 
-          addSchedule({ counselorId, dates, times });
+          addSchedule({ counselorId, dates, times }).then((data) => {
+            onSubmit();
+          });
 
           closeModal();
         })}
