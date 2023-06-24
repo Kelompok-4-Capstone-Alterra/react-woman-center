@@ -1,10 +1,11 @@
 export const convertDate = (dateString) => {
   const date = new Date(dateString);
 
-  const year = date.getFullYear();
-  const month = ("0" + (date.getMonth() + 1)).slice(-2); // Adding 1 to month since it is zero-based
-  const day = ("0" + date.getDate()).slice(-2);
+  const year = date.getFullYear().toString();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
 
-  const formattedDate = `${day}/${month}/${year}`;
+  const formattedDate = `${year}-${month}-${day}`;
+
   return formattedDate;
 };
