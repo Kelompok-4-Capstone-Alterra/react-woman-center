@@ -52,11 +52,13 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
           const counselorId = data.counselor.value;
           const dates = data.dates.map((date) => convertDate(date));
 
-          console.log(dates);
-
-          addSchedule({ counselorId, dates, times }).then((data) => {
-            onSubmit();
-          });
+          addSchedule({ counselorId, dates, times })
+            .then((data) => {
+              onSubmit(true, "success");
+            })
+            .catch((error) => {
+              onSubmit(false, "failed");
+            });
 
           closeModal();
         })}

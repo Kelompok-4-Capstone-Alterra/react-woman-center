@@ -30,9 +30,13 @@ const LinkModal = ({ modalState, closeModal, transactionId, onSubmit }) => {
       <form
         onSubmit={handleSubmit(({ link }) => {
           console.log(link);
-          sendTransactionLink(transactionId, link).then((data) => {
-            onSubmit();
-          });
+          sendTransactionLink(transactionId, link)
+            .then((data) => {
+              onSubmit(true, "success");
+            })
+            .catch((error) => {
+              onSubmit(false, "failed");
+            });
           closeModal();
         })}
       >
