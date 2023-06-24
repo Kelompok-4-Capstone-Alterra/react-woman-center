@@ -73,9 +73,13 @@ const UpdateModal = ({ modalState, closeModal, counselor, onSubmit }) => {
             const counselorId = counselor.id;
             const dates = data.dates.map((date) => convertDate(date));
 
-            updateSchedule({ counselorId, dates, times }).then((res) => {
-              onSubmit();
-            });
+            updateSchedule({ counselorId, dates, times })
+              .then((data) => {
+                onSubmit(true, "success");
+              })
+              .catch((error) => {
+                onSubmit(false, "failed");
+              });
             closeModal();
           })}
         >

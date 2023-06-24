@@ -16,6 +16,7 @@ import ViewModal from "../../components/Dashboard/Counseling/ViewModal/index";
 import DeleteModal from "../../components/Dashboard/Counseling/DeleteModal/index";
 import LinkModal from "../../components/Dashboard/Counseling/LinkModal";
 import CancelModal from "../../components/Dashboard/Counseling/CancelModal";
+import Popup from "../../components/Dashboard/Popup";
 
 import { getSchedule } from "../../api/schedule";
 import { getAllTransactions } from "../../api/transaction";
@@ -51,6 +52,11 @@ const CounselingPage = () => {
   const [scheduleSearchParams, setScheduleSearchParams] = useState("");
   const [transactionSearchParams, setTransactionSearchParams] = useState("");
 
+  // Popup State
+  const [isPopup, setIsPopup] = useState(false);
+  const [popupSuccess, setPopupSuccess] = useState(true);
+  const [popupMessage, setPopupMessage] = useState("success");
+
   // Helper State
   const [isLoading, setIsLoading] = useState(false);
   const [isShowToast, setIsShowToast] = useState({
@@ -69,6 +75,15 @@ const CounselingPage = () => {
     setIsSchedule(dropdownValue.value);
   };
 
+  const handlePopup = (type, message) => {
+    setIsPopup(true);
+    setPopupSuccess(type);
+    setPopupMessage(message);
+    setTimeout(function () {
+      setIsPopup(false);
+    }, 1500);
+  };
+
   const fetchAllCounselors = async (params = {}) => {
     setIsLoading(true);
 
@@ -81,12 +96,6 @@ const CounselingPage = () => {
         setNotFoundMsg("What you are looking for doesn't exist");
       }
     } catch (error) {
-      setIsShowToast({
-        ...isShowToast,
-        isOpen: true,
-        variant: "error",
-        message: error.message,
-      });
       setIsLoading(false);
     }
 
@@ -101,23 +110,27 @@ const CounselingPage = () => {
       setTransactions(response);
       setIsLoading(false);
     } catch (error) {
-      setIsShowToast({
-        ...isShowToast,
-        isOpen: true,
-        variant: "error",
-        message: error.message,
-      });
       setIsLoading(false);
     }
   };
 
-  const handleSubmitSchedule = () => {
+  const handleSubmitSchedule = (popupType, popupMessage) => {
     setScheduleSearchParams("");
     fetchAllCounselors({
       has_schedule: true,
       sort_by: scheduleSortBy,
       search: scheduleSearchParams,
     });
+    handlePopup(popupType, popupMessage);
+  };
+
+  const handleSumbitTransaction = (popupType, popupMessage) => {
+    setTransactionSearchParams("");
+    fetchAllTransactions({
+      sort_by: scheduleSortBy,
+      search: scheduleSearchParams,
+    });
+    handlePopup(popupType, popupMessage);
   };
 
   useEffect(() => {
@@ -137,6 +150,8 @@ const CounselingPage = () => {
 
   return (
     <div className="">
+      {/* POPUP */}
+      <Popup isSuccess={popupSuccess} isOpen={isPopup} message={popupMessage} />
       {/* SCHEDULE MODAL */}
       <ScheduleModal
         modalState={showScheduleModal}
@@ -160,14 +175,7 @@ const CounselingPage = () => {
         closeModal={() => {
           setShowUpdateModal(false);
         }}
-        onSubmit={() => {
-          setScheduleSearchParams("");
-          fetchAllCounselors({
-            has_schedule: true,
-            sort_by: scheduleSortBy,
-            search: scheduleSearchParams,
-          });
-        }}
+        onSubmit={handleSubmitSchedule}
       />
 
       {/* Delete Modal */}
@@ -177,14 +185,7 @@ const CounselingPage = () => {
         closeModal={() => {
           setShowDeleteModal(false);
         }}
-        onSubmit={() => {
-          setScheduleSearchParams("");
-          fetchAllCounselors({
-            has_schedule: true,
-            sort_by: scheduleSortBy,
-            search: scheduleSearchParams,
-          });
-        }}
+        onSubmit={handleSubmitSchedule}
       />
 
       {/* Link Modal */}
@@ -194,13 +195,7 @@ const CounselingPage = () => {
         closeModal={() => {
           setShowLinkModal(false);
         }}
-        onSubmit={() => {
-          setTransactionSearchParams("");
-          fetchAllTransactions({
-            sort_by: scheduleSortBy,
-            search: scheduleSearchParams,
-          });
-        }}
+        onSubmit={handleSumbitTransaction}
       />
       {/* Cancel Modal */}
       <CancelModal
@@ -209,13 +204,7 @@ const CounselingPage = () => {
         closeModal={() => {
           setShowCancelModal(false);
         }}
-        onSubmit={() => {
-          setTransactionSearchParams("");
-          fetchAllTransactions({
-            sort_by: scheduleSortBy,
-            search: scheduleSearchParams,
-          });
-        }}
+        onSubmit={handleSumbitTransaction}
       />
 
       <div className="flex flex-row justify-between items-center">
