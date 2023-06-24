@@ -25,18 +25,22 @@ const UserCounselorPage = () => {
   const { control, getValues, register, handleSubmit, setValue, formState: { errors } } = useForm();
   const [isCounselor, setIsCounselor] = useState(true);
   const [isAdd, setisAdd] = useState(false);
-  const [isDelete, setIsDelete] = useState(false);
   const [isView, setisView] = useState(false);
-  const [data, setData] = useState(null);
+  const [counselorsData, setCounselorsData] = useState(null);
+  const [usersData, setUsersData] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const [user, setUser] = useState(null);
   const [counselor, setCounselor] = useState(null);
-  const [sortBy, setSortBy] = useState("newest");
   const [showModalConfirmUser, setShowModalConfirmUser] = useState(false);
   const [showModalConfirmCounselor, setShowModalConfirmCounselor] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedCounselorId, setSelectedCounselorId] = useState(null);
+  const [counselorSearchParams, setCounselorSearchParams] = useState("");
+  const [userSearchParams, setUserSearchParams] = useState("");
+  const [userSortBy, setUserSortBy] = useState("newest");
+  const [counselorSortBy, setCounselorSortBy] = useState("newest")
+
   const [isShowToast, setIsShowToast] = useState({
     isOpen: false,
     variant: "info",
@@ -79,7 +83,7 @@ const UserCounselorPage = () => {
 
           handleAdd();
           const counselorsData = await getAllCounselors();
-          setData(counselorsData);
+          setCounselorsData(counselorsData);
 
           return response.data.meta;
       } catch (error) {
@@ -131,31 +135,37 @@ const UserCounselorPage = () => {
       }
   };
 
-  useEffect(() => {
-    const fetchDataCounselors = async () => {
-      try {
-        const counselorsData = await getAllCounselors();
-        setData(counselorsData);
-      } catch (error) {
-        console.log('Error:', error);
-      }
-    };
-
-    const fetchDataUsers = async () => {
-      try {
-        const usersData = await getAllUsers();
-        setData(usersData);
-      } catch (error) {
-        console.log('Error:', error);
-      }
-    };
-
-    if (isCounselor) {
-      fetchDataCounselors();
-    } else {
-      fetchDataUsers();
+  const fetchDataCounselors = async (params = {}) => {
+    try {
+      const counselorsData = await getAllCounselors(params);
+      setCounselorsData(counselorsData);
+    } catch (error) {
+      console.log('Error:', error);
     }
-  }, [isCounselor]);
+  };
+
+  const fetchDataUsers = async (params = {}) => {
+    try {
+      const usersData = await getAllUsers(params);
+      setUsersData(usersData);
+    } catch (error) {
+      console.log('Error:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDataCounselors({
+    sort_by: counselorSortBy,
+    search: counselorSearchParams
+    });
+  }, [counselorSortBy, counselorSearchParams]);
+
+  useEffect(() => {
+    fetchDataUsers({
+      sort_by: userSortBy,
+      search: userSearchParams
+      });
+  }, [userSortBy, userSearchParams]);
 
   const deleteCounselor = async (counselorId) => {
     try {
@@ -167,7 +177,7 @@ const UserCounselorPage = () => {
         message: response.message,
       });
       const counselorsData = await getAllCounselors();
-      setData(counselorsData);
+      setCounselorsData(counselorsData);
     } catch (error) {
       console.error(error);
     }
@@ -183,7 +193,7 @@ const UserCounselorPage = () => {
         message: response.message,
       });
       const usersData = await getAllUsers();
-      setData(usersData);
+      setUsersData(usersData);
     } catch (error) {
       console.error(error);
     }
@@ -274,12 +284,6 @@ const UserCounselorPage = () => {
     handleShowModalConfirmUser(false);
   }
 
-  const handleSearchCounselor= (event) => {
-    const keyword = event.target.value;
-
-    getAllCounselors({ search: keyword });
-  };
-
   return(
     <>
     <div className="px-[40px]">
@@ -305,7 +309,21 @@ const UserCounselorPage = () => {
           </div>
     </div>
     <TableContainer>
-      <TableTitle title={`${isCounselor ? "Counselors" : "Users"}`}/>
+      <TableTitle
+      title={`${isCounselor ? "Counselors" : "Users"}`}
+      onChange={
+            isCounselor
+              ? (e) => setCounselorSearchParams(e.target.value)
+              : (e) => setUserSearchParams(e.target.value)
+          }
+          // SortBy
+          sortBy={isCounselor ? counselorSortBy : userSortBy}
+          onSelect={
+            isCounselor
+              ? (e) => setCounselorSortBy(e.target.value)
+              : (e) => setUserSortBy(e.target.value)
+          }
+          />
         <Tables>
         {isCounselor ? (
           <TableHeader>
@@ -329,8 +347,8 @@ const UserCounselorPage = () => {
         )}
           <TableBody>
           {isCounselor ? (
-          data && Array.isArray(data) ? (
-            data.map((counselor) => (
+          counselorsData && Array.isArray(counselorsData) ? (
+            counselorsData.map((counselor) => (
               <TableRow key={counselor.id}>
                 <td className="w-[130px]">{counselor.id}</td>
                 <td className="w-[130px]">{counselor.name}</td>
@@ -347,12 +365,12 @@ const UserCounselorPage = () => {
             ))
           ) : (
               <tr>
-                <td colSpan="7">Loading...</td>
+                <td colSpan={9}>What you are looking for doesn't exist</td>
               </tr>
           )
         ) : (
-          data && Array.isArray(data) ? (
-            data.map((user) => (
+          usersData && Array.isArray(usersData) ? (
+            usersData.map((user) => (
               <TableRow key={user.id}>
                 <td className="w-[130px]">{user.id}</td>
                 <td className="w-[130px]">{user.name}</td>
@@ -368,7 +386,7 @@ const UserCounselorPage = () => {
             ))
           ) : (
               <tr>
-                <td colSpan="7">Loading...</td>
+                <td colSpan={9}>What you are looking for doesn't exist</td>
               </tr>
           )
         )}

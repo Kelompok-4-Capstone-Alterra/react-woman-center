@@ -17,7 +17,7 @@ import { getAuthCookie } from '../../../utils/cookies';
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
-const AddArticleModal = ({ openModal, onClose }) => {
+const AddArticleModal = ({ openModal, onClose, updateData }) => {
   const [topics, setTopics] = useState([]);
   const [imagePreview, setImagePreview] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
@@ -54,7 +54,7 @@ const AddArticleModal = ({ openModal, onClose }) => {
 
   const handleSelectTopic = () => {
     const formData = getValues();
-    const dropdownValue = formData.topic;
+    // const dropdownValue = formData.topic;
   };
 
   const onSubmit = async (articleData) => {
@@ -89,8 +89,9 @@ const AddArticleModal = ({ openModal, onClose }) => {
 
     reset();
     setImagePreview('')
+    updateData()
     onClose(false)
-
+    
   };
 
   const handleClose = () => {
