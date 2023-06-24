@@ -111,6 +111,15 @@ const CounselingPage = () => {
     }
   };
 
+  const handleSubmitSchedule = () => {
+    setScheduleSearchParams("");
+    fetchAllCounselors({
+      has_schedule: true,
+      sort_by: scheduleSortBy,
+      search: scheduleSearchParams,
+    });
+  };
+
   useEffect(() => {
     fetchAllCounselors({
       has_schedule: true,
@@ -134,14 +143,7 @@ const CounselingPage = () => {
         closeModal={() => {
           setShowScheduleModal(false);
         }}
-        onSubmit={() => {
-          setScheduleSearchParams("");
-          fetchAllCounselors({
-            has_schedule: true,
-            sort_by: scheduleSortBy,
-            search: scheduleSearchParams,
-          });
-        }}
+        onSubmit={handleSubmitSchedule}
       />
       {/* VIEW MODAL */}
       <ViewModal

@@ -52,6 +52,8 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
           const counselorId = data.counselor.value;
           const dates = data.dates.map((date) => convertDate(date));
 
+          console.log(dates);
+
           addSchedule({ counselorId, dates, times }).then((data) => {
             onSubmit();
           });
@@ -93,13 +95,13 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
             handleTimeSelect();
           }}
         >
-          <option value="09:00:00" label="09:00:00"></option>
-          <option value="10:00:00" label="10:00:00"></option>
-          <option value="11:00:00" label="11:00:00"></option>
-          <option value="12:00:00" label="12:00:00"></option>
-          <option value="13:00:00" label="13:00:00"></option>
-          <option value="14:00:00" label="14:00:00"></option>
-          <option value="15:00:00" label="15:00:00"></option>
+          <option value="09:00" label="09:00"></option>
+          <option value="10:00" label="10:00"></option>
+          <option value="11:00" label="11:00"></option>
+          <option value="12:00" label="12:00"></option>
+          <option value="13:00" label="13:00"></option>
+          <option value="14:00" label="14:00"></option>
+          <option value="15:00" label="15:00"></option>
         </Dropdown>
         {times?.map((time) => (
           <div
