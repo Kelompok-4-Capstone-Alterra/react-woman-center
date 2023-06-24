@@ -11,6 +11,7 @@ import UpdateIcon from "@mui/icons-material/Update";
 import { getSchedule, updateSchedule } from "../../../../api/schedule";
 import { convertDate } from "../../../../helpers/convertDate";
 import { getCounselorById } from "../../../../api/usercounselor";
+import { convertTime } from "../../../../helpers/converTime";
 
 const UpdateModal = ({ modalState, closeModal, counselor, onSubmit }) => {
   const {
@@ -30,8 +31,10 @@ const UpdateModal = ({ modalState, closeModal, counselor, onSubmit }) => {
   const getCounselorSchedule = async (id) => {
     const { dates, times } = await getSchedule(id);
     const counselorData = await getCounselorById(id);
+
+    const timesData = times.map((time) => convertTime(time));
     replace(dates);
-    setTimes(times);
+    setTimes(timesData);
     setCounselorImage(counselorData.profile_picture);
   };
 
@@ -92,13 +95,13 @@ const UpdateModal = ({ modalState, closeModal, counselor, onSubmit }) => {
             placeholder={"Select Time"}
             handleSelect={() => handleTimeSelect()}
           >
-            <option value="09:00:00" label="09:00:00"></option>
-            <option value="10:00:00" label="10:00:00"></option>
-            <option value="11:00:00" label="11:00:00"></option>
-            <option value="12:00:00" label="12:00:00"></option>
-            <option value="13:00:00" label="13:00:00"></option>
-            <option value="14:00:00" label="14:00:00"></option>
-            <option value="15:00:00" label="15:00:00"></option>
+            <option value="09:00" label="09:00"></option>
+            <option value="10:00" label="10:00"></option>
+            <option value="11:00" label="11:00"></option>
+            <option value="12:00" label="12:00"></option>
+            <option value="13:00" label="13:00"></option>
+            <option value="14:00" label="14:00"></option>
+            <option value="15:00" label="15:00"></option>
           </Dropdown>
 
           <div className="mb-6">
