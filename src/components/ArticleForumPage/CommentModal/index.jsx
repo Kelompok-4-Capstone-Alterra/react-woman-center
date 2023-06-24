@@ -9,7 +9,7 @@ import { updateComments } from '../../../features/article/commentSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Alert, MenuItem, Select, Skeleton, Snackbar } from '@mui/material';
 
-const CommentModal = ({ openModal, onClose, articleId }) => {
+const CommentModal = ({ openModal, onClose, articleId, totalComment, updateData }) => {
   const comments = useSelector((store) => store.commentReducer.comments);
   const dispatch = useDispatch();
 
@@ -24,7 +24,7 @@ const CommentModal = ({ openModal, onClose, articleId }) => {
 
   useEffect(() => {
     fetchAllComment();
-  }, [articleId]);
+  }, [articleId, totalComment]);
 
   const fetchAllComment = async () => {
     setIsLoading(true);
@@ -67,6 +67,8 @@ const CommentModal = ({ openModal, onClose, articleId }) => {
     } catch (error) {
       console.log(error);
     }
+
+    updateData()
   };
 
   return (
@@ -81,7 +83,7 @@ const CommentModal = ({ openModal, onClose, articleId }) => {
           <div className="py-2">
             <div className="flex justify-between w-full mb-[44px]">
               <div>
-                <CommentIcon /> 123 Commnets
+                <CommentIcon /> {totalComment} Comments
               </div>
               <button onClick={() => onClose(false)}>
                 <CloseIcon className="bg-black text-white w-[18px] h-[18px]" />

@@ -15,7 +15,7 @@ import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
 import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Placeholder from '@tiptap/extension-placeholder';
 import { Controller, useController, useForm, useFormContext } from 'react-hook-form';
 
@@ -167,7 +167,15 @@ export const TextEditor = ({ label, name, register, control }) => {
       const html = editor.getHTML();
       onChange(html);
     },
+    
   });
+
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value);
+    }
+  }, [value, editor]);
+
 
   return (
     <div className="flex flex-col mb-4 gap-y-2">
