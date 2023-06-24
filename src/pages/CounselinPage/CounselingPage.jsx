@@ -59,6 +59,7 @@ const CounselingPage = () => {
     duration: 5000,
     message: "",
   });
+  const [notFoundMsg, setNotFoundMsg] = useState("");
 
   const { getValues, control } = useForm();
 
@@ -75,6 +76,10 @@ const CounselingPage = () => {
       const response = await getAllCounselors(params);
       setCounselors(response);
       setIsLoading(false);
+
+      if (response.length < 1) {
+        setNotFoundMsg("What you are looking for doesn't exist");
+      }
     } catch (error) {
       setIsShowToast({
         ...isShowToast,
@@ -84,6 +89,8 @@ const CounselingPage = () => {
       });
       setIsLoading(false);
     }
+
+    setNotFoundMsg("What you are looking for doesn't exist");
   };
 
   const fetchAllTransactions = async (params = {}) => {
@@ -244,7 +251,7 @@ const CounselingPage = () => {
 
           {isSchedule && (
             <TableBody>
-              {counselors && Array.isArray(counselors) ? (
+              {counselors.length >= 1 ? (
                 counselors.map((counselor) => (
                   <TableRow key={counselor.id}>
                     {isLoading ? (
@@ -267,12 +274,6 @@ const CounselingPage = () => {
                             onClick={() => {
                               setShowUpdateModal(true);
                               setSelectedCounselor(counselor);
-                              getSchedule(counselor.id).then(
-                                ({ dates, times }) => {
-                                  setTimes(times);
-                                  setDates(dates);
-                                }
-                              );
                             }}
                           >
                             <Edit
@@ -318,7 +319,7 @@ const CounselingPage = () => {
                 ))
               ) : (
                 <TableRow>
-                  <td colSpan={6}>What you are looking for doesn't exist</td>
+                  <td colSpan={6}>{notFoundMsg}</td>
                 </TableRow>
               )}
             </TableBody>
@@ -364,31 +365,41 @@ const CounselingPage = () => {
                           <StatusTag type={transaction.status} />
                         </td>
                         <td className="w-[130px]">
-                          <ButtonOutline
-                            className="max-w-[130px] w-[90%]"
-                            onClick={() => {
-                              setShowLinkModal(true);
-                              setSelectedTransactionId(transaction.id);
-                            }}
-                          >
-                            <Link
-                              className="mr-1"
-                              style={{ fontSize: "1.125rem" }}
-                            />
-                            <span>Send Link</span>
-                          </ButtonOutline>
+                          {transaction.status == "pending" ||
+                          transaction.status == "ongoing" ? (
+                            <ButtonOutline
+                              className="max-w-[130px] w-[90%]"
+                              onClick={() => {
+                                setShowLinkModal(true);
+                                setSelectedTransactionId(transaction.id);
+                              }}
+                            >
+                              <Link
+                                className="mr-1"
+                                style={{ fontSize: "1.125rem" }}
+                              />
+                              <span>Send Link</span>
+                            </ButtonOutline>
+                          ) : (
+                            <span>-</span>
+                          )}
                         </td>
                         <td className="w-[130px]">
-                          {" "}
-                          <span
-                            className="cursor-pointer text-dangerMain"
-                            onClick={() => {
-                              setShowCancelModal(true);
-                              setSelectedTransactionId(transaction.id);
-                            }}
-                          >
-                            cancel
-                          </span>
+                          {transaction.status == "pending" ||
+                          transaction.status == "ongoing" ||
+                          transaction.status == "waiting" ? (
+                            <span
+                              className="cursor-pointer text-dangerMain"
+                              onClick={() => {
+                                setShowCancelModal(true);
+                                setSelectedTransactionId(transaction.id);
+                              }}
+                            >
+                              cancel
+                            </span>
+                          ) : (
+                            <span>-</span>
+                          )}
                         </td>
                       </>
                     )}
