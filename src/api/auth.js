@@ -8,7 +8,7 @@ export const login = async (payloads) => {
     const config = {
       method: "POST",
       baseURL: VITE_API_BASE_URL,
-      url: "/admin/login",
+      url: "/admin/auth/login",
       data: {
         username,
         password,
