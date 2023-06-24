@@ -13,47 +13,40 @@ import StatusTag from "../components/StatusTag";
 import { getAllTransactions } from "../api/transaction";
 import { formatCurrency } from "../helpers/formatCurrency";
 import { convertDate } from "../helpers/convertDate";
+import { getStatistics } from "../api/statistics";
 
 const DashboardPage = () => {
+  const [statistics, setStatistics] = useState({});
   const [transactions, setTransactions] = useState([]);
   const [sortBy, setSortBy] = useState("newest");
-   // Function to handle the sorting
-    const handleSort = () => {
-    const sortedData = [...transactions];
-    sortedData.sort((a, b) => {
-    const dateA = new Date(a.created_at);
-    const dateB = new Date(b.created_at);
-    return sortBy === 'Newest' ? dateA - dateB : dateB - dateA;
-    });
-    setTransactions(sortedData);
-    setSortBy(sortBy === 'Newest' ? 'Oldes' : 'Newest');
-    };
-    
-  
+ 
   useEffect(() => {
+    getStatistics().then((data) => {
+      setStatistics(data);
+      console.log(data);
+    });
     getAllTransactions({ sort_by: sortBy }).then((data) => {
       setTransactions(data);
       console.log(data);
     });
   }, [sortBy]);
 
-
   return (
     <>
       <div className="flex gap-5 mb-10">
         <Card
           title="Total Users"
-          amount="123.456.789"
+          amount= {statistics.total_user}
           icon={<GroupsIcon style={{ fontSize: "45px" }} />}
         ></Card>
         <Card
           title="Total Counselors"
-          amount="123.456.789"
+          amount={statistics.total_counselor}
           icon={<GroupsIcon style={{ fontSize: "45px" }} />}
         ></Card>
         <Card
           title="Total Transactions"
-          amount="123.456.789"
+          amount={statistics.total_transaction}
           icon={<ShoppingBagRoundedIcon style={{ fontSize: "45px" }} />}
         ></Card>
       </div>
