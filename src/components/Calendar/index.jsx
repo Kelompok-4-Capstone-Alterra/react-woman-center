@@ -50,6 +50,7 @@ const Calendar = ({control, name, label, type, placeholder, errors, register, ha
       handleSelect(date);
     } else {
       setInputValue("");
+      handleSelect(null);
     }
     closePopper();
   }

@@ -2,7 +2,7 @@ import React from "react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AnnouncementIcon from "@mui/icons-material/Announcement";
 
-const Popup = ({ message, success, failed, isOpen }) => {
+const Popup = ({ message, isSuccess, isOpen }) => {
   return (
     <>
       {isOpen && (
@@ -10,13 +10,13 @@ const Popup = ({ message, success, failed, isOpen }) => {
           <div className="fixed bg-black opacity-50 w-[100vw] h-[100vh] inset-0"></div>
           <div className="z-10 h-full flex justify-center items-center">
             <div className=" w-[250px] h-[125px] justify-center items-center flex flex-col rounded shadow-md op bg-white">
-              {success && (
+              {isSuccess && (
                 <CheckCircleIcon
                   fontSize="large"
                   className="mb-2 text-successMain"
                 />
               )}
-              {failed && (
+              {!isSuccess && (
                 <AnnouncementIcon
                   fontSize="large"
                   className="mb-2 text-dangerMain"
