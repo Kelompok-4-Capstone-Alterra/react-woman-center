@@ -19,6 +19,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { getAllCounselors, getAllUsers, deleteCounselorById, deleteUserById, getUserById, getCounselorById } from "../api/usercounselor";
 import { getAuthCookie } from "../utils/cookies";
 import { Alert, MenuItem, Select, Skeleton, Snackbar } from "@mui/material";
+import { Delete, Edit, Visibility, Add, Link } from "@mui/icons-material";
 const { VITE_API_BASE_URL } = import.meta.env;
 
 const UserCounselorPage = () => {
@@ -286,7 +287,7 @@ const UserCounselorPage = () => {
 
   return(
     <>
-    <div className="px-[40px]">
+    <div>
     <div className="flex flex-row justify-between items-center">
     <form className="w-[360px]">
             <Dropdown
@@ -303,7 +304,7 @@ const UserCounselorPage = () => {
           <div>
           {isCounselor && (
           <ButtonPrimary className="flex items-center justify-center text-sm" onClick={handleAdd}>
-            <AddIcon /> Add Counselor
+            <AddIcon /> New Counselor
           </ButtonPrimary>
           )}
           </div>
@@ -356,10 +357,22 @@ const UserCounselorPage = () => {
                 <td className="w-[130px]">{counselor.email}</td>
                 <td className="w-[130px]">{counselor.topic}</td>
                 <td className="w-[130px]">
-                <ButtonPrimary className="w-[90%]" onClick={() => getCounselor(counselor.id)}>View</ButtonPrimary>
+                <ButtonPrimary className="w-[90%]" onClick={() => getCounselor(counselor.id)}>
+                <Visibility
+                              className="mr-1"
+                              style={{ fontSize: "1.125rem" }}
+                            />
+                            <span>View</span>
+                </ButtonPrimary>
                 </td>
                 <td className="w-[130px]">
-                  <ButtonOutline className="w-[90%]" onClick={() => openModalConfirmCounselor(counselor.id)}>Delete</ButtonOutline>
+                  <ButtonOutline className="w-[90%]" onClick={() => openModalConfirmCounselor(counselor.id)}>
+                  <Delete
+                              className="mr-1"
+                              style={{ fontSize: "1.125rem" }}
+                            />
+                            <span>Delete</span>
+                  </ButtonOutline>
                 </td>
               </TableRow>
             ))
@@ -377,10 +390,22 @@ const UserCounselorPage = () => {
                 <td className="w-[130px]">{user.username}</td>
                 <td className="w-[130px]">{user.email}</td>
                 <td className="w-[130px]">
-                  <ButtonPrimary className="w-[90%]" onClick={() => getUser(user.id)}>View</ButtonPrimary>
+                  <ButtonPrimary className="w-[90%]" onClick={() => getUser(user.id)}>
+                  <Visibility
+                              className="mr-1"
+                              style={{ fontSize: "1.125rem" }}
+                            />
+                            <span>View</span>
+                  </ButtonPrimary>
                 </td>
                 <td className="w-[130px]">
-                  <ButtonOutline className="w-[90%]" onClick={() => openModalConfirmUser(user.id)}>Delete</ButtonOutline>
+                  <ButtonOutline className="w-[90%]" onClick={() => openModalConfirmUser(user.id)}>
+                  <Delete
+                              className="mr-1"
+                              style={{ fontSize: "1.125rem" }}
+                            />
+                            <span>Delete</span>
+                  </ButtonOutline>
                 </td>
               </TableRow>
             ))
@@ -493,7 +518,7 @@ const UserCounselorPage = () => {
               <InputField name="username" label="Username" type="preview" value={user?.username} />
               <InputField name="username" label="Phone Number" type="preview" value={user?.phone_number} />
               </form>
-              <ButtonPrimary onClick={handleView}>Close</ButtonPrimary>
+              <ButtonPrimary className="h-fit w-full px-3 py-3 flex items-center justify-center" onClick={handleView}>Close</ButtonPrimary>
               </div>
        </Modal>
             )}
