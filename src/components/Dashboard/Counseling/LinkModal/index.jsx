@@ -11,7 +11,7 @@ import UpdateIcon from "@mui/icons-material/Update";
 import InputField from "../../../InputField";
 import { sendTransactionLink } from "../../../../api/transaction";
 
-const LinkModal = ({ modalState, closeModal, transactionId }) => {
+const LinkModal = ({ modalState, closeModal, transactionId, onSubmit }) => {
   const {
     register,
     handleSubmit,
@@ -30,7 +30,9 @@ const LinkModal = ({ modalState, closeModal, transactionId }) => {
       <form
         onSubmit={handleSubmit(({ link }) => {
           console.log(link);
-          sendTransactionLink(transactionId, link);
+          sendTransactionLink(transactionId, link).then((data) => {
+            onSubmit();
+          });
           closeModal();
         })}
       >
