@@ -59,7 +59,7 @@ const Report = () => {
   return (
     <>
     <form onSubmit={handleSubmit(onSubmit)}>
-    <div className="flex relative w-full m-4">
+    <div className="flex relative w-full mx-4 mt-4">
       <div className="w-1/2 mr-4">
         <Calendar
         control ={control}
@@ -83,15 +83,14 @@ const Report = () => {
       </div>
     </div>
     </form>
-    <ButtonPrimary className="m-4 w-[140px] h-10 text-sm">
-      <FileDownloadRoundedIcon className="mr-[10px]" />
       <CSVLink 
-      data={transactions}
-      headers={headers}
-      filename={"Counseling Report.csv"}
-      >Export
+        data={transactions}
+        headers={headers}
+        filename={"Counseling Report.csv"}>
+        <ButtonPrimary className="m-4 w-[140px] h-10 text-base">
+          <FileDownloadRoundedIcon className="mr-[10px]" />Export File
+        </ButtonPrimary>
       </CSVLink>
-    </ButtonPrimary>
     <TableContainer>
         <TableTitle 
         title={"Counseling Report"}

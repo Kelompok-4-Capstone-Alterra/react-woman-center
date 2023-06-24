@@ -61,6 +61,11 @@ export const updateSchedule = async (payloads) => {
 
     const { counselorId, dates, times } = payloads;
 
+    console.log("payloads : ", {
+      dates,
+      times,
+    });
+
     const config = {
       method: "PUT",
       baseURL: VITE_API_BASE_URL,

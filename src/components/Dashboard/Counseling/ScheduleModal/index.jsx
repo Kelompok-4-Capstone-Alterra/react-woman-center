@@ -11,8 +11,9 @@ import axios from "axios";
 import { convertDate } from "../../../../helpers/convertDate";
 import { addSchedule } from "../../../../api/schedule";
 import { getAuthCookie } from "../../../../utils/cookies";
+import { getAllCounselors } from "../../../../api/usercounselor";
 
-const ScheduleModal = ({ modalState, closeModal }) => {
+const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
   const {
     register,
     handleSubmit,
@@ -27,17 +28,9 @@ const ScheduleModal = ({ modalState, closeModal }) => {
   useEffect(() => {
     const token = getAuthCookie();
     if (modalState == true) {
-      axios
-        .get(
-          "https://13.210.163.192:8080/admin/counselors?sort_by=newest&has_schedule=false",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
-        .then((response) => setCounselors(response.data.data.counselors))
-        .catch((error) => console.error(error));
+      getAllCounselors({ has_schedule: false }).then((data) =>
+        setCounselors(data)
+      );
     }
   }, [modalState]);
 
@@ -59,7 +52,9 @@ const ScheduleModal = ({ modalState, closeModal }) => {
           const counselorId = data.counselor.value;
           const dates = data.dates.map((date) => convertDate(date));
 
-          addSchedule({ counselorId, dates, times });
+          addSchedule({ counselorId, dates, times }).then((data) => {
+            onSubmit();
+          });
 
           closeModal();
         })}
