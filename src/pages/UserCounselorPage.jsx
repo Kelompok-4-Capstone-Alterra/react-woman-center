@@ -26,7 +26,7 @@ import Avatar from '../assets/forum/avatar-default.png'
 const { VITE_API_BASE_URL } = import.meta.env;
 
 const UserCounselorPage = () => {
-  const { control, getValues, register, handleSubmit, setValue, formState: { errors } } = useForm();
+  const { control, getValues, register, handleSubmit, setValue, formState: { errors }, reset } = useForm();
   const [isCounselor, setIsCounselor] = useState(true);
   const [isAdd, setisAdd] = useState(false);
   const [isView, setisView] = useState(false);
@@ -82,7 +82,8 @@ const UserCounselorPage = () => {
           const response = await axios(config);
           handleAdd();
           handlePopup(true, "Counselor succesfully added")
-          const counselorsData = await getAllCounselors();
+
+          const counselorsData = await getAllCounselors({sort_by: "newest"});
           setCounselorsData(counselorsData);
 
           return response.data.meta;
@@ -118,10 +119,11 @@ const UserCounselorPage = () => {
       
           const response = await axios(config);
 
+          handleView();
           handlePopup(true, "Counselor succesfully updated")
 
-          const counselorsData = await getAllCounselors();
-          setData(counselorsData);
+          const counselorsData = await getAllCounselors({sort_by: "newest"});
+          setCounselorsData(counselorsData);
       
           return response.data.meta;
       } catch (error) {
@@ -165,7 +167,7 @@ const UserCounselorPage = () => {
     try {
       const response = await deleteCounselorById(counselorId);
       handlePopup(true, response.message)
-      const counselorsData = await getAllCounselors();
+      const counselorsData = await getAllCounselors({sort_by: "newest"});
       setCounselorsData(counselorsData);
     } catch (error) {
       console.error(error);
@@ -176,7 +178,7 @@ const UserCounselorPage = () => {
     try {
       const response = await deleteUserById(userId);
       handlePopup(true, response.message)
-      const usersData = await getAllUsers();
+      const usersData = await getAllUsers({sort_by: "newest"});
       setUsersData(usersData);
     } catch (error) {
       console.error(error);
@@ -232,6 +234,7 @@ const UserCounselorPage = () => {
   };
 
   const handleAdd = () =>  {
+    reset();
     setisAdd(!isAdd);
   }
 
