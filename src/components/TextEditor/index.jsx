@@ -135,7 +135,7 @@ const MenuBar = ({ editor }) => {
   );
 };
 
-export const TextEditor = ({ label, name, register, control }) => {
+export const TextEditor = ({ label, name, register, control, errors }) => {
   const {
     field: { value, onChange },
   } = useController({
@@ -167,7 +167,6 @@ export const TextEditor = ({ label, name, register, control }) => {
       const html = editor.getHTML();
       onChange(html);
     },
-    
   });
 
   useEffect(() => {
@@ -175,7 +174,6 @@ export const TextEditor = ({ label, name, register, control }) => {
       editor.commands.setContent(value);
     }
   }, [value, editor]);
-
 
   return (
     <div className="flex flex-col mb-4 gap-y-2">
@@ -186,10 +184,17 @@ export const TextEditor = ({ label, name, register, control }) => {
         render={({ field }) => (
           <div className="textEditor w-full flex flex-col border border-solid p-[32px]">
             <MenuBar editor={editor} />
-            <EditorContent className="prose prose-p:m-0 prose-ul:m-0 prose-ol:m-0 max-w-none border border-solid h-[378px] overflow-auto" editor={editor} {...register(name)} />
+            <EditorContent
+              className="prose prose-p:m-0 prose-ul:m-0 prose-ol:m-0 max-w-none border border-solid h-[378px] overflow-auto"
+              editor={editor}
+              {...register(name, {
+                required: `The ${name} field is required`,
+              })}
+            />
           </div>
         )}
       />
+      <p className="mt-2 text-red-800 font-xs font-medium"> {errors[name] && errors[name].message}</p>
     </div>
   );
 };
