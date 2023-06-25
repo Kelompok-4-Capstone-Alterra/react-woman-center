@@ -3,7 +3,6 @@ import PersonIcon from "@mui/icons-material/Person";
 import { useDispatch, useSelector } from "react-redux";
 import { AddRounded } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
-import SearchIcon from "@mui/icons-material/Search";
 import ButtonPrimary from "../components/ButtonPrimary";
 import Dropdown from "../components/Dropdown";
 import AddArticleModal from "../components/ArticleForumPage/AddArticleModal";
@@ -21,6 +20,7 @@ import { updateArticle } from "../features/article/articleSlice";
 import SearchBar from "../components/SearchBar";
 import { deleteForumById, getAllForums } from "../api/forum";
 import { updateForum } from "../features/forum/forumSlice";
+import Popup from "../components/Dashboard/Popup";
 
 const ArticleForumPage = () => {
   const articles = useSelector((store) => store.articleReducer.articles);
@@ -44,8 +44,11 @@ const ArticleForumPage = () => {
   const [sortBy, setSortBy] = useState("newest");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [articleId, setArticleId] = useState("");
-  const [totalComment, setTotalComment] = useState("");
   const [notFoundMsg, setNotFoundMsg] = useState("");
+
+  const [isPopup, setIsPopup] = useState(false);
+  const [popupSuccess, setPopupSuccess] = useState(true);
+  const [popupMessage, setPopupMessage] = useState('success');
 
   const {
     register,
@@ -57,6 +60,15 @@ const ArticleForumPage = () => {
   useEffect(() => {
     fetchAllArticles();
   }, [isArticle]);
+
+  const handlePopup = (type, message) => {
+    setIsPopup(true);
+    setPopupSuccess(type);
+    setPopupMessage(message);
+    setTimeout(function () {
+      setIsPopup(false);
+    }, 1500);
+  };
 
   const fetchAllArticles = async (params = {}) => {
     setIsLoading(true);
@@ -105,15 +117,10 @@ const ArticleForumPage = () => {
   const deleteArticle = async (articleId) => {
     try {
       const response = await deleteArticleById(articleId);
-      setIsShowToast({
-        ...isShowToast,
-        isOpen: true,
-        variant: "success",
-        message: response.message,
-      });
+      handlePopup(true, response.data.message)
       fetchAllArticles();
     } catch (error) {
-      console.log(error);
+      handlePopup(false, 'Failed')
     }
   };
 
@@ -138,34 +145,6 @@ const ArticleForumPage = () => {
     }
   };
 
-  // useEffect(() => {
-  //   fetchAllForums();
-  // }, []);
-
-  // const fetchAllForums = async (params = {}) => {
-  //   setIsLoading(true);
-
-  //   try {
-  //     const response = await getAllArticles(params);
-  //     dispatch(updateArticle(response));
-  //     setIsLoading(false);
-
-  //     if (response.length < 1) {
-  //       setNotFoundMsg("What you are looking for doesn't exist");
-  //     }
-  //   } catch (error) {
-  //     setIsShowToast({
-  //       ...isShowToast,
-  //       isOpen: true,
-  //       variant: 'error',
-  //       message: error.message,
-  //     });
-  //     setIsLoading(false);
-  //   }
-
-  //   setNotFoundMsg("What you are looking for doesn't exist");
-  // };
-
   const deleteForum = async (forumId) => {
     try {
       const response = await deleteForumById(forumId);
@@ -185,15 +164,12 @@ const ArticleForumPage = () => {
     const formData = getValues();
     const dropdownValue = formData.pageStatus;
     setIsArticle(dropdownValue.value);
-    console.log("isArticle : ", isArticle);
-
-    console.log("Value: ", dropdownValue.value);
   };
 
-  const handleOpenModalComment = (articleId, commentCount) => {
+  const handleOpenModalComment = (articleId) => {
     setIsShowModalComment(true);
     setArticleId(articleId);
-    setTotalComment(commentCount);
+
   };
 
   const handleShowModalComment = (showModal) => {
@@ -211,7 +187,9 @@ const ArticleForumPage = () => {
   };
 
   return (
-    <div>
+    <>
+      <Popup isSuccess={popupSuccess} isOpen={isPopup} message={popupMessage} />
+
       <Snackbar
         open={isShowToast.isOpen}
         autoHideDuration={isShowToast.duration}
@@ -299,11 +277,7 @@ const ArticleForumPage = () => {
               </MenuItem>
               <MenuItem value="oldest">Oldest</MenuItem>
             </Select>
-            {/* <span className="text-base">Sort By</span>
-          <FilterDropdown>
-            <FilterDropdown.Option>Newest</FilterDropdown.Option>
-            <FilterDropdown.Option>Oldest</FilterDropdown.Option>
-          </FilterDropdown> */}
+
           </div>
         </div>
         <div className="flex w-full flex-col justify-center gap-4 min-h-[10rem]">
@@ -325,8 +299,7 @@ const ArticleForumPage = () => {
                       payloads={article}
                       openModalComment={() =>
                         handleOpenModalComment(
-                          article.id,
-                          article.comment_count
+                          article.id
                         )
                       }
                       openModalEdit={() => handleOpenModalEdit(article.id)}
@@ -376,7 +349,6 @@ const ArticleForumPage = () => {
         openModal={isShowModalComment}
         onClose={handleShowModalComment}
         articleId={articleId}
-        totalComment={totalComment}
         updateData={fetchAllArticles}
       />
 
@@ -390,9 +362,7 @@ const ArticleForumPage = () => {
 
       <EditArticleModal
         openModal={isShowModalEdit}
-        onClose={() => {
-          setIsShowModalEdit(false);
-        }}
+        onClose={handleShowModalEdit}
         articleId={articleId}
         updateData={fetchAllArticles}
       />
@@ -410,7 +380,7 @@ const ArticleForumPage = () => {
         }}
       />
  */}
-    </div>
+    </>
   );
 };
 
