@@ -7,6 +7,7 @@ import Tables from "../../components/Dashboard/Tables/Tables";
 import TableBody from "../../components/Dashboard/Tables/TableBody";
 import TableRow from "../../components/Dashboard/Tables/TableRow";
 import Dropdown from "../../components/Dropdown";
+import DropdownPage from "../../components/DropdownPage";
 import StatusTag from "../../components/StatusTag/index";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline/index";
@@ -67,8 +68,10 @@ const CounselingPage = () => {
   });
   const [notFoundMsg, setNotFoundMsg] = useState("");
 
+  // React Hook Form
   const { getValues, control } = useForm();
 
+  // Helper Functions
   const handleSelect = () => {
     const formData = getValues();
     const dropdownValue = formData.pageStatus;
@@ -82,36 +85,6 @@ const CounselingPage = () => {
     setTimeout(function () {
       setIsPopup(false);
     }, 1500);
-  };
-
-  const fetchAllCounselors = async (params = {}) => {
-    setIsLoading(true);
-
-    try {
-      const response = await getAllCounselors(params);
-      setCounselors(response);
-      setIsLoading(false);
-
-      if (response.length < 1) {
-        setNotFoundMsg("What you are looking for doesn't exist");
-      }
-    } catch (error) {
-      setIsLoading(false);
-    }
-
-    setNotFoundMsg("What you are looking for doesn't exist");
-  };
-
-  const fetchAllTransactions = async (params = {}) => {
-    setIsLoading(true);
-
-    try {
-      const response = await getAllTransactions(params);
-      setTransactions(response);
-      setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-    }
   };
 
   const handleSubmitSchedule = (popupType, popupMessage) => {
@@ -133,6 +106,38 @@ const CounselingPage = () => {
     handlePopup(popupType, popupMessage);
   };
 
+  // Fetch Functions
+  const fetchAllCounselors = async (params = {}) => {
+    setIsLoading(true);
+    try {
+      const response = await getAllCounselors(params);
+      setCounselors(response);
+      setIsLoading(false);
+      if (response.length < 1) {
+        setNotFoundMsg("What you are looking for doesn't exist");
+      }
+    } catch (error) {
+      setIsLoading(false);
+    }
+    setNotFoundMsg("What you are looking for doesn't exist");
+  };
+
+  const fetchAllTransactions = async (params = {}) => {
+    setIsLoading(true);
+    try {
+      const response = await getAllTransactions(params);
+      setTransactions(response);
+      setIsLoading(false);
+      if (response.length < 1) {
+        setNotFoundMsg("What you are looking for doesn't exist");
+      }
+    } catch (error) {
+      setIsLoading(false);
+    }
+    setNotFoundMsg("What you are looking for doesn't exist");
+  };
+
+  // Use Effect
   useEffect(() => {
     fetchAllCounselors({
       has_schedule: true,
@@ -207,9 +212,10 @@ const CounselingPage = () => {
         onSubmit={handleSumbitTransaction}
       />
 
+      {/* Page Select */}
       <div className="flex flex-row justify-between items-center">
         <form className="w-[360px]">
-          <Dropdown
+          <DropdownPage
             control={control}
             name={"pageStatus"}
             label={"Choose Sub Menu : "}
@@ -218,7 +224,7 @@ const CounselingPage = () => {
           >
             <option value={true} label="Counseling's Schedule" />
             <option value={false} label="Counseling's Transaction" />
-          </Dropdown>
+          </DropdownPage>
         </form>
         {isSchedule && (
           <ButtonPrimary
@@ -233,6 +239,7 @@ const CounselingPage = () => {
         )}
       </div>
 
+      {/* TABLE */}
       <TableContainer>
         <TableTitle
           title={`Counseling's ${isSchedule ? "Schedule" : "Transaction"}`}
@@ -278,6 +285,7 @@ const CounselingPage = () => {
             </TableHeader>
           )}
 
+          {/* Schedule Table */}
           {isSchedule && (
             <TableBody>
               {counselors.length >= 1 ? (
@@ -353,9 +361,11 @@ const CounselingPage = () => {
               )}
             </TableBody>
           )}
+
+          {/* Transaction Table */}
           {!isSchedule && (
             <TableBody>
-              {transactions && Array.isArray(transactions) ? (
+              {transactions.length >= 1 ? (
                 transactions.map((transaction) => (
                   <TableRow key={transaction.id}>
                     {isLoading ? (
@@ -436,7 +446,7 @@ const CounselingPage = () => {
                 ))
               ) : (
                 <TableRow>
-                  <td colSpan={9}>What you are looking for doesn't exist</td>
+                  <td colSpan={9}>{notFoundMsg}</td>
                 </TableRow>
               )}
             </TableBody>

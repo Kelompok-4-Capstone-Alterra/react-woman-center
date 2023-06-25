@@ -63,12 +63,6 @@ const Report = () => {
         setNotFoundMsg("What you are looking for doesn't exist");
       }
     } catch (error) {
-      setIsShowToast({
-        ...isShowToast,
-        isOpen: true,
-        variant: "error",
-        message: error.message,
-      });
       setIsLoading(false);
     }
 
@@ -79,7 +73,7 @@ const Report = () => {
     fetchReports({
       start_date: startDate,
       end_date: endDate,
-      sortby_by: sortBy,
+      sort_by: sortBy,
       search: searchParams,
     })
   },[ startDate,endDate,sortBy,searchParams]);

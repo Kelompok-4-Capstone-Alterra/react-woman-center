@@ -11,7 +11,6 @@ const Dropdown = ({
   label,
   children,
   handleSelect,
-  errors
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLabel, setSelectedLabel] = useState(placeholder);
@@ -21,7 +20,6 @@ const Dropdown = ({
   } = useController({
     name,
     control,
-    rules: { required: true }
   });
 
   const toggleDropdown = () => {
@@ -67,9 +65,6 @@ const Dropdown = ({
             </li>
           ))}
         </ul>
-      )}
-      {errors[name] && (
-        <span className="mt-2 text-red-800 font-xs font-medium">This {name} is required.</span>
       )}
     </div>
   );

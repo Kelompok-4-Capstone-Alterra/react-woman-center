@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import SearchIcon from "@mui/icons-material/Search";
 import ButtonPrimary from "../components/ButtonPrimary";
 import Dropdown from "../components/Dropdown";
+import DropdownPage from "../components/DropdownPage";
 import AddArticleModal from "../components/ArticleForumPage/AddArticleModal";
 import ArticleCard from "../components/ArticleForumPage/ArticleCard";
 import ForumCard from "../components/ArticleForumPage/ForumCard";
@@ -230,7 +231,7 @@ const ArticleForumPage = () => {
       <div className="">
         <div className="flex justify-between items-center">
           <form className="w-[360px]">
-            <Dropdown
+            <DropdownPage
               control={control}
               name={"pageStatus"}
               label={"Choose Sub Menu : "}
@@ -239,7 +240,7 @@ const ArticleForumPage = () => {
             >
               <option value={true} label="Article" />
               <option value={false} label="Forum Discussion" />
-            </Dropdown>
+            </DropdownPage>
           </form>
           {isArticle && (
             <ButtonPrimary
