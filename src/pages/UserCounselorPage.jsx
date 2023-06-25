@@ -15,11 +15,12 @@ import ImageUploader from "../components/ImageUploader";
 import ImageThumbnail from "../components/ImageUploader/ImageThumbnail";
 import ButtonPrimary from "../components/ButtonPrimary";
 import ButtonOutline from "../components/ButtonOutline/index.jsx";
+import Popup from "../components/Dashboard/Popup";
 import { useForm } from "react-hook-form";
-import AddIcon from "@mui/icons-material/Add";
 import { getAllCounselors, getAllUsers, deleteCounselorById, deleteUserById, getUserById, getCounselorById } from "../api/usercounselor";
 import { getAuthCookie } from "../utils/cookies";
 import { Alert, MenuItem, Select, Skeleton, Snackbar } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import { Delete, Edit, Visibility, Add, Link, EditRounded } from "@mui/icons-material";
 import Avatar from '../assets/forum/avatar-default.png'
 const { VITE_API_BASE_URL } = import.meta.env;
@@ -43,6 +44,9 @@ const UserCounselorPage = () => {
   const [userSearchParams, setUserSearchParams] = useState("");
   const [userSortBy, setUserSortBy] = useState("newest");
   const [counselorSortBy, setCounselorSortBy] = useState("newest")
+  const [isPopup, setIsPopup] = useState(false);
+  const [popupSuccess, setPopupSuccess] = useState(true);
+  const [popupMessage, setPopupMessage] = useState("success");
 
   const [isShowToast, setIsShowToast] = useState({
     isOpen: false,
@@ -76,15 +80,8 @@ const UserCounselorPage = () => {
           };
       
           const response = await axios(config);
-
-          setIsShowToast({
-            ...isShowToast,
-            isOpen: true,
-            variant: "success",
-            message: "Counselor successfully added",
-          });
-
           handleAdd();
+          handlePopup(true, "Counselor succesfully added")
           const counselorsData = await getAllCounselors();
           setCounselorsData(counselorsData);
 
@@ -121,14 +118,8 @@ const UserCounselorPage = () => {
       
           const response = await axios(config);
 
-          setIsShowToast({
-            ...isShowToast,
-            isOpen: true,
-            variant: "success",
-            message: "Counselor successfully updated",
-          });
+          handlePopup(true, "Counselor succesfully updated")
 
-          handleView();
           const counselorsData = await getAllCounselors();
           setData(counselorsData);
       
@@ -173,12 +164,7 @@ const UserCounselorPage = () => {
   const deleteCounselor = async (counselorId) => {
     try {
       const response = await deleteCounselorById(counselorId);
-      setIsShowToast({
-        ...isShowToast,
-        isOpen: true,
-        variant: "success",
-        message: response.message,
-      });
+      handlePopup(true, response.message)
       const counselorsData = await getAllCounselors();
       setCounselorsData(counselorsData);
     } catch (error) {
@@ -189,12 +175,7 @@ const UserCounselorPage = () => {
   const deleteUser = async (userId) => {
     try {
       const response = await deleteUserById(userId);
-      setIsShowToast({
-        ...isShowToast,
-        isOpen: true,
-        variant: "success",
-        message: response.message,
-      });
+      handlePopup(true, response.message)
       const usersData = await getAllUsers();
       setUsersData(usersData);
     } catch (error) {
@@ -286,6 +267,16 @@ const UserCounselorPage = () => {
     deleteUser(userId);
     handleShowModalConfirmUser(false);
   }
+
+
+  const handlePopup = (type, message) => {
+    setIsPopup(true);
+    setPopupSuccess(type);
+    setPopupMessage(message);
+    setTimeout(function () {
+      setIsPopup(false);
+    }, 1500);
+  };
 
   return(
     <>
@@ -543,6 +534,7 @@ const UserCounselorPage = () => {
               messages="Are you sure want to delete this item?"
             />
           )}
+          <Popup isSuccess={popupSuccess} isOpen={isPopup} message={popupMessage} />
           <Snackbar
         open={isShowToast.isOpen}
         autoHideDuration={isShowToast.duration}
