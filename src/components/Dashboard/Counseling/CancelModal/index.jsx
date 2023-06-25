@@ -12,9 +12,13 @@ const CancelModal = ({ modalState, closeModal, transactionId, onSubmit }) => {
       onClose={closeModal}
       messages={"Are you sure want to cancel this counseling’s appoinment?"}
       onSure={() => {
-        cancelTransaction(transactionId).then((data) => {
-          onSubmit();
-        });
+        cancelTransaction(transactionId)
+          .then((data) => {
+            onSubmit(true, "success");
+          })
+          .catch((error) => {
+            onSubmit(false, "failed");
+          });
         closeModal();
       }}
     />

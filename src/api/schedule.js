@@ -25,7 +25,7 @@ export const getSchedule = async (id) => {
 
     return { dates, times };
   } catch (error) {
-    console.error(error);
+    throw error.response.data.meta;
   }
 };
 
@@ -49,9 +49,8 @@ export const addSchedule = async (payloads) => {
     };
 
     const response = await axios(config);
-    console.log("Response:", response.data);
   } catch (error) {
-    console.error("Error:", error);
+    throw error.response.data.meta;
   }
 };
 
@@ -60,11 +59,6 @@ export const updateSchedule = async (payloads) => {
     const token = getAuthCookie();
 
     const { counselorId, dates, times } = payloads;
-
-    console.log("payloads : ", {
-      dates,
-      times,
-    });
 
     const config = {
       method: "PUT",
@@ -80,9 +74,8 @@ export const updateSchedule = async (payloads) => {
     };
 
     const response = await axios(config);
-    console.log("Response:", response.data);
   } catch (error) {
-    console.error("Error:", error);
+    throw error.response.data.meta;
   }
 };
 
@@ -100,8 +93,7 @@ export const deleteSchedule = async (id) => {
     };
 
     const response = await axios(config);
-    console.log("Response:", response.data);
   } catch (error) {
-    console.error("Error:", error);
+    throw error.response.data.meta;
   }
 };

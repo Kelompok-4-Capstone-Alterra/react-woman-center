@@ -11,6 +11,7 @@ import UpdateIcon from "@mui/icons-material/Update";
 import axios from "axios";
 import { getSchedule } from "../../../../api/schedule";
 import { getCounselorById } from "../../../../api/usercounselor";
+import { convertTime } from "../../../../helpers/converTime";
 
 const ViewModal = ({ modalState, closeModal, counselor }) => {
   const {
@@ -28,8 +29,11 @@ const ViewModal = ({ modalState, closeModal, counselor }) => {
   const getCounselorSchedule = async (id) => {
     const { dates, times } = await getSchedule(id);
     const counselorData = await getCounselorById(id);
+
+    const timesData = times.map((time) => convertTime(time));
+
     setDates(dates);
-    setTimes(times);
+    setTimes(timesData);
     setCounselorImage(counselorData.profile_picture);
   };
 
