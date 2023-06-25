@@ -22,6 +22,7 @@ import Dropdown from "../components/Dropdown";
 import ImageUploader from "../components/ImageUploader";
 import ImageThumbnail from "../components/ImageUploader/ImageThumbnail";
 import { TextEditor } from "../components/TextEditor";
+import PaginationTable from "../components/PaginationTable";
 
 const Career = () => {
   const careers = useSelector((store) => store.careerReducer.careers);
@@ -101,12 +102,14 @@ const Career = () => {
   };
 
   const handleSubmitCareer = async (values) => {
+    console.log(values);
     const {
       jobPosition,
       company,
       location,
       salary,
       minExperience,
+      workStatus,
       description,
       companyEmail,
     } = values;
@@ -117,6 +120,7 @@ const Career = () => {
     formData.append("salary", salary);
     formData.append("min_experience", minExperience);
     formData.append("last_education", lastEducation);
+    formData.append("job_type", workStatus);
     formData.append("description", description);
     formData.append("company_email", companyEmail);
     formData.append("image", pictureCareer.file);
@@ -154,6 +158,7 @@ const Career = () => {
       salary: "",
       minExperience: "",
       lastEducation: "",
+      workStatus: "",
       description: "",
       companyEmail: "",
     });
@@ -170,6 +175,7 @@ const Career = () => {
       salary: "",
       minExperience: "",
       lastEducation: "",
+      workStatus: "",
       description: "",
       companyEmail: "",
     });
@@ -187,6 +193,7 @@ const Career = () => {
         company: career.company_name,
         location: career.location,
         minExperience: career.min_experience,
+        workStatus: career.job_type,
         // lastEducation: career.last_education,
         salary: career.salary,
         description: career.description,
@@ -412,6 +419,15 @@ const Career = () => {
               {notFoundMsg}
             </h3>
           )}
+          <PaginationTable
+            rows={[
+              21212, 212121, 1212, 1212, 21212, 212121, 1212, 1212, 21212,
+              212121, 1212, 1212, 21212, 212121, 1212, 1212, 21212, 212121,
+              1212, 1212, 21212, 212121, 1212, 1212, 21212, 212121, 1212, 1212,
+              21212, 212121, 1212, 1212, 21212, 212121, 1212, 1212,
+            ]}
+            totalPage={10}
+          />
         </div>
       </div>
     </div>
