@@ -22,7 +22,6 @@ import Dropdown from "../components/Dropdown";
 import ImageUploader from "../components/ImageUploader";
 import ImageThumbnail from "../components/ImageUploader/ImageThumbnail";
 import { TextEditor } from "../components/TextEditor";
-import PaginationTable from "../components/PaginationTable";
 
 const Career = () => {
   const careers = useSelector((store) => store.careerReducer.careers);
@@ -194,7 +193,6 @@ const Career = () => {
         location: career.location,
         minExperience: career.min_experience,
         workStatus: career.job_type,
-        // lastEducation: career.last_education,
         salary: career.salary,
         description: career.description,
         companyEmail: career.company_email,
@@ -328,14 +326,6 @@ const Career = () => {
             register={register}
             errors={errors}
           />
-          {/* <InputField
-            label="Description"
-            placeholder="Ex : Looking for job applicant who are familiar with design tools such as Figma, Maze and Adobe."
-            type="text"
-            name="description"
-            register={register}
-            errors={errors}
-          /> */}
           <TextEditor
             label={"Description"}
             name={"description"}
@@ -419,15 +409,6 @@ const Career = () => {
               {notFoundMsg}
             </h3>
           )}
-          <PaginationTable
-            rows={[
-              21212, 212121, 1212, 1212, 21212, 212121, 1212, 1212, 21212,
-              212121, 1212, 1212, 21212, 212121, 1212, 1212, 21212, 212121,
-              1212, 1212, 21212, 212121, 1212, 1212, 21212, 212121, 1212, 1212,
-              21212, 212121, 1212, 1212, 21212, 212121, 1212, 1212,
-            ]}
-            totalPage={10}
-          />
         </div>
       </div>
     </div>
