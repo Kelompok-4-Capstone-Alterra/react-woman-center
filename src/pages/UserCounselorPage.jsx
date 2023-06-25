@@ -19,7 +19,8 @@ import AddIcon from "@mui/icons-material/Add";
 import { getAllCounselors, getAllUsers, deleteCounselorById, deleteUserById, getUserById, getCounselorById } from "../api/usercounselor";
 import { getAuthCookie } from "../utils/cookies";
 import { Alert, MenuItem, Select, Skeleton, Snackbar } from "@mui/material";
-import { Delete, Edit, Visibility, Add, Link } from "@mui/icons-material";
+import { Delete, Edit, Visibility, Add, Link, EditRounded } from "@mui/icons-material";
+import Avatar from '../assets/forum/avatar-default.png'
 const { VITE_API_BASE_URL } = import.meta.env;
 
 const UserCounselorPage = () => {
@@ -424,12 +425,13 @@ const UserCounselorPage = () => {
               <div>
               <form className="mb-3" onSubmit={handleSubmit(onSubmit)}>
               <ImageUploader
-              icon={<AddIcon />}
+              icon={<EditRounded fontSize="12px" />}
+              className="mb-5"
               name="image"
               handleChange={handleImageChange}
               errors={errors}
               register={register}>
-                <ImageThumbnail src={imagePreview}/>
+              { imagePreview ? <ImageThumbnail src={imagePreview}/> : <Add /> }
               </ImageUploader>
               <InputField name="name" label="Name" type="text" placeholder="johndoe" errors={errors} register={register}  />
               <InputField name="email" label="Email" type="text" placeholder="johndoe" errors={errors} register={register}  />
@@ -466,7 +468,8 @@ const UserCounselorPage = () => {
               <div>
               <form className="mb-3" onSubmit={handleSubmit(updateCounselor)}>
               <ImageUploader
-              icon={<AddIcon />}
+              icon={<EditRounded fontSize="12px" />}
+              className="mb-5"
               name="image"
               handleChange={handleImageChange}
               errors={errors}
@@ -497,8 +500,8 @@ const UserCounselorPage = () => {
               <option value="9" label="Mental Disorder"  />
               <option value="10" label="Self Harming Behaviour"  />
             </Dropdown>
-              <InputField name="description" label="Description" type="text" value={counselor?.description} errors={errors} register={register}  />
-              <InputField name="price" label="Counseling Price" type="number" value={counselor?.price} errors={errors} register={register}  />
+              <InputField name="description" label="Description" type="text"  errors={errors} register={register}  />
+              <InputField name="price" label="Counseling Price" type="number" errors={errors} register={register}  />
               <ButtonPrimary className="h-fit w-full px-3 py-3 flex items-center justify-center">Save</ButtonPrimary>
               </form>
               <ButtonOutline className="h-fit w-full px-3 py-3 flex items-center justify-center" onClick={handleView}>Close</ButtonOutline>
@@ -510,13 +513,13 @@ const UserCounselorPage = () => {
               <div>
               <form className="mb-3">
               <ImageUploader>
-                <ImageThumbnail src={user?.profile_picture}/>
+                { user?.profile_picture ? <ImageThumbnail src={user?.profile_picture}/> : <ImageThumbnail src={Avatar} /> }
               </ImageUploader>
-              <InputField name="username" label="User ID" type="preview" value={user?.id}  />
-              <InputField name="username" label="Name" type="preview" value={user?.name} />
-              <InputField name="username" label="Email" type="preview" value={user?.email}  />
+              <InputField name="id" label="User ID" type="preview" value={user?.id}  />
+              <InputField name="name" label="Name" type="preview" value={user?.name} />
+              <InputField name="email" label="Email" type="preview" value={user?.email}  />
               <InputField name="username" label="Username" type="preview" value={user?.username} />
-              <InputField name="username" label="Phone Number" type="preview" value={user?.phone_number} />
+              { user?.phone_number ? <InputField name="phone_number" label="Phone Number" type="preview" value={user?.phone_number} /> : <InputField name="phone_number" label="Phone Number" type="preview" value="-" /> }
               </form>
               <ButtonPrimary className="h-fit w-full px-3 py-3 flex items-center justify-center" onClick={handleView}>Close</ButtonPrimary>
               </div>
