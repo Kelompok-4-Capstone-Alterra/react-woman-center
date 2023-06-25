@@ -1,13 +1,13 @@
 import { useForm } from "react-hook-form";
-import { login } from "../api/auth";
+import { login } from "../../api/auth";
 import { useDispatch } from "react-redux";
-import InputField from "./InputField";
-import { updateToken } from "../features/auth/authSlice";
-import { setAuthCookie } from "../utils/cookies";
+import InputField from "../InputField";
+import { updateToken } from "../../features/auth/authSlice";
+import { setAuthCookie } from "../../utils/cookies";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { Alert, CircularProgress, Snackbar } from "@mui/material";
-import ButtonPrimary from "./ButtonPrimary";
+import ButtonPrimary from "../ButtonPrimary";
 
 const FormLogin = () => {
   const {

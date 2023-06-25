@@ -7,6 +7,7 @@ import Tables from "../../components/Dashboard/Tables/Tables";
 import TableBody from "../../components/Dashboard/Tables/TableBody";
 import TableRow from "../../components/Dashboard/Tables/TableRow";
 import Dropdown from "../../components/Dropdown";
+import DropdownPage from "../../components/DropdownPage";
 import StatusTag from "../../components/StatusTag/index";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline/index";
@@ -209,7 +210,7 @@ const CounselingPage = () => {
 
       <div className="flex flex-row justify-between items-center">
         <form className="w-[360px]">
-          <Dropdown
+          <DropdownPage
             control={control}
             name={"pageStatus"}
             label={"Choose Sub Menu : "}
@@ -218,7 +219,7 @@ const CounselingPage = () => {
           >
             <option value={true} label="Counseling's Schedule" />
             <option value={false} label="Counseling's Transaction" />
-          </Dropdown>
+          </DropdownPage>
         </form>
         {isSchedule && (
           <ButtonPrimary
