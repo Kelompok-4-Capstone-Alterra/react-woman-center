@@ -69,6 +69,7 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
           label={"Select Counselor"}
           placeholder={"Select Counselor"}
           handleSelect={() => {}}
+          errors={errors}
         >
           {counselors.map((counselor) => {
             return (
@@ -96,6 +97,7 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
           handleSelect={() => {
             handleTimeSelect();
           }}
+          errors={errors}
         >
           <option value="09:00" label="09:00"></option>
           <option value="10:00" label="10:00"></option>

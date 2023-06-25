@@ -98,6 +98,7 @@ const UpdateModal = ({ modalState, closeModal, counselor, onSubmit }) => {
             label={"Choose Time"}
             placeholder={"Select Time"}
             handleSelect={() => handleTimeSelect()}
+            errors={errors}
           >
             <option value="09:00" label="09:00"></option>
             <option value="10:00" label="10:00"></option>
