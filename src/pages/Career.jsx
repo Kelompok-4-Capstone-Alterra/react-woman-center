@@ -101,12 +101,14 @@ const Career = () => {
   };
 
   const handleSubmitCareer = async (values) => {
+    console.log(values);
     const {
       jobPosition,
       company,
       location,
       salary,
       minExperience,
+      workStatus,
       description,
       companyEmail,
     } = values;
@@ -117,6 +119,7 @@ const Career = () => {
     formData.append("salary", salary);
     formData.append("min_experience", minExperience);
     formData.append("last_education", lastEducation);
+    formData.append("job_type", workStatus);
     formData.append("description", description);
     formData.append("company_email", companyEmail);
     formData.append("image", pictureCareer.file);
@@ -154,6 +157,7 @@ const Career = () => {
       salary: "",
       minExperience: "",
       lastEducation: "",
+      workStatus: "",
       description: "",
       companyEmail: "",
     });
@@ -170,6 +174,7 @@ const Career = () => {
       salary: "",
       minExperience: "",
       lastEducation: "",
+      workStatus: "",
       description: "",
       companyEmail: "",
     });
@@ -187,7 +192,7 @@ const Career = () => {
         company: career.company_name,
         location: career.location,
         minExperience: career.min_experience,
-        // lastEducation: career.last_education,
+        workStatus: career.job_type,
         salary: career.salary,
         description: career.description,
         companyEmail: career.company_email,
@@ -321,14 +326,6 @@ const Career = () => {
             register={register}
             errors={errors}
           />
-          {/* <InputField
-            label="Description"
-            placeholder="Ex : Looking for job applicant who are familiar with design tools such as Figma, Maze and Adobe."
-            type="text"
-            name="description"
-            register={register}
-            errors={errors}
-          /> */}
           <TextEditor
             label={"Description"}
             name={"description"}

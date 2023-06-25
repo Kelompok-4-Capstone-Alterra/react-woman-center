@@ -18,7 +18,8 @@ export const getAllCommentByArticleId = async (articleId) => {
   
       const response = await axios(config);
   
-      return response.data.data.comments;
+      // console.log(response)
+      return response.data.data;
     } catch (error) {
       throw error.response.data.meta;
     }

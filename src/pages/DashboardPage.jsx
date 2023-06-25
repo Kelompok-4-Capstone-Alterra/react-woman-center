@@ -8,7 +8,6 @@ import TableBody from "../components/Dashboard/Tables/TableBody";
 import TableRow from "../components/Dashboard/Tables/TableRow";
 import GroupsIcon from "@mui/icons-material/Groups";
 import ShoppingBagRoundedIcon from "@mui/icons-material/ShoppingBagRounded";
-import PaginationTable from "../components/Pagination";
 import StatusTag from "../components/StatusTag";
 import { getAllTransactions } from "../api/transaction";
 import { formatCurrency } from "../helpers/formatCurrency";
@@ -42,7 +41,6 @@ const DashboardPage = () => {
     setNotFoundMsg("What you are looking for doesn't exist");
   };
 
-
   useEffect(() => {
     getStatistics().then((data) => {
       setStatistics(data);
@@ -58,7 +56,7 @@ const DashboardPage = () => {
       <div className="flex gap-5 mb-10">
         <Card
           title="Total Users"
-          amount= {statistics.total_user}
+          amount={statistics.total_user}
           icon={<GroupsIcon style={{ fontSize: "45px" }} />}
         ></Card>
         <Card
@@ -73,16 +71,12 @@ const DashboardPage = () => {
         ></Card>
       </div>
       <TableContainer>
-        <TableTitle 
-        title={"Recent Counseling Transaction"}
-        onChange={(e)=>
-          setTransactionSearchParams(e.target.value)
-        }
-        sortBy={transactionSortBy}
-        onSelect={(event) => 
-          setTransactionSortBy(event.target.value)
-        }
-         />
+        <TableTitle
+          title={"Recent Counseling Transaction"}
+          onChange={(e) => setTransactionSearchParams(e.target.value)}
+          sortBy={transactionSortBy}
+          onSelect={(event) => setTransactionSortBy(event.target.value)}
+        />
         <Tables scroll>
           <TableHeader>
             <th className="w-[130px]">Date</th>
@@ -96,43 +90,57 @@ const DashboardPage = () => {
             <th className="w-[130px]">Price</th>
             <th className="w-[130px]">Status</th>
           </TableHeader>
-          <TableBody>          
+          <TableBody>
             {transactions.length >= 1 ? (
-              transactions.map((transaction,index) => (
-              <TableRow key={index} >
-                {isLoading ? (
+              transactions.map((transaction, index) => (
+                <TableRow key={index}>
+                  {isLoading ? (
                     <td colSpan={12}>
                       <Skeleton
                         animation="wave"
                         variant="rounded"
                         width="100%"
                         height={50}
-                    />
-                  </td>
-                ) : (
-                  <>
-                    <td className="w-[130px]">{convertDate(transaction.created_at)}</td>
-                    <td className="w-[130px]">{transaction.id}</td>
-                    <td className="w-[130px]">{transaction.user_id}</td>
-                    <td className="w-[130px]">{transaction.counselor_data.id}</td>
-                    <td className="w-[130px]">{transaction.counselor_data.name}</td>
-                    <td className="w-[130px]">{transaction.consultation_method}</td>
-                    <td className="w-[130px]">{transaction.counselor_data.topic}</td>
-                    <td className="w-[130px]">{transaction.time_start}</td>
-                    <td className="w-[130px]">{formatCurrency(transaction.counselor_data.price)}</td>
-                    <td className="w-[130px]"><StatusTag type={transaction.status} /></td>
-                  </>
-                )}
+                      />
+                    </td>
+                  ) : (
+                    <>
+                      <td className="w-[130px]">
+                        {convertDate(transaction.created_at)}
+                      </td>
+                      <td className="w-[130px]">{transaction.id}</td>
+                      <td className="w-[130px]">{transaction.user_id}</td>
+                      <td className="w-[130px]">
+                        {transaction.counselor_data.id}
+                      </td>
+                      <td className="w-[130px]">
+                        {transaction.counselor_data.name}
+                      </td>
+                      <td className="w-[130px]">
+                        {transaction.consultation_method}
+                      </td>
+                      <td className="w-[130px]">
+                        {transaction.counselor_data.topic}
+                      </td>
+                      <td className="w-[130px]">{transaction.time_start}</td>
+                      <td className="w-[130px]">
+                        {formatCurrency(transaction.counselor_data.price)}
+                      </td>
+                      <td className="w-[130px]">
+                        <StatusTag type={transaction.status} />
+                      </td>
+                    </>
+                  )}
                 </TableRow>
               ))
-             ) : (
+            ) : (
               <TableRow>
-              <td colSpan={7}>{notFoundMsg}</td>
-            </TableRow>
-             )}                         
+                <td colSpan={7}>{notFoundMsg}</td>
+              </TableRow>
+            )}
           </TableBody>
         </Tables>
-      </TableContainer>     
+      </TableContainer>
     </>
   );
 };
