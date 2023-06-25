@@ -21,6 +21,7 @@ import {
 import Dropdown from "../components/Dropdown";
 import ImageUploader from "../components/ImageUploader";
 import ImageThumbnail from "../components/ImageUploader/ImageThumbnail";
+import { TextEditor } from "../components/TextEditor";
 
 const Career = () => {
   const careers = useSelector((store) => store.careerReducer.careers);
@@ -284,6 +285,14 @@ const Career = () => {
             errors={errors}
             suffix={<span>Year</span>}
           />
+          <InputField
+            label="Work Status"
+            placeholder="Ex : Fulltime"
+            type="text"
+            name="workStatus"
+            register={register}
+            errors={errors}
+          />
           <Dropdown
             control={control}
             name={"lastEducation"}
@@ -312,13 +321,19 @@ const Career = () => {
             register={register}
             errors={errors}
           />
-          <InputField
+          {/* <InputField
             label="Description"
             placeholder="Ex : Looking for job applicant who are familiar with design tools such as Figma, Maze and Adobe."
             type="text"
             name="description"
             register={register}
             errors={errors}
+          /> */}
+          <TextEditor
+            label={"Description"}
+            name={"description"}
+            register={register}
+            control={control}
           />
           <InputField
             label="Company Email"
