@@ -7,6 +7,7 @@ import TableHeader from "../components/Dashboard/Tables/TableHeader"
 import TableBody  from "../components/Dashboard/Tables/TableBody"
 import TableRow  from "../components/Dashboard/Tables/TableRow"
 import Dropdown from "../components/Dropdown";
+import DropdownPage from "../components/DropdownPage";
 import Modal from "../components/Modal";
 import ModalConfirm from "../components/ModalConfirm";
 import InputField from "../components/InputField";
@@ -291,16 +292,17 @@ const UserCounselorPage = () => {
     <div>
     <div className="flex flex-row justify-between items-center">
     <form className="w-[360px]">
-            <Dropdown
+            <DropdownPage
               control={control}
               name={"pageStatus"}
+              type="page"
               label={"Choose Sub Menu : "}
               placeholder={"Counselors"}
               handleSelect={handleSelect}
             >
               <option value={true} label="Counselors" />
               <option value={false} label="Users" />
-            </Dropdown>
+            </DropdownPage>
           </form>
           <div>
           {isCounselor && (
