@@ -48,6 +48,7 @@ const UserCounselorPage = () => {
   const [popupSuccess, setPopupSuccess] = useState(true);
   const [popupMessage, setPopupMessage] = useState("success");
 
+
   const [isShowToast, setIsShowToast] = useState({
     isOpen: false,
     variant: "info",
@@ -121,12 +122,14 @@ const UserCounselorPage = () => {
 
           handleView();
           handlePopup(true, "Counselor succesfully updated")
+          setImagePreview('');
 
           const counselorsData = await getAllCounselors({sort_by: "newest"});
           setCounselorsData(counselorsData);
       
           return response.data.meta;
       } catch (error) {
+        handlePopup(false, "Counselor data cannot be updated");
         throw error.response.meta;
       }
   };
@@ -170,6 +173,7 @@ const UserCounselorPage = () => {
       const counselorsData = await getAllCounselors({sort_by: "newest"});
       setCounselorsData(counselorsData);
     } catch (error) {
+      handlePopup(false, "Counselor data cannot be deleted");
       console.error(error);
     }
   };
@@ -181,6 +185,7 @@ const UserCounselorPage = () => {
       const usersData = await getAllUsers({sort_by: "newest"});
       setUsersData(usersData);
     } catch (error) {
+      handlePopup(false, "User data cannot be deleted")
       console.error(error);
     }
   };
@@ -229,17 +234,27 @@ const UserCounselorPage = () => {
     const formData = getValues();
     const dropdownValue = formData.pageStatus;
     setIsCounselor(dropdownValue.value);
-    console.log("isCounselor : ", isCounselor);
-    console.log("Value: ", dropdownValue.value);
+    setCounselorSearchParams("");
+    setUserSearchParams("");
   };
 
+  const openAdd = () =>  {
+    setisAdd(true);
+  }
+
   const handleAdd = () =>  {
+    setisAdd(false);
     reset();
-    setisAdd(!isAdd);
+  }
+
+  const openView = () =>  {
+    setisView(true);
+    reset();
   }
 
   const handleView = () =>  {
-    setisView(!isView);
+    setisView(false);
+    reset();
   }
 
   const openModalConfirmCounselor = (counselorId) => {
@@ -300,7 +315,7 @@ const UserCounselorPage = () => {
           </form>
           <div>
           {isCounselor && (
-          <ButtonPrimary className="flex items-center justify-center text-sm" onClick={handleAdd}>
+          <ButtonPrimary className="flex items-center justify-center text-sm font-medium" onClick={openAdd}>
             <AddIcon /> New Counselor
           </ButtonPrimary>
           )}
@@ -343,76 +358,88 @@ const UserCounselorPage = () => {
             <th className="w-[130px]">Delete</th>
           </TableHeader>
         )}
+        {isCounselor ? (
           <TableBody>
-          {isCounselor ? (
-          counselorsData && Array.isArray(counselorsData) ? (
-            counselorsData.map((counselor) => (
-              <TableRow key={counselor.id}>
-                <td className="w-[130px]">{counselor.id}</td>
-                <td className="w-[130px]">{counselor.name}</td>
-                <td className="w-[130px]">{counselor.username}</td>
-                <td className="w-[130px]">{counselor.email}</td>
-                <td className="w-[130px]">{counselor.topic}</td>
-                <td className="w-[130px]">
-                <ButtonPrimary className="w-[90%]" onClick={() => getCounselor(counselor.id)}>
-                <Visibility
-                              className="mr-1"
-                              style={{ fontSize: "1.125rem" }}
-                            />
-                            <span>View</span>
-                </ButtonPrimary>
-                </td>
-                <td className="w-[130px]">
-                  <ButtonOutline className="w-[90%]" onClick={() => openModalConfirmCounselor(counselor.id)}>
-                  <Delete
-                              className="mr-1"
-                              style={{ fontSize: "1.125rem" }}
-                            />
-                            <span>Delete</span>
-                  </ButtonOutline>
-                </td>
+          {counselorsData && Array.isArray(counselorsData) ? (
+            counselorsData.length > 0 ? (
+              counselorsData.map((counselor) => (
+                <TableRow key={counselor.id}>
+                  <td className="w-[130px]">{counselor.id}</td>
+                  <td className="w-[130px]">{counselor.name}</td>
+                  <td className="w-[130px]">{counselor.username}</td>
+                  <td className="w-[130px]">{counselor.email}</td>
+                  <td className="w-[130px]">{counselor.topic}</td>
+                  <td className="w-[130px]">
+                    <ButtonPrimary className="w-[90%] font-medium" onClick={() => getCounselor(counselor.id)}>
+                      <Visibility className="mr-1" style={{ fontSize: "1.125rem" }} />
+                      <span>View</span>
+                    </ButtonPrimary>
+                  </td>
+                  <td className="w-[130px]">
+                    <ButtonOutline className="w-[90%] font-medium" onClick={() => openModalConfirmCounselor(counselor.id)}>
+                      <Delete className="mr-1" style={{ fontSize: "1.125rem" }} />
+                      <span>Delete</span>
+                    </ButtonOutline>
+                  </td>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <td className="font-semibold" colSpan={7}>What are you looking for doesnt exist.</td>
               </TableRow>
-            ))
+            )
           ) : (
-              <tr>
-                <td colSpan={9}>What you are looking for doesn't exist</td>
-              </tr>
-          )
+            <TableRow>
+              <td colSpan={7}>
+                {[...Array(7)].map((_, index) => (
+                  <Skeleton key={index} animation="wave" variant="rounded" width="100%" height={50} />
+                ))}
+              </td>
+            </TableRow>
+          )}
+        </TableBody>
+
         ) : (
-          usersData && Array.isArray(usersData) ? (
-            usersData.map((user) => (
-              <TableRow key={user.id}>
-                <td className="w-[130px]">{user.id}</td>
-                <td className="w-[130px]">{user.name}</td>
-                <td className="w-[130px]">{user.username}</td>
-                <td className="w-[130px]">{user.email}</td>
-                <td className="w-[130px]">
-                  <ButtonPrimary className="w-[90%]" onClick={() => getUser(user.id)}>
-                  <Visibility
-                              className="mr-1"
-                              style={{ fontSize: "1.125rem" }}
-                            />
-                            <span>View</span>
-                  </ButtonPrimary>
-                </td>
-                <td className="w-[130px]">
-                  <ButtonOutline className="w-[90%]" onClick={() => openModalConfirmUser(user.id)}>
-                  <Delete
-                              className="mr-1"
-                              style={{ fontSize: "1.125rem" }}
-                            />
-                            <span>Delete</span>
-                  </ButtonOutline>
-                </td>
+
+          <TableBody>
+          {usersData && Array.isArray(usersData) ? (
+            usersData.length > 0 ? (
+              usersData.map((user) => (
+                <TableRow key={user.id}>
+                  <td className="w-[130px]">{user.id}</td>
+                  <td className="w-[130px]">{user.name}</td>
+                  <td className="w-[130px]">{user.username}</td>
+                  <td className="w-[130px]">{user.email}</td>
+                  <td className="w-[130px]">
+                    <ButtonPrimary className="w-[90%] font-medium" onClick={() => getUser(user.id)}>
+                      <Visibility className="mr-1" style={{ fontSize: "1.125rem" }} />
+                      <span>View</span>
+                    </ButtonPrimary>
+                  </td>
+                  <td className="w-[130px]">
+                    <ButtonOutline className="w-[90%] font-medium" onClick={() => openModalConfirmUser(user.id)}>
+                      <Delete className="mr-1" style={{ fontSize: "1.125rem" }} />
+                      <span>Delete</span>
+                    </ButtonOutline>
+                  </td>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <td className="font-semibold" colSpan={6}>What are you looking for doesnt exist.</td>
               </TableRow>
-            ))
+            )
           ) : (
-              <tr>
-                <td colSpan={9}>What you are looking for doesn't exist</td>
-              </tr>
-          )
+            <TableRow>
+              <td colSpan={6}>
+                {[...Array(6)].map((_, index) => (
+                  <Skeleton key={index} animation="wave" variant="rounded" width="100%" height={50} />
+                ))}
+              </td>
+            </TableRow>
+          )}
+        </TableBody>
         )}
-          </TableBody>
         </Tables>
       </TableContainer>
     </div>
@@ -429,9 +456,9 @@ const UserCounselorPage = () => {
               register={register}>
               { imagePreview ? <ImageThumbnail src={imagePreview}/> : <Add /> }
               </ImageUploader>
-              <InputField name="name" label="Name" type="text" placeholder="johndoe" errors={errors} register={register}  />
-              <InputField name="email" label="Email" type="text" placeholder="johndoe" errors={errors} register={register}  />
-              <InputField name="username" label="Username" type="text" placeholder="johndoe" errors={errors} register={register}  />
+              <InputField name="name" label="Name" type="text" placeholder="Ex : John Doe" errors={errors} register={register}  />
+              <InputField name="email" label="Email" type="text" placeholder="Ex : johndoe@example.com" errors={errors} register={register}  />
+              <InputField name="username" label="Username" type="text" placeholder="Ex : johndoe123" errors={errors} register={register}  />
               <Dropdown
               control={control}
               name="topic"
@@ -452,10 +479,10 @@ const UserCounselorPage = () => {
               <option value="10" label="Self Harming Behaviour"  />
             </Dropdown>
               <InputField name="description" label="Description" type="text" placeholder="Ex : Counselor work to empower women to make positive changes" errors={errors} register={register}  />
-              <InputField name="price" label="Counseling Price" type="number" placeholder="johndoe" errors={errors} register={register}  />
-              <ButtonPrimary className="h-fit w-full px-3 py-3 flex items-center justify-center">+ Add New Counselor</ButtonPrimary>
+              <InputField name="price" label="Counseling Price" type="number" placeholder="Ex : Rp 200,000" errors={errors} register={register}  />
+              <ButtonPrimary className="h-fit w-full px-3 py-3 flex items-center justify-center font-medium">+ Add New Counselor</ButtonPrimary>
               </form>
-              <ButtonOutline className="h-fit w-full px-3 py-3 flex items-center justify-center" onClick={handleAdd}>Not Now</ButtonOutline>
+              <ButtonOutline className="h-fit w-full px-3 py-3 flex items-center justify-center font-medium" onClick={handleAdd}>Not Now</ButtonOutline>
               </div>
       </Modal>
       {isCounselor ? (
@@ -470,7 +497,7 @@ const UserCounselorPage = () => {
               handleChange={handleImageChange}
               errors={errors}
               register={register}>
-                <ImageThumbnail src={counselor?.profile_picture}/>
+                { imagePreview ? <ImageThumbnail src={imagePreview}/> : <ImageThumbnail src={counselor?.profile_picture}/>  }
               </ImageUploader>
               <InputField name="id" label="ID" type="text" errors={errors} register={register} disabled={true} />
               <InputField name="name" label="Name" type="text"  errors={errors} register={register}  />
@@ -498,9 +525,9 @@ const UserCounselorPage = () => {
             </Dropdown>
               <InputField name="description" label="Description" type="text"  errors={errors} register={register}  />
               <InputField name="price" label="Counseling Price" type="number" errors={errors} register={register}  />
-              <ButtonPrimary className="h-fit w-full px-3 py-3 flex items-center justify-center">Save</ButtonPrimary>
+              <ButtonPrimary className="h-fit w-full px-3 py-3 flex items-center justify-center font-medium">Save</ButtonPrimary>
               </form>
-              <ButtonOutline className="h-fit w-full px-3 py-3 flex items-center justify-center" onClick={handleView}>Close</ButtonOutline>
+              <ButtonOutline className="h-fit w-full px-3 py-3 flex items-center justify-center font-medium" onClick={handleView}>Close</ButtonOutline>
               </div>
       </Modal>
             ) : (
@@ -508,7 +535,7 @@ const UserCounselorPage = () => {
       <Modal.Title title={'View User'} />
               <div>
               <form className="mb-3">
-              <ImageUploader>
+              <ImageUploader className="mb-5">
                 { user?.profile_picture ? <ImageThumbnail src={user?.profile_picture}/> : <ImageThumbnail src={Avatar} /> }
               </ImageUploader>
               <InputField name="id" label="User ID" type="preview" value={user?.id}  />
@@ -517,7 +544,7 @@ const UserCounselorPage = () => {
               <InputField name="username" label="Username" type="preview" value={user?.username} />
               { user?.phone_number ? <InputField name="phone_number" label="Phone Number" type="preview" value={user?.phone_number} /> : <InputField name="phone_number" label="Phone Number" type="preview" value="-" /> }
               </form>
-              <ButtonPrimary className="h-fit w-full px-3 py-3 flex items-center justify-center" onClick={handleView}>Close</ButtonPrimary>
+              <ButtonPrimary className="h-fit w-full px-3 py-3 flex items-center justify-center font-medium" onClick={handleView}>Close</ButtonPrimary>
               </div>
        </Modal>
             )}
