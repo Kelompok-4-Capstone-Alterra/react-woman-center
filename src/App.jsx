@@ -127,7 +127,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/report",
-    element: <Dashboard />,
+    element: <Dashboard page="Report" />,
     children: [
       {
         element: <Report />,
