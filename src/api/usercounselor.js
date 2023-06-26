@@ -41,7 +41,7 @@ export const getAllUsers = async (params) => {
 
     const response = await axios(config);
 
-    return response.data.data.users;
+    return response.data.data;
   } catch (error) {
     throw error.response.data.meta;
   }
