@@ -12,17 +12,17 @@ const Popup = ({ message, isSuccess, isOpen }) => {
             <div className=" w-[250px] h-[125px] justify-center items-center flex flex-col rounded shadow-md op bg-white">
               {isSuccess && (
                 <CheckCircleIcon
-                  fontSize="large"
-                  className="mb-2 text-successMain"
+                  className="text-successMain"
+                  sx={{ fontSize: "50px" }}
                 />
               )}
               {!isSuccess && (
                 <AnnouncementIcon
-                  fontSize="large"
-                  className="mb-2 text-dangerMain"
+                  className="text-dangerMain"
+                  sx={{ fontSize: "50px" }}
                 />
               )}
-              {message}
+              <p className="font-medium capitalize-first">{message}</p>
             </div>
           </div>
         </div>
