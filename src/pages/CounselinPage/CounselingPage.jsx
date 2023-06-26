@@ -192,7 +192,7 @@ const CounselingPage = () => {
   return (
     <div className="">
       {/* POPUP */}
-      <Popup isSuccess={popupSuccess} isOpen={true} message={popupMessage} />
+      <Popup isSuccess={popupSuccess} isOpen={isPopup} message={popupMessage} />
       {/* SCHEDULE MODAL */}
       <ScheduleModal
         modalState={showScheduleModal}
