@@ -46,6 +46,9 @@ export default {
           "-webkit-appearance": "none",
           "-moz-appearance": "none",
         },
+        ".capitalize-first::first-letter": {
+          textTransform: "uppercase",
+        },
       });
     }),
   ],

@@ -9,20 +9,20 @@ const Popup = ({ message, isSuccess, isOpen }) => {
         <div className="fixed w-[100vw] h-[100vh] z-10 inset-0 flex flex-col items-center overflow-auto">
           <div className="fixed bg-black opacity-50 w-[100vw] h-[100vh] inset-0"></div>
           <div className="z-10 h-full flex justify-center items-center">
-            <div className=" w-[250px] h-[125px] justify-center items-center flex flex-col rounded shadow-md op bg-white">
+            <div className="justify-center items-center flex flex-col rounded shadow-md op bg-white gap-4 text-center py-8 px-16">
               {isSuccess && (
                 <CheckCircleIcon
-                  fontSize="large"
-                  className="mb-2 text-successMain"
+                  className="text-successMain"
+                  sx={{ fontSize: "50px" }}
                 />
               )}
               {!isSuccess && (
                 <AnnouncementIcon
-                  fontSize="large"
-                  className="mb-2 text-dangerMain"
+                  className="text-dangerMain"
+                  sx={{ fontSize: "50px" }}
                 />
               )}
-              {message}
+              <p className="font-medium capitalize-first">{message}</p>
             </div>
           </div>
         </div>
