@@ -13,9 +13,13 @@ const DeleteModal = ({ modalState, closeModal, counselor, onSubmit }) => {
       onClose={closeModal}
       messages={"Are you sure want to delete this item?"}
       onSure={() => {
-        deleteSchedule(counselor.id).then((res) => {
-          onSubmit();
-        });
+        deleteSchedule(counselor.id)
+          .then((data) => {
+            onSubmit(true, "success");
+          })
+          .catch((error) => {
+            onSubmit(false, "failed");
+          });
         closeModal();
       }}
     />

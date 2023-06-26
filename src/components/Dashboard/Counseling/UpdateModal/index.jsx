@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import Dropdown from "../../../Dropdown";
+import DropdownPage from "../../../DropdownPage";
 import Modal from "../../../Modal";
 import Calendar from "../../../Calendar";
 import ButtonPrimary from "../../../ButtonPrimary";
 import ButtonOutline from "../../../ButtonOutline/index";
-import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
 import { getSchedule, updateSchedule } from "../../../../api/schedule";
 import { convertDate } from "../../../../helpers/convertDate";
 import { getCounselorById } from "../../../../api/usercounselor";
+import { convertTime } from "../../../../helpers/converTime";
 
 const UpdateModal = ({ modalState, closeModal, counselor, onSubmit }) => {
   const {
@@ -30,8 +30,10 @@ const UpdateModal = ({ modalState, closeModal, counselor, onSubmit }) => {
   const getCounselorSchedule = async (id) => {
     const { dates, times } = await getSchedule(id);
     const counselorData = await getCounselorById(id);
+
+    const timesData = times.map((time) => convertTime(time));
     replace(dates);
-    setTimes(times);
+    setTimes(timesData);
     setCounselorImage(counselorData.profile_picture);
   };
 
@@ -53,26 +55,34 @@ const UpdateModal = ({ modalState, closeModal, counselor, onSubmit }) => {
   };
 
   return (
-    <Modal isOpen={modalState} type={"viewUpdateSchedule"}>
+    <Modal isOpen={modalState} type={"viewUpdateSchedule"} onClose={closeModal}>
       <Modal.LeftSide>
         {counselorImage && (
           <img src={counselorImage} alt="" className="w-[100px] h-[80px]" />
         )}
       </Modal.LeftSide>
       <Modal.RightSide>
-        <p className="text-[16px] font-medium text-neutralMedium">123456</p>
-        <h2 className="font-medium text-[22px] text-neutralHigh">John Doe</h2>
+        <p className="text-[16px] font-medium text-neutralMedium">
+          {counselor.id}
+        </p>
+        <h2 className="font-medium text-[22px] text-neutralHigh">
+          {counselor.name}
+        </h2>
         <p className="font-normal text-[14px] text-neutralMedium mb-6">
-          Self Development
+          {counselor.topic}
         </p>
         <form
           onSubmit={handleSubmit((data) => {
             const counselorId = counselor.id;
             const dates = data.dates.map((date) => convertDate(date));
 
-            updateSchedule({ counselorId, dates, times }).then((res) => {
-              onSubmit();
-            });
+            updateSchedule({ counselorId, dates, times })
+              .then((data) => {
+                onSubmit(true, "success");
+              })
+              .catch((error) => {
+                onSubmit(false, "failed");
+              });
             closeModal();
           })}
         >
@@ -85,21 +95,22 @@ const UpdateModal = ({ modalState, closeModal, counselor, onSubmit }) => {
             placeholder={""}
             handleSelect={() => {}}
           />
-          <Dropdown
+          <DropdownPage
             control={control}
             name={"times"}
             label={"Choose Time"}
             placeholder={"Select Time"}
             handleSelect={() => handleTimeSelect()}
+            errors={errors}
           >
-            <option value="09:00:00" label="09:00:00"></option>
-            <option value="10:00:00" label="10:00:00"></option>
-            <option value="11:00:00" label="11:00:00"></option>
-            <option value="12:00:00" label="12:00:00"></option>
-            <option value="13:00:00" label="13:00:00"></option>
-            <option value="14:00:00" label="14:00:00"></option>
-            <option value="15:00:00" label="15:00:00"></option>
-          </Dropdown>
+            <option value="09:00" label="09:00"></option>
+            <option value="10:00" label="10:00"></option>
+            <option value="11:00" label="11:00"></option>
+            <option value="12:00" label="12:00"></option>
+            <option value="13:00" label="13:00"></option>
+            <option value="14:00" label="14:00"></option>
+            <option value="15:00" label="15:00"></option>
+          </DropdownPage>
 
           <div className="mb-6">
             <label className="font-medium">Counseling's Schedule Time</label>

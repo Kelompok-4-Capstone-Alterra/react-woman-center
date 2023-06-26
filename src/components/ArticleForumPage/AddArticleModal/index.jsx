@@ -6,14 +6,14 @@ import InputField from '../../InputField';
 import Dropdown from '../../Dropdown';
 import ButtonPrimary from '../../ButtonPrimary';
 import ButtonOutline from '../../ButtonOutline';
-import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { useState } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
-import AddIcon from '@mui/icons-material/Add';
+import { AddRounded } from '@mui/icons-material';
 import { TextEditor } from '../../TextEditor';
 import { getAuthCookie } from '../../../utils/cookies';
+import Popup from '../../Dashboard/Popup';
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
@@ -21,6 +21,10 @@ const AddArticleModal = ({ openModal, onClose, updateData }) => {
   const [topics, setTopics] = useState([]);
   const [imagePreview, setImagePreview] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
+
+  const [isPopup, setIsPopup] = useState(false);
+  const [popupSuccess, setPopupSuccess] = useState(true);
+  const [popupMessage, setPopupMessage] = useState('success');
 
   const {
     register,
@@ -31,7 +35,20 @@ const AddArticleModal = ({ openModal, onClose, updateData }) => {
     reset,
   } = useForm();
 
-  const getTopics = async (data) => {
+  useEffect(() => {
+    getTopics();
+  }, []);
+
+  const handlePopup = (type, message) => {
+    setIsPopup(true);
+    setPopupSuccess(type);
+    setPopupMessage(message);
+    setTimeout(function () {
+      setIsPopup(false);
+    }, 1500);
+  };
+
+  const getTopics = async () => {
     const token = getAuthCookie();
     const response = await axios.get(`${VITE_API_BASE_URL}/topics`, {
       headers: {
@@ -39,12 +56,10 @@ const AddArticleModal = ({ openModal, onClose, updateData }) => {
       },
     });
 
-    setTopics(response.data.data);
+    setTopics(response.data.data.topics);
   };
 
-  useEffect(() => {
-    getTopics();
-  }, []);
+
 
   const handleImageChange = (file) => {
     setSelectedImage(file);
@@ -52,20 +67,17 @@ const AddArticleModal = ({ openModal, onClose, updateData }) => {
     setImagePreview(imageUrl);
   };
 
-  const handleSelectTopic = () => {
-    const formData = getValues();
-    // const dropdownValue = formData.topic;
-  };
+  const handleSelectTopic = () => {};
 
   const onSubmit = async (articleData) => {
-    const formData = new FormData();
-    formData.append('title', articleData.title);
-    formData.append('author', articleData.author);
-    formData.append('description', articleData.description);
-    formData.append('topic', articleData.topic.value);
-    formData.append('image', selectedImage);
-
     try {
+      const formData = new FormData();
+      formData.append('title', articleData.title);
+      formData.append('author', articleData.author);
+      formData.append('description', articleData.description);
+      formData.append('topic', articleData.topic.value);
+      formData.append('image', selectedImage);
+
       const token = getAuthCookie();
 
       const config = {
@@ -81,54 +93,56 @@ const AddArticleModal = ({ openModal, onClose, updateData }) => {
 
       const response = await axios(config);
 
-      // return response.data.data
-      console.log('Response:', response.data);
-    } catch (error) {
-      throw error.response.data.meta;
-    }
+      handlePopup(true, 'succes');
 
-    reset();
-    setImagePreview('')
-    updateData()
-    onClose(false)
-    
+      reset();
+      setImagePreview('');
+      updateData();
+      onClose(false);
+
+    } catch (error) {
+      handlePopup(false, 'false');
+
+    }
   };
 
   const handleClose = () => {
     reset();
-    setImagePreview('')
+    setImagePreview('');
     onClose(false);
   };
 
   return (
-    <Modal isOpen={openModal} onClose={onClose} type={'addArticle'}>
-      <Modal.Title title={'Add Article'} />
-      <div>
-        <form className="mb-3" onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-4">
-            <ImageUploader handleChange={(file) => handleImageChange(file)}>
-              <ImageThumbnail src={imagePreview} />
-            </ImageUploader>
-          </div>
+    <>
+      <Popup isSuccess={popupSuccess} isOpen={isPopup} message={popupMessage} />
 
-          <InputField name="title" label="Title" type="text" placeholder="Ex : How to get women's right?" errors={errors} register={register} />
-          <InputField name="author" label="Author" type="text" placeholder="Ex : Ruby Jane" errors={errors} register={register} />
-          <TextEditor label={'Description'} name={'description'} register={register} control={control} />
-          <Dropdown control={control} name={'topic'} label={'Topic'} placeholder={'Choose article`s Topics'} handleSelect={handleSelectTopic}>
-            {topics?.topics?.map((topic) => (
-              <option label={topic.name} value={topic.id} key={topic.id} />
-            ))}
-          </Dropdown>
-          <ButtonPrimary className="w-full">
-            <SaveAltIcon /> Save
-          </ButtonPrimary>
-        </form>
+      <Modal isOpen={openModal} onClose={handleClose} type={'addArticle'}>
+        <Modal.Title title={'New Article'} />
+        <div>
+          <form className="mb-3" onSubmit={handleSubmit(onSubmit)}>
+            <div className="mb-4">
+              <ImageUploader className="mb-4" icon={<AddRounded />} handleChange={(file) => handleImageChange(file)}>
+                {!imagePreview ? <AddRounded /> : <ImageThumbnail src={imagePreview} />}
+              </ImageUploader>
+            </div>
 
-        <ButtonOutline className="w-full" onClick={handleClose}>
-          close
-        </ButtonOutline>
-      </div>
-    </Modal>
+            <InputField name="title" label="Title" type="text" placeholder="Ex : How to get women's right?" errors={errors} register={register} />
+            <InputField name="author" label="Author" type="text" placeholder="Ex : Ruby Jane" errors={errors} register={register} />
+            <TextEditor label={'Description'} name={'description'} register={register} control={control} errors={errors}/>
+            <Dropdown control={control} name={'topic'} label={'Topic'} placeholder={'Choose article`s Topics'} handleSelect={handleSelectTopic}>
+              {topics?.map((topic) => (
+                <option label={topic.name} value={topic.id} key={topic.id} />
+              ))}
+            </Dropdown>
+            <ButtonPrimary className="w-full flex justify-center items-center">Save</ButtonPrimary>
+          </form>
+
+          <ButtonOutline className="w-full flex justify-center items-center" onClick={handleClose}>
+            Discard
+          </ButtonOutline>
+        </div>
+      </Modal>
+    </>
   );
 };
 

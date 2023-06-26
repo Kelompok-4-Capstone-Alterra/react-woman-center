@@ -15,24 +15,26 @@ import { useState, useEffect } from "react";
 import { getReport } from "../api/transaction";
 import { formatCurrency } from "../helpers/formatCurrency";
 import { convertDate } from "../helpers/convertDate";
+import { Skeleton } from "@mui/material";
 
 const Report = () => {
   const { register, handleSubmit, control, formState: { errors } } = useForm();
   const [transactions, setTransactions] = useState([]);
+  const [searchParams, setSearchParams] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [startDate, setStartDate] = useState([]);
   const [endDate, setEndDate] = useState([]);
+  const [notFoundMsg, setNotFoundMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = (data) => {
     alert(JSON.stringify(data));
   }
-  const handleSelect=(startDate)=>{
-    console.log("Start Date : ",startDate);
+  const handleSelectStart = (startDate)=>{
     setStartDate(startDate);
   }
 
-  const handleSelect2=(endDate)=>{
-    console.log("End Date : ", endDate);
+  const handleSelectEnd = (endDate)=>{
     setEndDate(endDate);
   }
 
@@ -48,13 +50,33 @@ const Report = () => {
     { label: 'Price', key: 'counselor_data.price'},
     { label: 'Status', key: 'status'},
   ];
+
+  const fetchReports = async (params = {}) => {
+    setIsLoading(true);
+
+    try {
+      const response = await getReport(params);
+      setTransactions(response);
+      setIsLoading(false);
+
+      if (response.length < 1) {
+        setNotFoundMsg("What you are looking for doesn't exist");
+      }
+    } catch (error) {
+      setIsLoading(false);
+    }
+
+    setNotFoundMsg("What you are looking for doesn't exist");
+  };
  
   useEffect (()=>{
-    getReport({ start_date: startDate, end_date: endDate, sort_by: sortBy}).then((data) => {
-      setTransactions(data);
-      console.log(data);
-    });
-  },[ startDate,endDate,sortBy]);
+    fetchReports({
+      start_date: startDate,
+      end_date: endDate,
+      sort_by: sortBy,
+      search: searchParams,
+    })
+  },[ startDate,endDate,sortBy,searchParams]);
 
   return (
     <>
@@ -68,7 +90,7 @@ const Report = () => {
         label="Start Date"
         errors={errors}
         register={register}
-        handleSelect={handleSelect}
+        handleSelect={handleSelectStart}
         />
       </div>
       <div className="w-1/2 mr-4">
@@ -79,7 +101,7 @@ const Report = () => {
         label="End Date"
         errors={errors}
         register={register}
-        handleSelect={handleSelect2}/>
+        handleSelect={handleSelectEnd}/>
       </div>
     </div>
     </form>
@@ -94,11 +116,13 @@ const Report = () => {
     <TableContainer>
         <TableTitle 
         title={"Counseling Report"}
-        onChange={(e)=>(
-          console.log(e.target.value)
-        )}
+        onChange={(e)=>
+          setSearchParams(e.target.value)
+        }
         sortBy={sortBy}
-        onSelect={(event) => setSortBy(event.target.value)}
+        onSelect={(e) => 
+          setSortBy(e.target.value)
+        }
          />
         <Tables scroll>
           <TableHeader>
@@ -113,21 +137,40 @@ const Report = () => {
             <th className="w-[130px]">Price</th>
             <th className="w-[130px]">Status</th>
           </TableHeader>
-          <TableBody>          
-            {transactions.map((transaction) => (
-            <TableRow key={transaction.id} >
-              <td className="w-[130px]">{convertDate(transaction.created_at)}</td>
-              <td className="w-[130px]">{transaction.id}</td>
-              <td className="w-[130px]">{transaction.user_id}</td>
-              <td className="w-[130px]">{transaction.counselor_data.id}</td>
-              <td className="w-[130px]">{transaction.counselor_data.name}</td>
-              <td className="w-[130px]">{transaction.consultation_method}</td>
-              <td className="w-[130px]">{transaction.counselor_data.topic}</td>
-              <td className="w-[130px]">{transaction.time_start}</td>
-              <td className="w-[130px]">{formatCurrency(transaction.counselor_data.price)}</td>
-              <td className="w-[130px]"><StatusTag type={transaction.status} /></td>
+          <TableBody> 
+          {transactions.length >= 1 ? (
+            transactions.map((transaction,index) => (
+            <TableRow key={index} >
+              {isLoading ? (
+                  <td colSpan={12}>
+                    <Skeleton
+                      animation="wave"
+                      variant="rounded"
+                      width="100%"
+                      height={50}
+                  />
+                </td>
+              ) : (
+                <>
+                  <td className="w-[130px]">{convertDate(transaction.created_at)}</td>
+                  <td className="w-[130px]">{transaction.id}</td>
+                  <td className="w-[130px]">{transaction.user_id}</td>
+                  <td className="w-[130px]">{transaction.counselor_data.id}</td>
+                  <td className="w-[130px]">{transaction.counselor_data.name}</td>
+                  <td className="w-[130px]">{transaction.consultation_method}</td>
+                  <td className="w-[130px]">{transaction.counselor_data.topic}</td>
+                  <td className="w-[130px]">{transaction.time_start}</td>
+                  <td className="w-[130px]">{formatCurrency(transaction.counselor_data.price)}</td>
+                  <td className="w-[130px]"><StatusTag type={transaction.status} /></td>
+                </>
+              ) }
+              </TableRow>
+            ))
+             ) : (
+              <TableRow>
+              <td colSpan={7}>{notFoundMsg}</td>
             </TableRow>
-            ))} 
+             )}                         
           </TableBody>
         </Tables>
       </TableContainer>     

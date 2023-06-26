@@ -42,11 +42,18 @@ const Modal = ({ isOpen, onClose, children, type }) => {
       {isOpen && (
         <div className="fixed w-[100vw] h-[100vh] z-10 inset-0 flex flex-col items-center overflow-auto">
           <div className="fixed bg-black opacity-50 w-[100vw] h-[100vh] inset-0"></div>
-          <div className="my-10 z-10" ref={wrapperModal}>
+          <div
+            className={`z-10 ${
+              type === "link"
+                ? "flex justify-center items-center h-full"
+                : "my-10 "
+            }`}
+            ref={wrapperModal}
+          >
             <div
               className={`bg-white w-[664px] ${paddingModal} z-10 rounded-md shadow border-solid border-[1px] border-primaryBorder`}
             >
-              <div className={`flex ${layoutContent} ${paddingContent}`}>
+              <div className={`flex  ${layoutContent} ${paddingContent}`}>
                 {children}
               </div>
             </div>

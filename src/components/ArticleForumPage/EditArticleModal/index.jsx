@@ -10,11 +10,14 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
-import AddIcon from '@mui/icons-material/Add';
+
 import { TextEditor } from '../../TextEditor';
 import { getArticleById } from '../../../api/article';
 import { getAuthCookie } from '../../../utils/cookies';
-import { useSelector } from 'react-redux';
+
+import { AddRounded} from '@mui/icons-material';
+import NoImage from '../../../assets/article/no-image.jpg';
+import Popup from '../../Dashboard/Popup';
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
@@ -24,17 +27,27 @@ const EditArticleModal = ({ openModal, onClose, articleId, updateData }) => {
   const [imagePreview, setImagePreview] = useState('');
   const [selectedImage, setSelectedImage] = useState({});
 
-
+  const [isPopup, setIsPopup] = useState(false);
+  const [popupSuccess, setPopupSuccess] = useState(true);
+  const [popupMessage, setPopupMessage] = useState('success');
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     control,
-    getValues,
     setValue,
     reset,
   } = useForm();
+
+  const handlePopup = (type, message) => {
+    setIsPopup(true);
+    setPopupSuccess(type);
+    setPopupMessage(message);
+    setTimeout(function () {
+      setIsPopup(false);
+    }, 1500);
+  };
 
   useEffect(() => {
     if (article) {
@@ -44,13 +57,8 @@ const EditArticleModal = ({ openModal, onClose, articleId, updateData }) => {
       setValue('description', article.description);
       setValue('image', article.image);
       setImagePreview(article.image);
-      // setValue('topic', article.topic);
-
-      // const selectedTopic = topics.find((topic) => topic.id === article.topicId);
-      // console.log(selectedTopic)
-      // setValue('topic', selectedTopic);
     }
-  }, [article, setValue, topics]);
+  }, [article, setValue]);
 
   useEffect(() => {
     getTopics();
@@ -81,7 +89,6 @@ const EditArticleModal = ({ openModal, onClose, articleId, updateData }) => {
     if (articleId) {
       try {
         const response = await getArticleById(articleId);
-        console.log(response.data);
         setArticle(response.data);
       } catch (error) {
         console.log(error);
@@ -99,22 +106,19 @@ const EditArticleModal = ({ openModal, onClose, articleId, updateData }) => {
 
   const onSubmit = async (articleData) => {
     const formData = new FormData();
+    formData.append('image', selectedImage[articleId]);
     formData.append('title', articleData.title);
     formData.append('author', articleData.author);
     formData.append('description', articleData.description);
 
     if (!articleData.topic) {
       const selectTopic = topics?.topics?.find((topic) => topic.name === article.topic);
-      console.log(selectTopic);
       if (selectTopic) {
         formData.append('topic', selectTopic.id);
       }
     } else {
-
       formData.append('topic', articleData.topic.value);
     }
-
-    formData.append('image', selectedImage[articleId]);
 
     try {
       const token = getAuthCookie();
@@ -132,15 +136,15 @@ const EditArticleModal = ({ openModal, onClose, articleId, updateData }) => {
 
       const response = await axios(config);
 
-      // return response.data.data
-      console.log('Response:', response.data);
+      handlePopup(true, 'succes');
+
+      reset();
+      setImagePreview('');
+      updateData();
+      onClose(false);
     } catch (error) {
-      throw error.response.data.meta;
+      handlePopup(false, 'false');
     }
-    reset();
-    setImagePreview('');
-    updateData()
-    handleClose();
   };
 
   const handleClose = () => {
@@ -148,30 +152,34 @@ const EditArticleModal = ({ openModal, onClose, articleId, updateData }) => {
   };
 
   return (
-    <Modal isOpen={openModal} onClose={onClose} type={'addArticle'}>
-      <Modal.Title title={'Add Article'} />
-      <div>
-        <form className="mb-3" onSubmit={handleSubmit(onSubmit)}>
-          <ImageUploader icon={<AddIcon />} handleChange={(file) => handleImageChange(file)}>
-            <ImageThumbnail src={imagePreview} />
-          </ImageUploader>
-          <InputField name="id" label="ID" type="text" placeholder="12345" errors={errors} register={register} disabled={true} />
-          <InputField name="title" label="Title" type="text" placeholder="Ex : How to get women's right?" errors={errors} register={register} />
-          <InputField name="author" label="Author" type="text" placeholder="Ex : Ruby Jane" errors={errors} register={register} />
-          <TextEditor label={'Description'} name={'description'} register={register} control={control} />
-          <Dropdown control={control} type="edit" name={'topic'} label={'Topic'} placeholder={article?.topic} handleSelect={handleSelectTopic}>
-            {topics?.topics?.map((topic) => (
-              <option label={topic.name} value={topic.id} key={topic.id} />
-            ))}
-          </Dropdown>
-          <ButtonPrimary className="w-full">Save</ButtonPrimary>
-        </form>
+    <>
+      <Popup isSuccess={popupSuccess} isOpen={isPopup} message={popupMessage} />
 
-        <ButtonOutline className="w-full" onClick={handleClose}>
-          close
-        </ButtonOutline>
-      </div>
-    </Modal>
+      <Modal isOpen={openModal} onClose={handleClose} type={'addArticle'}>
+        <Modal.Title title={'Edit Article'} />
+        <div>
+          <form className="mb-3" onSubmit={handleSubmit(onSubmit)}>
+            <ImageUploader className="mb-4" icon={<AddRounded />} handleChange={(file) => handleImageChange(file)}>
+              {!imagePreview ? <ImageThumbnail src={NoImage} /> : <ImageThumbnail src={imagePreview} />}
+            </ImageUploader>
+            <InputField name="id" label="ID" type="text" placeholder="12345" errors={errors} register={register} disabled={true} />
+            <InputField name="title" label="Title" type="text" placeholder="Ex : How to get women's right?" errors={errors} register={register} />
+            <InputField name="author" label="Author" type="text" placeholder="Ex : Ruby Jane" errors={errors} register={register} />
+            <TextEditor label={'Description'} name={'description'} register={register} control={control} errors={errors}/>
+            <Dropdown control={control} type="edit" name={'topic'} label={'Topic'} placeholder={article?.topic} handleSelect={handleSelectTopic}>
+              {topics?.topics?.map((topic) => (
+                <option label={topic.name} value={topic.id} key={topic.id} />
+              ))}
+            </Dropdown>
+            <ButtonPrimary className="w-full">Save</ButtonPrimary>
+          </form>
+
+          <ButtonOutline className="w-full" onClick={handleClose}>
+            Discard
+          </ButtonOutline>
+        </div>
+      </Modal>
+    </>
   );
 };
 

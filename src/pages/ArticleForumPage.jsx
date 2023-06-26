@@ -1,26 +1,22 @@
 import React, { useEffect, useState } from "react";
-import PersonIcon from "@mui/icons-material/Person";
 import { useDispatch, useSelector } from "react-redux";
 import { AddRounded } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
-import SearchIcon from "@mui/icons-material/Search";
 import ButtonPrimary from "../components/ButtonPrimary";
-import Dropdown from "../components/Dropdown";
+import DropdownPage from "../components/DropdownPage";
 import AddArticleModal from "../components/ArticleForumPage/AddArticleModal";
 import ArticleCard from "../components/ArticleForumPage/ArticleCard";
 import ForumCard from "../components/ArticleForumPage/ForumCard";
 import EditArticleModal from "../components/ArticleForumPage/EditArticleModal";
 import CommentModal from "../components/ArticleForumPage/CommentModal";
-import LinkModal from "../components/ArticleForumPage/LinkModal";
-import DeleteModal from "../components/ArticleForumPage/DeleteModal";
-import axios from "axios";
-import { Alert, MenuItem, Select, Skeleton, Snackbar } from "@mui/material";
-
+import { MenuItem, Select, Skeleton } from "@mui/material";
 import { deleteArticleById, getAllArticles } from "../api/article";
 import { updateArticle } from "../features/article/articleSlice";
 import SearchBar from "../components/SearchBar";
 import { deleteForumById, getAllForums } from "../api/forum";
 import { updateForum } from "../features/forum/forumSlice";
+import Popup from "../components/Dashboard/Popup";
+import PaginationTable from "../components/PaginationTable";
 
 const ArticleForumPage = () => {
   const articles = useSelector((store) => store.articleReducer.articles);
@@ -31,21 +27,19 @@ const ArticleForumPage = () => {
   const [isShowModalAdd, setIsShowModalAdd] = useState(false);
   const [isShowModalEdit, setIsShowModalEdit] = useState(false);
   const [isShowModalComment, setIsShowModalComment] = useState(false);
-  const [showIsViewLink, setShowIsViewLink] = useState(false);
-  const [showIsDelete, setShowIsDelete] = useState(false);
-  const [isShowToast, setIsShowToast] = useState({
-    isOpen: false,
-    variant: "info",
-    duration: 5000,
-    message: "",
-  });
 
   const [isLoading, setIsLoading] = useState(false);
   const [sortBy, setSortBy] = useState("newest");
   const [searchKeyword, setSearchKeyword] = useState("");
   const [articleId, setArticleId] = useState("");
-  const [totalComment, setTotalComment] = useState("");
   const [notFoundMsg, setNotFoundMsg] = useState("");
+
+  const [isPopup, setIsPopup] = useState(false);
+  const [popupSuccess, setPopupSuccess] = useState(true);
+  const [popupMessage, setPopupMessage] = useState("success");
+
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(1);
 
   const {
     register,
@@ -55,8 +49,17 @@ const ArticleForumPage = () => {
   } = useForm();
 
   useEffect(() => {
-    fetchAllArticles();
+    fetchAllArticles({ sort_by: sortBy });
   }, [isArticle]);
+
+  const handlePopup = (type, message) => {
+    setIsPopup(true);
+    setPopupSuccess(type);
+    setPopupMessage(message);
+    setTimeout(function () {
+      setIsPopup(false);
+    }, 2000);
+  };
 
   const fetchAllArticles = async (params = {}) => {
     setIsLoading(true);
@@ -71,12 +74,7 @@ const ArticleForumPage = () => {
           setNotFoundMsg("What you are looking for doesn't exist");
         }
       } catch (error) {
-        setIsShowToast({
-          ...isShowToast,
-          isOpen: true,
-          variant: "error",
-          message: error.message,
-        });
+        handlePopup(false, error.message);
         setIsLoading(false);
       }
     } else {
@@ -85,35 +83,23 @@ const ArticleForumPage = () => {
         dispatch(updateForum(response));
         setIsLoading(false);
 
-        if (response.length < 1) {
+        if (response.forums.length < 1) {
           setNotFoundMsg("What you are looking for doesn't exist");
         }
       } catch (error) {
-        setIsShowToast({
-          ...isShowToast,
-          isOpen: true,
-          variant: "error",
-          message: error.message,
-        });
+        handlePopup(false, error.message);
         setIsLoading(false);
       }
     }
-
-    setNotFoundMsg("What you are looking for doesn't exist");
   };
 
   const deleteArticle = async (articleId) => {
     try {
       const response = await deleteArticleById(articleId);
-      setIsShowToast({
-        ...isShowToast,
-        isOpen: true,
-        variant: "success",
-        message: response.message,
-      });
-      fetchAllArticles();
+      handlePopup(true, response.data.message);
+      fetchAllArticles({ sort_by: sortBy });
     } catch (error) {
-      console.log(error);
+      handlePopup(false, "Failed");
     }
   };
 
@@ -123,7 +109,7 @@ const ArticleForumPage = () => {
     if (isArticle) {
       fetchAllArticles({ search: keyword, sort_by: sortBy });
     } else {
-      fetchAllArticles({ topic: keyword, sort_by: sortBy });
+      fetchAllArticles({ topic: keyword, sort_by: sortBy, page });
     }
   };
 
@@ -131,51 +117,20 @@ const ArticleForumPage = () => {
     const sortByValue = event.target.value;
 
     setSortBy(sortByValue);
+
     if (isArticle) {
       fetchAllArticles({ sort_by: sortByValue, search: searchKeyword });
     } else {
-      fetchAllArticles({ sort_by: sortByValue, topic: searchKeyword });
+      fetchAllArticles({ sort_by: sortByValue, topic: searchKeyword, page });
     }
   };
-
-  // useEffect(() => {
-  //   fetchAllForums();
-  // }, []);
-
-  // const fetchAllForums = async (params = {}) => {
-  //   setIsLoading(true);
-
-  //   try {
-  //     const response = await getAllArticles(params);
-  //     dispatch(updateArticle(response));
-  //     setIsLoading(false);
-
-  //     if (response.length < 1) {
-  //       setNotFoundMsg("What you are looking for doesn't exist");
-  //     }
-  //   } catch (error) {
-  //     setIsShowToast({
-  //       ...isShowToast,
-  //       isOpen: true,
-  //       variant: 'error',
-  //       message: error.message,
-  //     });
-  //     setIsLoading(false);
-  //   }
-
-  //   setNotFoundMsg("What you are looking for doesn't exist");
-  // };
 
   const deleteForum = async (forumId) => {
     try {
       const response = await deleteForumById(forumId);
-      setIsShowToast({
-        ...isShowToast,
-        isOpen: true,
-        variant: "success",
-        message: response.message,
-      });
-      fetchAllArticles();
+
+      handlePopup(true, response.message);
+      fetchAllArticles({ sort_by: sortBy, page: 1 });
     } catch (error) {
       console.log(error);
     }
@@ -185,15 +140,12 @@ const ArticleForumPage = () => {
     const formData = getValues();
     const dropdownValue = formData.pageStatus;
     setIsArticle(dropdownValue.value);
-    console.log("isArticle : ", isArticle);
-
-    console.log("Value: ", dropdownValue.value);
+    setSearchKeyword("");
   };
 
-  const handleOpenModalComment = (articleId, commentCount) => {
+  const handleOpenModalComment = (articleId) => {
     setIsShowModalComment(true);
     setArticleId(articleId);
-    setTotalComment(commentCount);
   };
 
   const handleShowModalComment = (showModal) => {
@@ -211,26 +163,12 @@ const ArticleForumPage = () => {
   };
 
   return (
-    <div>
-      <Snackbar
-        open={isShowToast.isOpen}
-        autoHideDuration={isShowToast.duration}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        onClose={() => setIsShowToast({ ...isShowToast, isOpen: false })}
-      >
-        <Alert
-          onClose={() => setIsShowToast({ ...isShowToast, isOpen: false })}
-          severity={isShowToast.variant}
-          sx={{ width: "100%" }}
-          className="capitalize"
-        >
-          {isShowToast.message}
-        </Alert>
-      </Snackbar>
+    <>
+      <Popup isSuccess={popupSuccess} isOpen={isPopup} message={popupMessage} />
       <div className="">
         <div className="flex justify-between items-center">
           <form className="w-[360px]">
-            <Dropdown
+            <DropdownPage
               control={control}
               name={"pageStatus"}
               label={"Choose Sub Menu : "}
@@ -239,7 +177,7 @@ const ArticleForumPage = () => {
             >
               <option value={true} label="Article" />
               <option value={false} label="Forum Discussion" />
-            </Dropdown>
+            </DropdownPage>
           </form>
           {isArticle && (
             <ButtonPrimary
@@ -299,11 +237,6 @@ const ArticleForumPage = () => {
               </MenuItem>
               <MenuItem value="oldest">Oldest</MenuItem>
             </Select>
-            {/* <span className="text-base">Sort By</span>
-          <FilterDropdown>
-            <FilterDropdown.Option>Newest</FilterDropdown.Option>
-            <FilterDropdown.Option>Oldest</FilterDropdown.Option>
-          </FilterDropdown> */}
           </div>
         </div>
         <div className="flex w-full flex-col justify-center gap-4 min-h-[10rem]">
@@ -324,10 +257,7 @@ const ArticleForumPage = () => {
                       key={article.id}
                       payloads={article}
                       openModalComment={() =>
-                        handleOpenModalComment(
-                          article.id,
-                          article.comment_count
-                        )
+                        handleOpenModalComment(article.id)
                       }
                       openModalEdit={() => handleOpenModalEdit(article.id)}
                       deleteArticle={deleteArticle}
@@ -342,8 +272,8 @@ const ArticleForumPage = () => {
             </div>
           ) : (
             <div>
-              {forums.length >= 1 ? (
-                forums.map((forum) =>
+              {forums.forums?.length >= 1 ? (
+                forums.forums.map((forum) =>
                   isLoading ? (
                     <Skeleton
                       key={forum.id}
@@ -367,6 +297,26 @@ const ArticleForumPage = () => {
                   {notFoundMsg}
                 </h3>
               )}
+              <PaginationTable
+                page={page}
+                rows={forums.total_pages}
+                rowsPerPage={rowsPerPage}
+                handleChangePage={(event, page) => {
+                  setPage(page);
+                  setIsArticle(false);
+                  fetchAllArticles({ sort_by: sortBy, page });
+                }}
+                handleChangeRowsPerPage={(event) => {
+                  setRowsPerPage(parseInt(event.target.value, 10));
+                  setPage(1);
+                  setIsArticle(false);
+                  fetchAllArticles({
+                    limit: parseInt(event.target.value, 10),
+                    page,
+                    sort_by: sortBy,
+                  });
+                }}
+              />
             </div>
           )}
         </div>
@@ -376,7 +326,6 @@ const ArticleForumPage = () => {
         openModal={isShowModalComment}
         onClose={handleShowModalComment}
         articleId={articleId}
-        totalComment={totalComment}
         updateData={fetchAllArticles}
       />
 
@@ -390,9 +339,7 @@ const ArticleForumPage = () => {
 
       <EditArticleModal
         openModal={isShowModalEdit}
-        onClose={() => {
-          setIsShowModalEdit(false);
-        }}
+        onClose={handleShowModalEdit}
         articleId={articleId}
         updateData={fetchAllArticles}
       />
@@ -410,7 +357,7 @@ const ArticleForumPage = () => {
         }}
       />
  */}
-    </div>
+    </>
   );
 };
 
