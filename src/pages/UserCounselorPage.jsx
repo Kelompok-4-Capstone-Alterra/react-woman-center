@@ -189,8 +189,7 @@ const UserCounselorPage = () => {
     try {
       const response = await deleteCounselorById(counselorId);
       handlePopup(true, response.message)
-      const counselorsData = await getAllCounselors({sort_by: "newest"});
-      setCounselorsData(counselorsData);
+      fetchDataCounselors({sort_by: "newest"});
     } catch (error) {
       handlePopup(false, "Counselor data cannot be deleted");
       console.error(error);
@@ -201,8 +200,7 @@ const UserCounselorPage = () => {
     try {
       const response = await deleteUserById(userId);
       handlePopup(true, response.message)
-      const usersData = await getAllUsers({sort_by: "newest"});
-      setUsersData(usersData);
+      fetchDataUsers({sort_by: "newest"});
     } catch (error) {
       handlePopup(false, "User data cannot be deleted")
       console.error(error);
