@@ -6,7 +6,6 @@ import TableHeader from "../../components/Dashboard/Tables/TableHeader";
 import Tables from "../../components/Dashboard/Tables/Tables";
 import TableBody from "../../components/Dashboard/Tables/TableBody";
 import TableRow from "../../components/Dashboard/Tables/TableRow";
-import Dropdown from "../../components/Dropdown";
 import DropdownPage from "../../components/DropdownPage";
 import StatusTag from "../../components/StatusTag/index";
 import ButtonPrimary from "../../components/ButtonPrimary";
@@ -18,8 +17,8 @@ import DeleteModal from "../../components/Dashboard/Counseling/DeleteModal/index
 import LinkModal from "../../components/Dashboard/Counseling/LinkModal";
 import CancelModal from "../../components/Dashboard/Counseling/CancelModal";
 import Popup from "../../components/Dashboard/Popup";
+import PaginationTable from "../../components/PaginationTable";
 
-import { getSchedule } from "../../api/schedule";
 import { getAllTransactions } from "../../api/transaction";
 import { getAllCounselors } from "../../api/usercounselor";
 import { formatCurrency } from "../../helpers/formatCurrency";
@@ -57,6 +56,14 @@ const CounselingPage = () => {
   const [isPopup, setIsPopup] = useState(false);
   const [popupSuccess, setPopupSuccess] = useState(true);
   const [popupMessage, setPopupMessage] = useState("success");
+
+  // Pagination State
+  const [currentSchedulePages, setCurrentSchedulePages] = useState("");
+  const [totalSchedulePages, setTotalSchedulePages] = useState("");
+  const [rowsPerSchedulePage, setRowsPerSchedulePage] = useState(10);
+  const [currentTransactionPages, setCurrentTransactionPages] = useState("");
+  const [totalTransactionPages, setTotalTransactionPages] = useState("");
+  const [rowsPerTransactionPage, setRowsPerTransactionPage] = useState(10);
 
   // Helper State
   const [isLoading, setIsLoading] = useState(false);
@@ -106,14 +113,35 @@ const CounselingPage = () => {
     handlePopup(popupType, popupMessage);
   };
 
+  const handleScheduleSearch = (e) => {
+    setScheduleSearchParams(e.target.value);
+    setCurrentSchedulePages(1);
+  };
+  const handleTransactionSearch = (e) => {
+    setTransactionSearchParams(e.target.value);
+    setCurrentTransactionPages(1);
+  };
+  const handleScheduleSortBy = (e) => {
+    setScheduleSortBy(e.target.value);
+    setCurrentSchedulePages(1);
+  };
+  const handleTransactionSortBy = (e) => {
+    setTransactionSortBy(e.target.value);
+    setCurrentTransactionPages(1);
+  };
+
   // Fetch Functions
   const fetchAllCounselors = async (params = {}) => {
     setIsLoading(true);
     try {
-      const response = await getAllCounselors(params);
-      setCounselors(response);
+      const { counselors, current_pages, total_pages } = await getAllCounselors(
+        params
+      );
+      setCounselors(counselors);
+      setCurrentSchedulePages(current_pages);
+      setTotalSchedulePages(total_pages);
       setIsLoading(false);
-      if (response.length < 1) {
+      if (counselors.length < 1) {
         setNotFoundMsg("What you are looking for doesn't exist");
       }
     } catch (error) {
@@ -125,8 +153,11 @@ const CounselingPage = () => {
   const fetchAllTransactions = async (params = {}) => {
     setIsLoading(true);
     try {
-      const response = await getAllTransactions(params);
-      setTransactions(response);
+      const { transaction, current_pages, total_pages } =
+        await getAllTransactions(params);
+      setTransactions(transaction);
+      setCurrentTransactionPages(current_pages);
+      setTotalTransactionPages(total_pages);
       setIsLoading(false);
       if (response.length < 1) {
         setNotFoundMsg("What you are looking for doesn't exist");
@@ -143,6 +174,8 @@ const CounselingPage = () => {
       has_schedule: true,
       sort_by: scheduleSortBy,
       search: scheduleSearchParams,
+      limit: rowsPerSchedulePage,
+      page: currentSchedulePages,
     });
   }, [scheduleSortBy, scheduleSearchParams]);
 
@@ -150,6 +183,8 @@ const CounselingPage = () => {
     fetchAllTransactions({
       sort_by: transactionSortBy,
       search: transactionSearchParams,
+      limit: rowsPerTransactionPage,
+      page: currentTransactionPages,
     });
   }, [transactionSortBy, transactionSearchParams]);
 
@@ -246,15 +281,15 @@ const CounselingPage = () => {
           // Search
           onChange={
             isSchedule
-              ? (e) => setScheduleSearchParams(e.target.value)
-              : (e) => setTransactionSearchParams(e.target.value)
+              ? (e) => handleScheduleSearch(e)
+              : (e) => handleTransactionSearch(e)
           }
           // SortBy
           sortBy={isSchedule ? scheduleSortBy : transactionSortBy}
           onSelect={
             isSchedule
-              ? (e) => setScheduleSortBy(e.target.value)
-              : (e) => setTransactionSortBy(e.target.value)
+              ? (e) => handleScheduleSortBy(e)
+              : (e) => handleTransactionSortBy(e)
           }
         />
 
@@ -452,6 +487,58 @@ const CounselingPage = () => {
             </TableBody>
           )}
         </Tables>
+        {isSchedule && counselors.length >= 1 && (
+          <PaginationTable
+            page={currentSchedulePages}
+            rows={totalSchedulePages}
+            rowsPerPage={rowsPerSchedulePage}
+            handleChangePage={(event, currentSchedulePages) => {
+              setCurrentSchedulePages(currentSchedulePages);
+              fetchAllCounselors({
+                page: currentSchedulePages,
+                has_schedule: true,
+                sort_by: scheduleSortBy,
+                limit: rowsPerSchedulePage,
+              });
+            }}
+            handleChangeRowsPerPage={(event) => {
+              setRowsPerSchedulePage(parseInt(event.target.value, 10));
+              setCurrentSchedulePages(1);
+              setScheduleSearchParams("");
+              fetchAllCounselors({
+                limit: parseInt(event.target.value, 10),
+                page: currentSchedulePages,
+                has_schedule: true,
+                sort_by: scheduleSortBy,
+              });
+            }}
+          />
+        )}
+        {!isSchedule && transactions.length >= 1 && (
+          <PaginationTable
+            page={currentTransactionPages}
+            rows={totalTransactionPages}
+            rowsPerPage={rowsPerTransactionPage}
+            handleChangePage={(event, currentTransactionPages) => {
+              setCurrentTransactionPages(currentTransactionPages);
+              fetchAllTransactions({
+                page: currentTransactionPages,
+                sort_by: transactionSortBy,
+                limit: rowsPerTransactionPage,
+              });
+            }}
+            handleChangeRowsPerPage={(event) => {
+              setRowsPerTransactionPage(parseInt(event.target.value, 10));
+              setCurrentTransactionPages(1);
+              setTransactionSearchParams("");
+              fetchAllTransactions({
+                limit: parseInt(event.target.value, 10),
+                page: currentTransactionPages,
+                sort_by: transactionSortBy,
+              });
+            }}
+          />
+        )}
       </TableContainer>
     </div>
   );

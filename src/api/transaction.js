@@ -19,7 +19,7 @@ export const getAllTransactions = async (params) => {
 
     const response = await axios(config, params);
 
-    return response.data.data.transaction;
+    return response.data.data;
   } catch (error) {
     throw error.response.data.meta;
   }
