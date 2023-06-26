@@ -11,7 +11,14 @@ import UpdateIcon from "@mui/icons-material/Update";
 import InputField from "../../../InputField";
 import { sendTransactionLink } from "../../../../api/transaction";
 
-const LinkModal = ({ modalState, closeModal, transactionId, onSubmit }) => {
+const LinkModal = ({
+  modalState,
+  closeModal,
+  transactionId,
+  onSubmit,
+  counselor,
+  consultationMethod,
+}) => {
   const {
     register,
     handleSubmit,
@@ -21,11 +28,15 @@ const LinkModal = ({ modalState, closeModal, transactionId, onSubmit }) => {
   } = useForm();
 
   return (
-    <Modal isOpen={modalState} type={"link"}>
-      <p className="text-[16px] font-medium text-neutralMedium">123456</p>
-      <h2 className="font-medium text-[22px] text-neutralHigh">John Doe</h2>
+    <Modal isOpen={modalState} type={"link"} onClose={closeModal}>
+      <p className="text-[16px] font-medium text-neutralMedium">
+        {counselor.id}
+      </p>
+      <h2 className="font-medium text-[22px] text-neutralHigh">
+        {counselor.name}
+      </h2>
       <p className="font-medium text-[16px] text-neutralHigh mb-6">
-        Video Call
+        {consultationMethod}
       </p>
       <form
         onSubmit={handleSubmit(({ link }) => {

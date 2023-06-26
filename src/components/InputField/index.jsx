@@ -85,7 +85,9 @@ const InputField = ({
         {" "}
         {errors[name] && errors[name].message}
       </p>
-      {suffix && <div className="absolute top-12 right-4">{suffix}</div>}
+      {suffix && (
+        <div className="absolute top-12 right-4 bg-white">{suffix}</div>
+      )}
     </div>
   );
 };

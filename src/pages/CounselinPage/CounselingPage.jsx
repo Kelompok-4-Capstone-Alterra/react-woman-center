@@ -47,6 +47,7 @@ const CounselingPage = () => {
   // Feature State
   const [selectedCounselor, setSelectedCounselor] = useState("");
   const [selectedTransactionId, setSelectedTransactionId] = useState("");
+  const [selectedMethod, setSelectedMethod] = useState("");
   const [scheduleSortBy, setScheduleSortBy] = useState("newest");
   const [transactionSortBy, setTransactionSortBy] = useState("newest");
   const [scheduleSearchParams, setScheduleSearchParams] = useState("");
@@ -230,6 +231,8 @@ const CounselingPage = () => {
 
       {/* Link Modal */}
       <LinkModal
+        counselor={selectedCounselor}
+        consultationMethod={selectedMethod}
         transactionId={selectedTransactionId}
         modalState={showLinkModal}
         closeModal={() => {
@@ -446,6 +449,12 @@ const CounselingPage = () => {
                               onClick={() => {
                                 setShowLinkModal(true);
                                 setSelectedTransactionId(transaction.id);
+                                setSelectedCounselor(
+                                  transaction.counselor_data
+                                );
+                                setSelectedMethod(
+                                  transaction.consultation_method
+                                );
                               }}
                             >
                               <Link
