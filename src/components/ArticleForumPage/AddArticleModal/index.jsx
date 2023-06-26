@@ -31,7 +31,6 @@ const AddArticleModal = ({ openModal, onClose, updateData }) => {
     handleSubmit,
     formState: { errors },
     control,
-    getValues,
     reset,
   } = useForm();
 
@@ -50,16 +49,17 @@ const AddArticleModal = ({ openModal, onClose, updateData }) => {
 
   const getTopics = async () => {
     const token = getAuthCookie();
-    const response = await axios.get(`${VITE_API_BASE_URL}/topics`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    setTopics(response.data.data.topics);
+    try {
+      const response = await axios.get(`${VITE_API_BASE_URL}/users/public/topics`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setTopics(response.data.data.topics);
+    } catch (error) {
+      console.log(error);
+    }
   };
-
-
 
   const handleImageChange = (file) => {
     setSelectedImage(file);
@@ -93,21 +93,21 @@ const AddArticleModal = ({ openModal, onClose, updateData }) => {
 
       const response = await axios(config);
 
-      handlePopup(true, 'succes');
+      handlePopup(true, response.data.meta.message);
 
       reset();
+      setSelectedImage(null)
       setImagePreview('');
       updateData();
       onClose(false);
-
     } catch (error) {
-      handlePopup(false, 'false');
-
+      handlePopup(false, error.message);
     }
   };
 
   const handleClose = () => {
     reset();
+    setSelectedImage(null)
     setImagePreview('');
     onClose(false);
   };
@@ -128,17 +128,20 @@ const AddArticleModal = ({ openModal, onClose, updateData }) => {
 
             <InputField name="title" label="Title" type="text" placeholder="Ex : How to get women's right?" errors={errors} register={register} />
             <InputField name="author" label="Author" type="text" placeholder="Ex : Ruby Jane" errors={errors} register={register} />
-            <TextEditor label={'Description'} name={'description'} register={register} control={control} errors={errors}/>
-            <Dropdown control={control} name={'topic'} label={'Topic'} placeholder={'Choose article`s Topics'} handleSelect={handleSelectTopic}>
+            <TextEditor label={'Description'} name={'description'} register={register} control={control} errors={errors} />
+            <Dropdown control={control} name={'topic'} label={'Topic'} placeholder={'Choose article`s Topics'} handleSelect={handleSelectTopic} errors={errors}>
               {topics?.map((topic) => (
                 <option label={topic.name} value={topic.id} key={topic.id} />
               ))}
             </Dropdown>
-            <ButtonPrimary className="w-full flex justify-center items-center">Save</ButtonPrimary>
+            <ButtonPrimary className="w-full flex justify-center items-center">
+              {' '}
+              <span className="text-[16px] font-medium">Save</span>
+            </ButtonPrimary>
           </form>
 
           <ButtonOutline className="w-full flex justify-center items-center" onClick={handleClose}>
-            Discard
+            <span className="text-[16px] font-medium">Discard</span>
           </ButtonOutline>
         </div>
       </Modal>

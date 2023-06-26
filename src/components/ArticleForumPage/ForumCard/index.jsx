@@ -11,15 +11,11 @@ import moment from "moment";
 import avatarDefault from "../../../assets/forum/avatar-default.png";
 import Modal from "../../Modal";
 import InputField from "../../InputField";
-import { useForm } from "react-hook-form";
 import { Skeleton } from "@mui/material";
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
 const ForumCard = ({ payloads, deleteForum }) => {
-  const {
-    formState: { errors },
-  } = useForm();
   const backgroundStyle = {
     background:
       "conic-gradient(from 180deg at 50% 50%, #DAD29C -120deg, #F9DAD9 33.75deg, #DAD29C 240deg, #F9DAD9 393.75deg)",
