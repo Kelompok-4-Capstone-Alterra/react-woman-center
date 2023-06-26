@@ -12,6 +12,7 @@ import StatusTag from "../components/StatusTag";
 import { getAllTransactions } from "../api/transaction";
 import { formatCurrency } from "../helpers/formatCurrency";
 import { convertDate } from "../helpers/convertDate";
+import { convertTime } from "../helpers/converTime";
 import { getStatistics } from "../api/statistics";
 import { Skeleton } from "@mui/material";
 
@@ -22,6 +23,18 @@ const DashboardPage = () => {
   const [transactionSortBy, setTransactionSortBy] = useState("newest");
   const [isLoading, setIsLoading] = useState(false);
   const [notFoundMsg, setNotFoundMsg] = useState("");
+
+  const fetchAllStatistics = async () => {
+    setIsLoading(true);
+
+    try {
+      const response = await getStatistics();
+      setStatistics(response);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+    }
+  };
 
   const fetchAllTransactions = async (params = {}) => {
     setIsLoading(true);
@@ -37,14 +50,10 @@ const DashboardPage = () => {
     } catch (error) {
       setIsLoading(false);
     }
-
-    setNotFoundMsg("What you are looking for doesn't exist");
   };
 
   useEffect(() => {
-    getStatistics().then((data) => {
-      setStatistics(data);
-    });
+    fetchAllStatistics();
     fetchAllTransactions({
       sort_by: transactionSortBy,
       search: transactionSearchParams,
@@ -106,7 +115,7 @@ const DashboardPage = () => {
                   ) : (
                     <>
                       <td className="w-[130px]">
-                        {convertDate(transaction.created_at)}
+                        {convertDate(transaction.created_at, " / ", true)}
                       </td>
                       <td className="w-[130px]">{transaction.id}</td>
                       <td className="w-[130px]">{transaction.user_id}</td>
@@ -122,7 +131,8 @@ const DashboardPage = () => {
                       <td className="w-[130px]">
                         {transaction.counselor_data.topic}
                       </td>
-                      <td className="w-[130px]">{transaction.time_start}</td>
+                      <td className="w-[130px]">
+                        {convertTime(transaction.time_start)}</td>
                       <td className="w-[130px]">
                         {formatCurrency(transaction.counselor_data.price)}
                       </td>

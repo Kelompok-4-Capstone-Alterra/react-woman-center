@@ -6,7 +6,8 @@ import TableTitle from "../components/Dashboard/Tables/TableTitle"
 import Tables from "../components/Dashboard/Tables/Tables"
 import TableHeader from "../components/Dashboard/Tables/TableHeader"
 import TableBody  from "../components/Dashboard/Tables/TableBody"
-import TableRow  from "../components/Dashboard/Tables/TableRow"
+import TableRow  from "../components/Dashboard/Tables/TableRow";
+import PaginationTable from "../components/PaginationTable";
 import ButtonPrimary from "../components/ButtonPrimary";
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 import StatusTag from "../components/StatusTag";
@@ -15,6 +16,7 @@ import { useState, useEffect } from "react";
 import { getReport } from "../api/transaction";
 import { formatCurrency } from "../helpers/formatCurrency";
 import { convertDate } from "../helpers/convertDate";
+import { convertTime } from "../helpers/converTime";
 import { Skeleton } from "@mui/material";
 
 const Report = () => {
@@ -24,6 +26,7 @@ const Report = () => {
   const [sortBy, setSortBy] = useState("newest");
   const [startDate, setStartDate] = useState([]);
   const [endDate, setEndDate] = useState([]);
+  const [page, setPage] = useState([]);
   const [notFoundMsg, setNotFoundMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -75,13 +78,14 @@ const Report = () => {
       end_date: endDate,
       sort_by: sortBy,
       search: searchParams,
+      page
     })
-  },[ startDate,endDate,sortBy,searchParams]);
+  },[ startDate,endDate,sortBy,searchParams,page]);
 
   return (
     <>
     <form onSubmit={handleSubmit(onSubmit)}>
-    <div className="flex relative w-full mx-4 mt-4">
+    <div className="flex relative w-full">
       <div className="w-1/2 mr-4">
         <Calendar
         control ={control}
@@ -93,7 +97,7 @@ const Report = () => {
         handleSelect={handleSelectStart}
         />
       </div>
-      <div className="w-1/2 mr-4">
+      <div className="w-1/2">
         <Calendar
         control ={control}
         type="calendar-input"
@@ -109,7 +113,7 @@ const Report = () => {
         data={transactions}
         headers={headers}
         filename={"Counseling Report.csv"}>
-        <ButtonPrimary className="m-4 w-[140px] h-10 text-base">
+        <ButtonPrimary className="my-4 w-[140px] h-10 text-base">
           <FileDownloadRoundedIcon className="mr-[10px]" />Export File
         </ButtonPrimary>
       </CSVLink>
@@ -152,14 +156,14 @@ const Report = () => {
                 </td>
               ) : (
                 <>
-                  <td className="w-[130px]">{convertDate(transaction.created_at)}</td>
+                  <td className="w-[130px]">{convertDate(transaction.created_at, " / ", true)}</td>
                   <td className="w-[130px]">{transaction.id}</td>
                   <td className="w-[130px]">{transaction.user_id}</td>
                   <td className="w-[130px]">{transaction.counselor_data.id}</td>
                   <td className="w-[130px]">{transaction.counselor_data.name}</td>
                   <td className="w-[130px]">{transaction.consultation_method}</td>
                   <td className="w-[130px]">{transaction.counselor_data.topic}</td>
-                  <td className="w-[130px]">{transaction.time_start}</td>
+                  <td className="w-[130px]">{convertTime(transaction.time_start)}</td>
                   <td className="w-[130px]">{formatCurrency(transaction.counselor_data.price)}</td>
                   <td className="w-[130px]"><StatusTag type={transaction.status} /></td>
                 </>
@@ -173,7 +177,8 @@ const Report = () => {
              )}                         
           </TableBody>
         </Tables>
-      </TableContainer>     
+      </TableContainer>
+      <PaginationTable/>    
     </>
   )
 };
