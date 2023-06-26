@@ -40,10 +40,10 @@ const CardCareer = ({ payloads, handleEditCareer, deleteCareer }) => {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <h3 className="text-2xl font-semibold capitalize">{job_position}</h3>
+          <h3 className="text-2xl font-medium capitalize">{job_position}</h3>
           <p className="capitalize">{company_name}</p>
           <p className="capitalize">{location}</p>
-          <h6 className="font-semibold">{formatCurrency(salary)}</h6>
+          <h6 className="font-medium">{formatCurrency(salary)}</h6>
         </div>
       </div>
       <div className="flex gap-4 items-end">
