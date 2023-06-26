@@ -3,13 +3,13 @@ import CommentCard from '../CommentCard';
 import CommentIcon from '@mui/icons-material/Comment';
 import CloseIcon from '@mui/icons-material/Close';
 import Modal from '../../Modal';
-import axios from 'axios';
 import { deleteCommentByArticleIdCommentId, getAllCommentByArticleId } from '../../../api/comment';
 import { updateComments } from '../../../features/article/commentSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { Alert, MenuItem, Select, Skeleton, Snackbar } from '@mui/material';
+import { Alert, Skeleton, Snackbar } from '@mui/material';
+import Popup from '../../Dashboard/Popup';
 
-const CommentModal = ({ openModal, onClose, articleId, totalComment, updateData }) => {
+const CommentModal = ({ openModal, onClose, articleId, updateData }) => {
   const comments = useSelector((store) => store.commentReducer.comments);
   const dispatch = useDispatch();
 
@@ -22,9 +22,22 @@ const CommentModal = ({ openModal, onClose, articleId, totalComment, updateData 
   const [isLoading, setIsLoading] = useState(false);
   const [notFoundMsg, setNotFoundMsg] = useState('');
 
+  const [isPopup, setIsPopup] = useState(false);
+  const [popupSuccess, setPopupSuccess] = useState(true);
+  const [popupMessage, setPopupMessage] = useState('success');
+
+  const handlePopup = (type, message) => {
+    setIsPopup(true);
+    setPopupSuccess(type);
+    setPopupMessage(message);
+    setTimeout(function () {
+      setIsPopup(false);
+    }, 1500);
+  };
+
   useEffect(() => {
     fetchAllComment();
-  }, [articleId, totalComment]);
+  }, [articleId]);
 
   const fetchAllComment = async () => {
     setIsLoading(true);
@@ -34,8 +47,6 @@ const CommentModal = ({ openModal, onClose, articleId, totalComment, updateData 
         const response = await getAllCommentByArticleId(articleId);
         dispatch(updateComments(response));
         setIsLoading(false);
-        console.log(response);
-        console.log(comments);
 
         if (response.length < 1) {
           setNotFoundMsg("What you are looking for doesn't exist");
@@ -57,6 +68,7 @@ const CommentModal = ({ openModal, onClose, articleId, totalComment, updateData 
   const deleteComment = async (commentId) => {
     try {
       const response = await deleteCommentByArticleIdCommentId(articleId, commentId);
+      handlePopup(true, 'Success')
       setIsShowToast({
         ...isShowToast,
         isOpen: true,
@@ -65,14 +77,16 @@ const CommentModal = ({ openModal, onClose, articleId, totalComment, updateData 
       });
       fetchAllComment();
     } catch (error) {
-      console.log(error);
+      handlePopup(false, 'Failed')
     }
 
-    updateData()
+    updateData();
   };
 
   return (
-    <div>
+    <>
+      <Popup isSuccess={popupSuccess} isOpen={isPopup} message={popupMessage} />
+
       <Snackbar open={isShowToast.isOpen} autoHideDuration={isShowToast.duration} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} onClose={() => setIsShowToast({ ...isShowToast, isOpen: false })}>
         <Alert onClose={() => setIsShowToast({ ...isShowToast, isOpen: false })} severity={isShowToast.variant} sx={{ width: '100%' }} className="capitalize">
           {isShowToast.message}
@@ -83,7 +97,7 @@ const CommentModal = ({ openModal, onClose, articleId, totalComment, updateData 
           <div className="py-2">
             <div className="flex justify-between w-full mb-[44px]">
               <div>
-                <CommentIcon /> {totalComment} Comments
+                <CommentIcon className="text-primaryMain" /> {comments.comment_count} Comments
               </div>
               <button onClick={() => onClose(false)}>
                 <CloseIcon className="bg-black text-white w-[18px] h-[18px]" />
@@ -91,8 +105,8 @@ const CommentModal = ({ openModal, onClose, articleId, totalComment, updateData 
             </div>
 
             <div>
-              {comments.length >= 1 ? (
-                comments.map((comment) =>
+              {comments?.comments?.length >= 1 ? (
+                comments.comments.map((comment) =>
                   isLoading ? (
                     <Skeleton key={comment.id} animation="wave" variant="rounded" width="100%" height={150} />
                   ) : (
@@ -111,7 +125,7 @@ const CommentModal = ({ openModal, onClose, articleId, totalComment, updateData 
           </div>
         </div>
       </Modal>
-    </div>
+    </>
   );
 };
 

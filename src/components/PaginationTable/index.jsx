@@ -1,12 +1,16 @@
-import { useState } from "react";
 import { Box, Pagination, TablePagination } from "@mui/material";
 
-const TablePaginationActions = () => {
+const TablePaginationActions = (props) => {
+  const { count, page, onPageChange } = props;
+
   return (
     <Box sx={{ flexShrink: 0, ml: 2.5 }}>
       <Pagination
+        onPage
+        onChange={onPageChange}
         size="small"
-        count={10}
+        page={page}
+        count={count}
         variant="outlined"
         shape="rounded"
         sx={{
@@ -31,24 +35,14 @@ const TablePaginationActions = () => {
   );
 };
 
-const PaginationTable = (rows) => {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+const PaginationTable = (props) => {
+  const { page, rows, rowsPerPage, handleChangePage, handleChangeRowsPerPage } =
+    props;
 
   return (
     <TablePagination
-      className="shadow"
       colSpan={10}
-      count={rows.length}
+      count={rows}
       rowsPerPage={rowsPerPage}
       page={page}
       SelectProps={{
@@ -63,8 +57,21 @@ const PaginationTable = (rows) => {
       sx={{
         "&.MuiTablePagination-root": {
           border: "none",
-          backgroundColor: "#f0f0f0",
+          backgroundColor: "#fff",
           padding: "0 1rem",
+          display: "block",
+          "& .MuiToolbar-root": {
+            paddingLeft: 0,
+            "& .MuiTablePagination-spacer": {
+              display: "none",
+            },
+            "& .MuiTablePagination-displayedRows": {
+              display: "none",
+            },
+            "& .MuiBox-root": {
+              marginLeft: "auto",
+            },
+          },
         },
       }}
     />

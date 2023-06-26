@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { useRef } from "react";
 import { useClickOutside } from "../../hooks/useClickOutside";
 
@@ -29,6 +29,10 @@ const Modal = ({ isOpen, onClose, children, type }) => {
     paddingModal = "px-[56px]";
     paddingContent = "px-[16px] py-[32px]";
     layoutContent = "flex-col";
+  } else if (type == "viewUpdateSchedule") {
+    paddingModal = "px-2";
+    paddingContent = "px-0 py-[32px]";
+    layoutContent = "flex-row";
   } else {
     paddingModal = "p-0";
   }

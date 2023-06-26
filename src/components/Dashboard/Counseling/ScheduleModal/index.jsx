@@ -11,8 +11,9 @@ import axios from "axios";
 import { convertDate } from "../../../../helpers/convertDate";
 import { addSchedule } from "../../../../api/schedule";
 import { getAuthCookie } from "../../../../utils/cookies";
+import { getAllCounselors } from "../../../../api/usercounselor";
 
-const ScheduleModal = ({ modalState, closeModal }) => {
+const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
   const {
     register,
     handleSubmit,
@@ -27,17 +28,9 @@ const ScheduleModal = ({ modalState, closeModal }) => {
   useEffect(() => {
     const token = getAuthCookie();
     if (modalState == true) {
-      axios
-        .get(
-          "https://13.210.163.192:8080/admin/counselors?sort_by=newest&has_schedule=false",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
-        .then((response) => setCounselors(response.data.data.counselors))
-        .catch((error) => console.error(error));
+      getAllCounselors({ has_schedule: false }).then((data) =>
+        setCounselors(data)
+      );
     }
   }, [modalState]);
 
@@ -59,7 +52,13 @@ const ScheduleModal = ({ modalState, closeModal }) => {
           const counselorId = data.counselor.value;
           const dates = data.dates.map((date) => convertDate(date));
 
-          addSchedule({ counselorId, dates, times });
+          addSchedule({ counselorId, dates, times })
+            .then((data) => {
+              onSubmit(true, "success");
+            })
+            .catch((error) => {
+              onSubmit(false, "failed");
+            });
 
           closeModal();
         })}
@@ -70,6 +69,7 @@ const ScheduleModal = ({ modalState, closeModal }) => {
           label={"Select Counselor"}
           placeholder={"Select Counselor"}
           handleSelect={() => {}}
+          errors={errors}
         >
           {counselors.map((counselor) => {
             return (
@@ -97,14 +97,15 @@ const ScheduleModal = ({ modalState, closeModal }) => {
           handleSelect={() => {
             handleTimeSelect();
           }}
+          errors={errors}
         >
-          <option value="09:00:00" label="09:00:00"></option>
-          <option value="10:00:00" label="10:00:00"></option>
-          <option value="11:00:00" label="11:00:00"></option>
-          <option value="12:00:00" label="12:00:00"></option>
-          <option value="13:00:00" label="13:00:00"></option>
-          <option value="14:00:00" label="14:00:00"></option>
-          <option value="15:00:00" label="15:00:00"></option>
+          <option value="09:00" label="09:00"></option>
+          <option value="10:00" label="10:00"></option>
+          <option value="11:00" label="11:00"></option>
+          <option value="12:00" label="12:00"></option>
+          <option value="13:00" label="13:00"></option>
+          <option value="14:00" label="14:00"></option>
+          <option value="15:00" label="15:00"></option>
         </Dropdown>
         {times?.map((time) => (
           <div
