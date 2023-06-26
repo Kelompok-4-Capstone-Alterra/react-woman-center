@@ -19,7 +19,7 @@ export const getAllCareers = async (params) => {
 
     const response = await axios(config);
 
-    return response.data.data.careers;
+    return response.data.data;
   } catch (error) {
     throw error.response.data.meta;
   }
@@ -64,7 +64,7 @@ export const addCareer = async (data) => {
 
     return response.data.meta;
   } catch (error) {
-    throw error.response.meta;
+    throw error.response.data.meta;
   }
 };
 
@@ -86,7 +86,7 @@ export const updateCareerById = async (id, data) => {
 
     return response.data.meta;
   } catch (error) {
-    throw error.response.meta;
+    throw error.response.data.meta;
   }
 };
 
