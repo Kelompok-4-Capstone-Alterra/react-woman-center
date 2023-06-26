@@ -16,6 +16,7 @@ import ImageThumbnail from "../components/ImageUploader/ImageThumbnail";
 import ButtonPrimary from "../components/ButtonPrimary";
 import ButtonOutline from "../components/ButtonOutline/index.jsx";
 import Popup from "../components/Dashboard/Popup";
+import PaginationTable from "../components/PaginationTable";
 import { useForm } from "react-hook-form";
 import { getAllCounselors, getAllUsers, deleteCounselorById, deleteUserById, getUserById, getCounselorById } from "../api/usercounselor";
 import { getAuthCookie } from "../utils/cookies";
@@ -47,6 +48,12 @@ const UserCounselorPage = () => {
   const [isPopup, setIsPopup] = useState(false);
   const [popupSuccess, setPopupSuccess] = useState(true);
   const [popupMessage, setPopupMessage] = useState("success");
+  const [currentCounselorPages, setCurrentCounselorPages] = useState("");
+  const [totalCounselorPages, setTotalCounselorPages] = useState("");
+  const [rowsPerCounselorPage, setRowsPerCounselorPage] = useState(10);
+  const [currentUserPages, setCurrentUserPages] = useState("");
+  const [totalUserPages, setTotalUserPages] = useState("");
+  const [rowsPerUserPage, setRowsPerUserPage] = useState(10);
 
 
   const [isShowToast, setIsShowToast] = useState({
@@ -136,8 +143,12 @@ const UserCounselorPage = () => {
 
   const fetchDataCounselors = async (params = {}) => {
     try {
-      const counselorsData = await getAllCounselors(params);
-      setCounselorsData(counselorsData);
+      const { counselors, current_pages, total_pages } = await getAllCounselors(
+        params
+      );
+      setCounselorsData(counselors);
+      setCurrentCounselorPages(current_pages);
+      setTotalCounselorPages(total_pages);
     } catch (error) {
       console.log('Error:', error);
     }
@@ -145,8 +156,12 @@ const UserCounselorPage = () => {
 
   const fetchDataUsers = async (params = {}) => {
     try {
-      const usersData = await getAllUsers(params);
-      setUsersData(usersData);
+      const { users, current_pages, total_pages } = await getAllUsers(
+        params
+      );
+      setUsersData(users);
+      setCurrentCounselorPages(current_pages);
+      setTotalCounselorPages(total_pages);
     } catch (error) {
       console.log('Error:', error);
     }
@@ -155,14 +170,18 @@ const UserCounselorPage = () => {
   useEffect(() => {
     fetchDataCounselors({
     sort_by: counselorSortBy,
-    search: counselorSearchParams
+    search: counselorSearchParams,
+    limit: rowsPerCounselorPage,
+    page: currentCounselorPages,
     });
   }, [counselorSortBy, counselorSearchParams]);
 
   useEffect(() => {
     fetchDataUsers({
       sort_by: userSortBy,
-      search: userSearchParams
+      search: userSearchParams,
+      limit: rowsPerUserPage,
+      page: currentUserPages,
       });
   }, [userSortBy, userSearchParams]);
 
@@ -360,7 +379,7 @@ const UserCounselorPage = () => {
         )}
         {isCounselor ? (
           <TableBody>
-          {counselorsData && Array.isArray(counselorsData) ? (
+          {counselorsData ? (
             counselorsData.length > 0 ? (
               counselorsData.map((counselor) => (
                 <TableRow key={counselor.id}>
@@ -402,7 +421,7 @@ const UserCounselorPage = () => {
         ) : (
 
           <TableBody>
-          {usersData && Array.isArray(usersData) ? (
+          {usersData ? (
             usersData.length > 0 ? (
               usersData.map((user) => (
                 <TableRow key={user.id}>
@@ -580,6 +599,55 @@ const UserCounselorPage = () => {
           {isShowToast.message}
         </Alert>
       </Snackbar>
+      { isCounselor ? (
+          <PaginationTable
+            page={currentCounselorPages}
+            rows={totalCounselorPages}
+            rowsPerPage={rowsPerCounselorPage}
+            handleChangePage={(event, currentCounselorPages) => {
+              setCurrentCounselorPages(currentCounselorPages);
+              fetchDataCounselors({
+                page: currentCounselorPages,
+                sort_by: counselorSortBy,
+                limit: rowsPerCounselorPage,
+              });
+            }}
+            handleChangeRowsPerPage={(event) => {
+              setRowsPerCounselorPage(parseInt(event.target.value, 10));
+              setCurrentCounselorPages(1);
+              setCounselorSearchParams("");
+              fetchDataCounselors({
+                limit: parseInt(event.target.value, 10),
+                page: currentCounselorPages,
+                sort_by: counselorSortBy,
+              });
+            }}
+          />
+        ) : (
+          <PaginationTable
+            page={currentUserPages}
+            rows={totalUserPages}
+            rowsPerPage={rowsPerUserPage}
+            handleChangePage={(event, currentUserPages) => {
+              setCurrentTransactionPages(currentUserPages);
+              fetchDataUsers({
+                page: currentUserPages,
+                sort_by: userSortBy,
+                limit: rowsPerUserPage,
+              });
+            }}
+            handleChangeRowsPerPage={(event) => {
+              setRowsPerUserPage(parseInt(event.target.value, 10));
+              setCurrentUserPages(1);
+              setUserSearchParams("");
+              fetchDataUsers({
+                limit: parseInt(event.target.value, 10),
+                page: currentUserPages,
+                sort_by: userSortBy,
+              });
+            }}
+          />
+        )}
     </>
   )
 }
