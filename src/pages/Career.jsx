@@ -1,16 +1,9 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateCareer } from "../features/career/careerSlice";
-import CardCareer from "../components/CardCareer";
-import SearchBar from "../components/SearchBar";
-import ButtonPrimary from "../components/ButtonPrimary";
-import { AddRounded, EditRounded, SaveAltRounded } from "@mui/icons-material";
-import Modal from "../components/Modal";
-import InputField from "../components/InputField";
 import { useForm } from "react-hook-form";
-import ButtonOutline from "../components/ButtonOutline";
-import FilterDropdown from "../components/FilterDropdown";
-import { Alert, Skeleton, Snackbar } from "@mui/material";
+import { AddRounded, EditRounded, SaveAltRounded } from "@mui/icons-material";
+import { Skeleton } from "@mui/material";
 import {
   addCareer,
   deleteCareerById,
@@ -18,10 +11,19 @@ import {
   getCareerById,
   updateCareerById,
 } from "../api/career";
+import { TextEditor } from "../components/TextEditor";
+import CardCareer from "../components/CardCareer";
+import SearchBar from "../components/SearchBar";
+import ButtonPrimary from "../components/ButtonPrimary";
+import Modal from "../components/Modal";
+import InputField from "../components/InputField";
+import ButtonOutline from "../components/ButtonOutline";
+import FilterDropdown from "../components/FilterDropdown";
 import Dropdown from "../components/Dropdown";
 import ImageUploader from "../components/ImageUploader";
 import ImageThumbnail from "../components/ImageUploader/ImageThumbnail";
-import { TextEditor } from "../components/TextEditor";
+import PaginationTable from "../components/PaginationTable";
+import Popup from "../components/Dashboard/Popup";
 
 const Career = () => {
   const careers = useSelector((store) => store.careerReducer.careers);
@@ -35,12 +37,6 @@ const Career = () => {
     formState: { errors },
   } = useForm();
   const [isShowModal, setIsShowModal] = useState(false);
-  const [isShowToast, setIsShowToast] = useState({
-    isOpen: false,
-    variant: "info",
-    duration: 5000,
-    message: "",
-  });
   const [isLoading, setIsLoading] = useState(false);
   const [sortBy, setSortBy] = useState("newest");
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -49,9 +45,14 @@ const Career = () => {
   const [lastEducation, setLastEducation] = useState("");
   const [createOrUpdate, setCreateOrUpdate] = useState(0);
   const [selectedCareerId, setSelectedCareerId] = useState("");
+  const [isOpenPopup, setIsOpenPopup] = useState(false);
+  const [isSuccessPopup, setIsSuccessPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    fetchAllCareers();
+    fetchAllCareers({ sort_by: sortBy });
   }, []);
 
   const fetchAllCareers = async (params = {}) => {
@@ -66,30 +67,19 @@ const Career = () => {
         setNotFoundMsg("What you are looking for doesn't exist");
       }
     } catch (error) {
-      setIsShowToast({
-        ...isShowToast,
-        isOpen: true,
-        variant: "error",
-        message: error.message,
-      });
+      handlePopup(false, error.message || "Something went wrong");
       setIsLoading(false);
     }
-
-    setNotFoundMsg("What you are looking for doesn't exist");
   };
 
   const handleDeleteCareer = async (careerId) => {
     try {
       const response = await deleteCareerById(careerId);
-      setIsShowToast({
-        ...isShowToast,
-        isOpen: true,
-        variant: "success",
-        message: response.message,
-      });
-      fetchAllCareers();
+
+      handlePopup(true, response.message);
+      fetchAllCareers({ sort_by: sortBy });
     } catch (error) {
-      console.log(error);
+      handlePopup(false, error.message || "Something went wrong");
     }
   };
 
@@ -101,7 +91,6 @@ const Career = () => {
   };
 
   const handleSubmitCareer = async (values) => {
-    console.log(values);
     const {
       jobPosition,
       company,
@@ -122,31 +111,24 @@ const Career = () => {
     formData.append("job_type", workStatus);
     formData.append("description", description);
     formData.append("company_email", companyEmail);
-    formData.append("image", pictureCareer.file);
+
+    if (pictureCareer.file) {
+      formData.append("image", pictureCareer.file);
+    }
 
     if (createOrUpdate === 0) {
       try {
         const response = await addCareer(formData);
-        setIsShowToast({
-          ...isShowToast,
-          isOpen: true,
-          variant: "success",
-          message: response.message,
-        });
+        handlePopup(true, response.message);
       } catch (error) {
-        console.log(error);
+        handlePopup(false, error.message || "Something went wrong");
       }
     } else {
       try {
         const response = await updateCareerById(selectedCareerId, formData);
-        setIsShowToast({
-          ...isShowToast,
-          isOpen: true,
-          variant: "success",
-          message: response.message,
-        });
+        handlePopup(true, response.message);
       } catch (error) {
-        console.log(error);
+        handlePopup(false, error.message || "Something went wrong");
       }
     }
     setPictureCareer({});
@@ -162,7 +144,7 @@ const Career = () => {
       companyEmail: "",
     });
     handleShowModal(false);
-    fetchAllCareers();
+    fetchAllCareers({ sort_by: sortBy });
   };
 
   const handleCreateCareer = () => {
@@ -192,6 +174,7 @@ const Career = () => {
         company: career.company_name,
         location: career.location,
         minExperience: career.min_experience,
+        lastEducation: career.last_education,
         workStatus: career.job_type,
         salary: career.salary,
         description: career.description,
@@ -201,7 +184,7 @@ const Career = () => {
       setCreateOrUpdate(1);
       setSelectedCareerId(careerId);
     } catch (error) {
-      console.log(error);
+      handlePopup(false, error.message || "Something went wrong");
     }
   };
 
@@ -226,23 +209,22 @@ const Career = () => {
     fetchAllCareers({ sort_by: sortByValue, search: searchKeyword });
   };
 
+  const handlePopup = (isSuccess, message) => {
+    setIsOpenPopup(true);
+    setIsSuccessPopup(isSuccess);
+    setPopupMessage(message);
+    setTimeout(function () {
+      setIsOpenPopup(false);
+    }, 2000);
+  };
+
   return (
     <div>
-      <Snackbar
-        open={isShowToast.isOpen}
-        autoHideDuration={isShowToast.duration}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        onClose={() => setIsShowToast({ ...isShowToast, isOpen: false })}
-      >
-        <Alert
-          onClose={() => setIsShowToast({ ...isShowToast, isOpen: false })}
-          severity={isShowToast.variant}
-          sx={{ width: "100%" }}
-          className="capitalize"
-        >
-          {isShowToast.message}
-        </Alert>
-      </Snackbar>
+      <Popup
+        isSuccess={isSuccessPopup}
+        isOpen={isOpenPopup}
+        message={popupMessage}
+      />
       <Modal isOpen={isShowModal} type="addCareer" onClose={handleShowModal}>
         <Modal.Title title="New Career" />
         <form onSubmit={handleSubmit(handleSubmitCareer)}>
@@ -257,6 +239,16 @@ const Career = () => {
               <ImageThumbnail src={pictureCareer.url} />
             )}
           </ImageUploader>
+          {createOrUpdate !== 0 && (
+            <InputField
+              label="Career Id"
+              placeholder="Ex : 12345678"
+              type="preview"
+              name="careerId"
+              value={selectedCareerId}
+              disabled
+            />
+          )}
           <InputField
             label="Job Position"
             placeholder="Ex : Junior UI Designer"
@@ -264,6 +256,7 @@ const Career = () => {
             name="jobPosition"
             register={register}
             errors={errors}
+            suffix={createOrUpdate !== 0 && <EditRounded />}
           />
           <InputField
             label="Company"
@@ -272,6 +265,7 @@ const Career = () => {
             name="company"
             register={register}
             errors={errors}
+            suffix={createOrUpdate !== 0 && <EditRounded />}
           />
           <InputField
             label="Location"
@@ -280,11 +274,12 @@ const Career = () => {
             name="location"
             register={register}
             errors={errors}
+            suffix={createOrUpdate !== 0 && <EditRounded />}
           />
           <InputField
             label="Min. Experience"
             placeholder="Ex : 5"
-            type="text"
+            type="number"
             name="minExperience"
             register={register}
             errors={errors}
@@ -297,6 +292,7 @@ const Career = () => {
             name="workStatus"
             register={register}
             errors={errors}
+            suffix={createOrUpdate !== 0 && <EditRounded />}
           />
           <Dropdown
             control={control}
@@ -308,6 +304,7 @@ const Career = () => {
                 : lastEducation
             }
             handleSelect={handleLastEducation}
+            errors={errors}
           >
             <option value="High School" label="High School (SMP)" />
             <option
@@ -321,16 +318,18 @@ const Career = () => {
           <InputField
             label="Salary"
             placeholder="Ex : 3,500,000 ++"
-            type="text"
+            type="number"
             name="salary"
             register={register}
             errors={errors}
+            suffix={createOrUpdate !== 0 && <EditRounded />}
           />
           <TextEditor
             label={"Description"}
             name={"description"}
             register={register}
             control={control}
+            errors={errors}
           />
           <InputField
             label="Company Email"
@@ -339,6 +338,7 @@ const Career = () => {
             name="companyEmail"
             register={register}
             errors={errors}
+            suffix={createOrUpdate !== 0 && <EditRounded />}
           />
           <div className="flex flex-col gap-4">
             <ButtonPrimary className="h-fit w-full px-3 py-3 flex items-center justify-center">
@@ -385,8 +385,8 @@ const Career = () => {
           <FilterDropdown value={sortBy} handleChange={handleSortBy} />
         </div>
         <div className="flex flex-col justify-center gap-4 min-h-[10rem]">
-          {careers.length >= 1 ? (
-            careers.map((career) =>
+          {careers.careers?.length >= 1 ? (
+            careers?.careers.map((career) =>
               isLoading ? (
                 <Skeleton
                   key={career.id}
@@ -409,6 +409,25 @@ const Career = () => {
               {notFoundMsg}
             </h3>
           )}
+          <PaginationTable
+            page={page}
+            rows={careers.total_pages}
+            rowsPerPage={rowsPerPage}
+            handleChangePage={(event, page) => {
+              setPage(page);
+              fetchAllCareers({ page, sort_by: sortBy });
+            }}
+            handleChangeRowsPerPage={(event) => {
+              setRowsPerPage(parseInt(event.target.value, 10));
+              setPage(1);
+              fetchAllCareers({
+                limit: parseInt(event.target.value, 10),
+                page,
+                sort_by: sortBy,
+              });
+            }}
+          />
+          {/* <PaginationTable rows={careers.total_pages} /> */}
         </div>
       </div>
     </div>

@@ -1,6 +1,5 @@
-import { getAuthCookie } from '../utils/cookies';
-import axios from 'axios';
-
+import { getAuthCookie } from "../utils/cookies";
+import axios from "axios";
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
@@ -9,9 +8,9 @@ export const getAllForums = async (params) => {
     const token = getAuthCookie();
 
     const config = {
-      method: 'GET',
+      method: "GET",
       baseURL: VITE_API_BASE_URL,
-      url: '/admin/forums',
+      url: "/admin/forums",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -20,19 +19,18 @@ export const getAllForums = async (params) => {
 
     const response = await axios(config);
 
-    return response.data.data.forums;
+    return response.data.data;
   } catch (error) {
     throw error.response.data.meta;
   }
 };
-
 
 export const deleteForumById = async (id) => {
   try {
     const token = getAuthCookie();
 
     const config = {
-      method: 'DELETE',
+      method: "DELETE",
       baseURL: VITE_API_BASE_URL,
       url: `/admin/forums/${id}`,
       headers: {

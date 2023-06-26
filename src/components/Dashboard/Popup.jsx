@@ -9,7 +9,7 @@ const Popup = ({ message, isSuccess, isOpen }) => {
         <div className="fixed w-[100vw] h-[100vh] z-[998] inset-0 flex flex-col items-center overflow-auto">
           <div className="fixed bg-black opacity-50 w-[100vw] h-[100vh] inset-0"></div>
           <div className="z-[999] h-full flex justify-center items-center">
-            <div className=" w-[250px] h-[125px] justify-center items-center flex flex-col rounded shadow-md op bg-white">
+            <div className="text-center justify-center items-center gap-4 flex flex-col rounded shadow-md op bg-white py-8 px-14">
               {isSuccess && (
                 <CheckCircleIcon
                   className="text-successMain"
