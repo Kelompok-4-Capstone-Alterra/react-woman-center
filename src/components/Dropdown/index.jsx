@@ -11,21 +11,21 @@ const Dropdown = ({
   label,
   children,
   handleSelect,
-  errors
+  errors,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState('');
+  const [selectedLabel, setSelectedLabel] = useState("");
 
-  useEffect(()=>{
-    setSelectedLabel(placeholder)
-  }, [placeholder])
+  useEffect(() => {
+    setSelectedLabel(placeholder);
+  }, [placeholder]);
 
   const {
     field: { value, onChange },
   } = useController({
     name,
     control,
-    rules: { required: true }
+    rules: { required: true },
   });
 
   const toggleDropdown = () => {
@@ -50,7 +50,7 @@ const Dropdown = ({
             className="w-full h-[48px] focus:outline-none px-4 border-solid border-2 rounded mt-2 flex items-center"
             onClick={toggleDropdown}
           >
-            {field.value ? selectLabel : placeholder}
+            {field.value ? selectedLabel : placeholder}
             {isOpen ? (
               <ExpandLess className="absolute top-[44px] right-4 cursor-pointer" />
             ) : (
@@ -73,7 +73,9 @@ const Dropdown = ({
         </ul>
       )}
       {errors[name] && (
-        <span className="mt-2 text-red-800 font-xs font-medium">This {name} is required.</span>
+        <span className="mt-2 text-red-800 font-xs font-medium">
+          This {name} is required.
+        </span>
       )}
     </div>
   );
