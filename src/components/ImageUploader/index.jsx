@@ -23,15 +23,17 @@ const ImageUploader = ({
           {children}
         </div>
       </div>
-      <div
-        className="absolute w-7 h-7 bottom-0 right-0 p-1 text-white bg-primaryMain rounded-full flex justify-center items-center"
-        style={{
-          width: `calc(${width} / ${4})`,
-          height: `calc(${height} / ${4})`,
-        }}
-      >
-        {icon}
-      </div>
+      {icon && (
+        <div
+          className="absolute w-7 h-7 bottom-0 right-0 p-1 text-white bg-primaryMain rounded-full flex justify-center items-center"
+          style={{
+            width: `calc(${width} / ${4})`,
+            height: `calc(${height} / ${4})`,
+          }}
+        >
+          {icon}
+        </div>
+      )}
     </div>
   );
 };

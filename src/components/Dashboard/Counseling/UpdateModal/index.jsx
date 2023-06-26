@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import Dropdown from "../../../Dropdown";
+import DropdownPage from "../../../DropdownPage";
 import Modal from "../../../Modal";
 import Calendar from "../../../Calendar";
 import ButtonPrimary from "../../../ButtonPrimary";
 import ButtonOutline from "../../../ButtonOutline/index";
-import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
+import Avatar from "../../../../assets/profile/avatar.png";
 import { getSchedule, updateSchedule } from "../../../../api/schedule";
 import { convertDate } from "../../../../helpers/convertDate";
 import { getCounselorById } from "../../../../api/usercounselor";
@@ -55,18 +55,31 @@ const UpdateModal = ({ modalState, closeModal, counselor, onSubmit }) => {
     setTimes((prevTimes) => prevTimes.filter((prevTime) => prevTime !== time));
   };
 
+  const handleImageError = (event) => {
+    event.currentTarget.src = Avatar;
+  };
+
   return (
-    <Modal isOpen={modalState} type={"viewUpdateSchedule"}>
+    <Modal isOpen={modalState} type={"viewUpdateSchedule"} onClose={closeModal}>
       <Modal.LeftSide>
         {counselorImage && (
-          <img src={counselorImage} alt="" className="w-[100px] h-[80px]" />
+          <img
+            src={counselorImage}
+            alt=""
+            className="w-[100px] h-[80px] rounded-full"
+            onError={handleImageError}
+          />
         )}
       </Modal.LeftSide>
       <Modal.RightSide>
-        <p className="text-[16px] font-medium text-neutralMedium">123456</p>
-        <h2 className="font-medium text-[22px] text-neutralHigh">John Doe</h2>
+        <p className="text-[16px] font-medium text-neutralMedium">
+          {counselor.id}
+        </p>
+        <h2 className="font-medium text-[22px] text-neutralHigh">
+          {counselor.name}
+        </h2>
         <p className="font-normal text-[14px] text-neutralMedium mb-6">
-          Self Development
+          {counselor.topic}
         </p>
         <form
           onSubmit={handleSubmit((data) => {
@@ -92,7 +105,7 @@ const UpdateModal = ({ modalState, closeModal, counselor, onSubmit }) => {
             placeholder={""}
             handleSelect={() => {}}
           />
-          <Dropdown
+          <DropdownPage
             control={control}
             name={"times"}
             label={"Choose Time"}
@@ -107,7 +120,7 @@ const UpdateModal = ({ modalState, closeModal, counselor, onSubmit }) => {
             <option value="13:00" label="13:00"></option>
             <option value="14:00" label="14:00"></option>
             <option value="15:00" label="15:00"></option>
-          </Dropdown>
+          </DropdownPage>
 
           <div className="mb-6">
             <label className="font-medium">Counseling's Schedule Time</label>

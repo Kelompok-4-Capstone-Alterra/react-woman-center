@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import { useController } from "react-hook-form";
 import ExpandLess from "@mui/icons-material/ExpandLess";
@@ -11,17 +11,21 @@ const Dropdown = ({
   label,
   children,
   handleSelect,
-  errors
+  errors,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState(placeholder);
+  const [selectedLabel, setSelectedLabel] = useState("");
+
+  useEffect(() => {
+    setSelectedLabel(placeholder);
+  }, [placeholder]);
 
   const {
     field: { value, onChange },
   } = useController({
     name,
     control,
-    rules: { required: true }
+    rules: { required: true },
   });
 
   const toggleDropdown = () => {
@@ -69,7 +73,9 @@ const Dropdown = ({
         </ul>
       )}
       {errors[name] && (
-        <span className="mt-2 text-red-800 font-xs font-medium">This {name} is required.</span>
+        <span className="mt-2 text-red-800 font-xs font-medium">
+          This {name} is required.
+        </span>
       )}
     </div>
   );
