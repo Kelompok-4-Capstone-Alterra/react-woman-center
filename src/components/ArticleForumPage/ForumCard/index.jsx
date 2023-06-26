@@ -4,7 +4,6 @@ import ButtonPrimary from "../../ButtonPrimary";
 import ButtonOutline from "../../ButtonOutline";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useDispatch } from "react-redux";
 import ModalConfirm from "../../ModalConfirm";
 import axios from "axios";
 import { getAuthCookie } from "../../../utils/cookies";
@@ -17,9 +16,8 @@ import { Skeleton } from "@mui/material";
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
-const ForumCard = ({ openEdit, openModalComment, payloads, deleteForum }) => {
+const ForumCard = ({ payloads, deleteForum }) => {
   const {
-    register,
     formState: { errors },
   } = useForm();
   const backgroundStyle = {
@@ -30,7 +28,6 @@ const ForumCard = ({ openEdit, openModalComment, payloads, deleteForum }) => {
   const [isLoadingUser, setIsLoadingUser] = useState(false);
   const [isShowModalConfirm, setIsShowModalConfirm] = useState(false);
   const [isShowModalEdit, setIsShowModalEdit] = useState(false);
-  const dispatch = useDispatch();
   const { user_id, category, link, topic, member, created_at } = payloads;
   const [user, setUser] = useState({});
   const differenceDay = moment(new Date(created_at)).from(moment());
@@ -92,7 +89,7 @@ const ForumCard = ({ openEdit, openModalComment, payloads, deleteForum }) => {
             ) : (
               <img
                 src={user.profile_picture}
-                className="w-[40px] h-[40px] rounded-full"
+                className="w-[40px] h-[40px] rounded-full object-cover"
                 onError={handleImageError}
               />
             )}
