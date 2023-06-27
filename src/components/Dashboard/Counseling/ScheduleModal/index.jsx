@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import Dropdown from "../../../Dropdown";
 import DropdownPage from "../../../DropdownPage";
 import Modal from "../../../Modal";
@@ -25,6 +25,8 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
 
   const [counselors, setCounselors] = useState([]);
   const [times, setTimes] = useState([]);
+
+  const { replace } = useFieldArray({ name: "dates", control });
 
   useEffect(() => {
     const token = getAuthCookie();
@@ -54,8 +56,10 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
           const dates = data.dates.map((date) => convertDate(date));
 
           addSchedule({ counselorId, dates, times })
-            .then((data) => {
+            .then(() => {
               onSubmit(true, "success");
+              replace([]);
+              setTimes([]);
             })
             .catch((error) => {
               onSubmit(false, error.message || "something went wrong");
@@ -127,7 +131,11 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
         </ButtonPrimary>
         <ButtonOutline
           type="button"
-          onClick={closeModal}
+          onClick={() => {
+            closeModal();
+            replace([]);
+            setTimes([]);
+          }}
           className="flex items-center justify-center h-[56px] w-full text-[17px]"
         >
           Not Now
