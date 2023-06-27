@@ -266,7 +266,6 @@ const ArticleForumPage = () => {
                   fetchAllArticles({
                     page: currentPage,
                     sort_by: sortBy,
-                    search: searchValue
                   });
                 }}
                 handleChangeRowsPerPage={(event) => {
