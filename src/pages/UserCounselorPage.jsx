@@ -93,7 +93,10 @@ const UserCounselorPage = () => {
     formData.append("topic", counselorData.topic.value);
     formData.append("description", counselorData.description);
     formData.append("price", counselorData.price);
-    formData.append("profile_picture", selectedImage);
+
+    if (selectedImage) {
+      formData.append("profile_picture", selectedImage);
+    }
 
     try {
       const token = getAuthCookie();
