@@ -48,7 +48,7 @@ const EditArticleModal = ({ openModal, onClose, articleId, updateData }) => {
     setPopupMessage(message);
     setTimeout(function () {
       setIsPopup(false);
-    }, 1500);
+    }, 2000);
   };
 
   useEffect(() => {

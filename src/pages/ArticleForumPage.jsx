@@ -107,7 +107,7 @@ const ArticleForumPage = () => {
     try {
       const response = await deleteArticleById(articleId);
       handlePopup(true, response.message);
-      fetchAllArticles({ sort_by: sortBy });
+      fetchAllArticles({ sort_by: sortBy,  page: 1 });
     } catch (error) {
       handlePopup(false, error.message);
     }
@@ -120,7 +120,7 @@ const ArticleForumPage = () => {
     if (isArticle) {
       fetchAllArticles({ search: keyword, sort_by: sortBy });
     } else {
-      fetchAllArticles({ topic: keyword, sort_by: sortBy, page });
+      fetchAllArticles({ topic: keyword, sort_by: sortBy });
     }
   };
 
@@ -130,7 +130,7 @@ const ArticleForumPage = () => {
     setSortBy(sortByValue);
 
     if (isArticle) {
-      fetchAllArticles({ sort_by: sortByValue, search: searchKeyword });
+      fetchAllArticles({ sort_by: sortByValue, search: searchKeyword, page });
     } else {
       fetchAllArticles({ sort_by: sortByValue, topic: searchKeyword, page });
     }
@@ -266,6 +266,7 @@ const ArticleForumPage = () => {
                   fetchAllArticles({
                     page: currentPage,
                     sort_by: sortBy,
+                    search: searchValue
                   });
                 }}
                 handleChangeRowsPerPage={(event) => {
