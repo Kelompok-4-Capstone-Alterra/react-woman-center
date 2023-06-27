@@ -61,8 +61,7 @@ const UserCounselorPage = () => {
   const [user, setUser] = useState(null);
   const [counselor, setCounselor] = useState(null);
   const [showModalConfirmUser, setShowModalConfirmUser] = useState(false);
-  const [showModalConfirmCounselor, setShowModalConfirmCounselor] =
-    useState(false);
+  const [showModalConfirmCounselor, setShowModalConfirmCounselor] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedCounselorId, setSelectedCounselorId] = useState(null);
   const [counselorSearchParams, setCounselorSearchParams] = useState("");
@@ -468,7 +467,7 @@ const UserCounselorPage = () => {
                   usersData.length > 0 ? (
                     usersData.map((user) => (
                       <TableRow key={user.id}>
-                        <td className="w-[130px]">{user.id}</td>
+                        <td className="w-[130px]">{hideId(user.id)}</td>
                         <td className="w-[130px]">{user.name}</td>
                         <td className="w-[130px]">{user.username}</td>
                         <td className="w-[130px]">{user.email}</td>
