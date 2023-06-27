@@ -11,28 +11,27 @@ import PaginationTable from "../components/PaginationTable";
 import ButtonPrimary from "../components/ButtonPrimary";
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 import StatusTag from "../components/StatusTag";
-import { CSVLink } from "react-csv";
 import { useState, useEffect } from "react";
 import { getReport } from "../api/transaction";
+import { getReportDownload } from "../api/transaction";
 import { formatCurrency } from "../helpers/formatCurrency";
 import { convertDate } from "../helpers/convertDate";
 import { convertTime } from "../helpers/converTime";
 import { Skeleton } from "@mui/material";
 
 const Report = () => {
-  const { register, handleSubmit, control, formState: { errors } } = useForm();
+  const { register, control, formState: { errors } } = useForm();
   const [transactions, setTransactions] = useState([]);
   const [searchParams, setSearchParams] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [startDate, setStartDate] = useState([]);
   const [endDate, setEndDate] = useState([]);
-  const [page, setPage] = useState([]);
   const [notFoundMsg, setNotFoundMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [currentTransactionPages, setCurrentTransactionPages] = useState("");
+  const [totalTransactionPages, setTotalTransactionPages] = useState("");
+  const [rowsPerTransactionPage, setRowsPerTransactionPage] = useState(10);
 
-  const onSubmit = (data) => {
-    alert(JSON.stringify(data));
-  }
   const handleSelectStart = (startDate)=>{
     setStartDate(startDate);
   }
@@ -41,36 +40,52 @@ const Report = () => {
     setEndDate(endDate);
   }
 
-  const headers = [
-    { label: 'Date', key: 'created_at'},
-    { label: 'Transaction id', key: 'id'},
-    { label: 'User id', key: 'user_id'},
-    { label: 'Counselor id', key: 'counselor_data.id'},
-    { label: 'Counselors name', key: 'counselor_data.name'},
-    { label: 'Method', key: 'consultation_method'},
-    { label: 'Topic', key: 'counselor_data.topic'},
-    { label: 'Time', key: 'time_start'},
-    { label: 'Price', key: 'counselor_data.price'},
-    { label: 'Status', key: 'status'},
-  ];
+  const handleTransactionSearch = (e) => {
+    setSearchParams(e.target.value);
+    setCurrentTransactionPages(1);
+  };
 
+  const handleTransactionSortBy = (e) => {
+    setSortBy(e.target.value);
+    setCurrentTransactionPages(1);
+  };
+  
   const fetchReports = async (params = {}) => {
     setIsLoading(true);
-
     try {
-      const response = await getReport(params);
-      setTransactions(response);
+      const {transaction,current_pages, total_pages } = await getReport(params);
+      setTransactions(transaction);
+      setCurrentTransactionPages(current_pages);
+      setTotalTransactionPages(total_pages);
       setIsLoading(false);
-
       if (response.length < 1) {
         setNotFoundMsg("What you are looking for doesn't exist");
       }
     } catch (error) {
       setIsLoading(false);
     }
-
     setNotFoundMsg("What you are looking for doesn't exist");
   };
+
+  const fetchReportDownload = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getReportDownload({
+        start_date: startDate,
+        end_date: endDate,
+        sort_by: sortBy,
+        search: searchParams,});
+        setIsLoading(false);
+        const csvContent = `data:text/csv;charset=utf-8,${response.data}`;
+        const encodedURI = encodeURI(csvContent);
+        
+        window.open(encodedURI);
+    } catch (error) {
+      setIsLoading(false);
+      console.log("err")
+    }
+  };
+  
  
   useEffect (()=>{
     fetchReports({
@@ -78,13 +93,14 @@ const Report = () => {
       end_date: endDate,
       sort_by: sortBy,
       search: searchParams,
-      page
+      limit: rowsPerTransactionPage,
+      page: currentTransactionPages,
     })
-  },[ startDate,endDate,sortBy,searchParams,page]);
+    
+  },[ startDate,endDate,sortBy,searchParams]);
 
   return (
     <>
-    <form onSubmit={handleSubmit(onSubmit)}>
     <div className="flex relative w-full">
       <div className="w-1/2 mr-4">
         <Calendar
@@ -108,24 +124,20 @@ const Report = () => {
         handleSelect={handleSelectEnd}/>
       </div>
     </div>
-    </form>
-      <CSVLink 
-        data={transactions}
-        headers={headers}
-        filename={"Counseling Report.csv"}>
-        <ButtonPrimary className="my-4 w-[140px] h-10 text-base">
-          <FileDownloadRoundedIcon className="mr-[10px]" />Export File
-        </ButtonPrimary>
-      </CSVLink>
+      <ButtonPrimary 
+        className="my-4 w-[140px] h-10 text-base"
+        onClick={fetchReportDownload}>
+        <FileDownloadRoundedIcon className="mr-[10px]" />Export File
+      </ButtonPrimary>
     <TableContainer>
         <TableTitle 
         title={"Counseling Report"}
         onChange={(e)=>
-          setSearchParams(e.target.value)
+          handleTransactionSearch(e)
         }
         sortBy={sortBy}
         onSelect={(e) => 
-          setSortBy(e.target.value)
+          handleTransactionSortBy(e)
         }
          />
         <Tables scroll>
@@ -177,8 +189,36 @@ const Report = () => {
              )}                         
           </TableBody>
         </Tables>
+      {transactions.length >= 1 && (
+          <PaginationTable
+            page={currentTransactionPages}
+            rows={totalTransactionPages}
+            rowsPerPage={rowsPerTransactionPage}
+            handleChangePage={(event, currentTransactionPages) => {
+              setCurrentTransactionPages(currentTransactionPages);
+              fetchReports({
+                page: currentTransactionPages,
+                sort_by: sortBy,
+                limit: rowsPerTransactionPage,
+                start_date: startDate,
+                end_date: endDate,
+              });
+            }}
+            handleChangeRowsPerPage={(event) => {
+              setRowsPerTransactionPage(parseInt(event.target.value, 10));
+              setCurrentTransactionPages(1);
+              setSearchParams("");
+              fetchReports({
+                limit: parseInt(event.target.value, 10),
+                page: currentTransactionPages,
+                sort_by: sortBy,
+                start_date: startDate,
+                end_date: endDate,
+              });
+            }}
+          />
+        )}  
       </TableContainer>
-      <PaginationTable/>    
     </>
   )
 };
