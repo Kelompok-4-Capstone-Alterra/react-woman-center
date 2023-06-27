@@ -27,6 +27,8 @@ import { convertDate } from "../../helpers/convertDate";
 import { useForm } from "react-hook-form";
 import { Delete, Edit, Visibility, Add, Link } from "@mui/icons-material";
 import { Skeleton } from "@mui/material";
+import { hideId } from "../../helpers/hideId";
+import { convertTime } from "../../helpers/converTime";
 
 const CounselingPage = () => {
   // Table State
@@ -340,7 +342,7 @@ const CounselingPage = () => {
                       </td>
                     ) : (
                       <>
-                        <td className="w-[130px]">{counselor.id}</td>
+                        <td className="w-[130px]">{hideId(counselor.id)}</td>
                         <td className="w-[130px]">{counselor.name}</td>
                         <td className="w-[130px]">{counselor.topic}</td>
                         <td className="w-[130px]">
@@ -418,12 +420,14 @@ const CounselingPage = () => {
                     ) : (
                       <>
                         <td className="w-[130px]">
-                          {convertDate(transaction.created_at)}
+                          {convertDate(transaction.created_at, " / ")}
                         </td>
-                        <td className="w-[130px]">{transaction.id}</td>
-                        <td className="w-[130px]">{transaction.user_id}</td>
+                        <td className="w-[130px]">{hideId(transaction.id)}</td>
                         <td className="w-[130px]">
-                          {transaction.counselor_id}
+                          {hideId(transaction.user_id)}
+                        </td>
+                        <td className="w-[130px]">
+                          {hideId(transaction.counselor_id)}
                         </td>
                         <td className="w-[130px]">
                           {transaction.counselor_data.name}
@@ -434,7 +438,9 @@ const CounselingPage = () => {
                         <td className="w-[130px]">
                           {transaction.counselor_data.topic}
                         </td>
-                        <td className="w-[130px]">{transaction.time_start}</td>
+                        <td className="w-[130px]">
+                          {convertTime(transaction.time_start)}
+                        </td>
                         <td className="w-[130px]">
                           {formatCurrency(transaction.counselor_data.price)}
                         </td>
