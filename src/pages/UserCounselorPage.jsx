@@ -161,7 +161,7 @@ const UserCounselorPage = () => {
       );
       setUsersData(users);
       setCurrentCounselorPages(current_pages);
-      setTotalCounselorPages(total_pages);
+      setTotalUserPages(total_pages);
     } catch (error) {
       console.log('Error:', error);
     }
@@ -627,7 +627,7 @@ const UserCounselorPage = () => {
             rows={totalUserPages}
             rowsPerPage={rowsPerUserPage}
             handleChangePage={(event, currentUserPages) => {
-              setCurrentTransactionPages(currentUserPages);
+              setCurrentUserPages(currentUserPages);
               fetchDataUsers({
                 page: currentUserPages,
                 sort_by: userSortBy,
