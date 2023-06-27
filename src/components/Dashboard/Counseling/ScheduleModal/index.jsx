@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Dropdown from "../../../Dropdown";
+import DropdownPage from "../../../DropdownPage";
 import Modal from "../../../Modal";
 import Calendar from "../../../Calendar";
 import ButtonPrimary from "../../../ButtonPrimary";
@@ -89,7 +90,7 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
           register={register}
           placeholder={""}
         />
-        <Dropdown
+        <DropdownPage
           control={control}
           name={"times"}
           label={"Choose Time"}
@@ -106,7 +107,7 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
           <option value="13:00" label="13:00"></option>
           <option value="14:00" label="14:00"></option>
           <option value="15:00" label="15:00"></option>
-        </Dropdown>
+        </DropdownPage>
         {times?.map((time) => (
           <div
             key={time}
