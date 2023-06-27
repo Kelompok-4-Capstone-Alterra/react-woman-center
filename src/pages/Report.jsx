@@ -6,19 +6,21 @@ import TableTitle from "../components/Dashboard/Tables/TableTitle"
 import Tables from "../components/Dashboard/Tables/Tables"
 import TableHeader from "../components/Dashboard/Tables/TableHeader"
 import TableBody  from "../components/Dashboard/Tables/TableBody"
-import TableRow  from "../components/Dashboard/Tables/TableRow"
+import TableRow  from "../components/Dashboard/Tables/TableRow";
+import PaginationTable from "../components/PaginationTable";
 import ButtonPrimary from "../components/ButtonPrimary";
 import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
 import StatusTag from "../components/StatusTag";
-import { CSVLink } from "react-csv";
 import { useState, useEffect } from "react";
 import { getReport } from "../api/transaction";
+import { getReportDownload } from "../api/transaction";
 import { formatCurrency } from "../helpers/formatCurrency";
 import { convertDate } from "../helpers/convertDate";
+import { convertTime } from "../helpers/converTime";
 import { Skeleton } from "@mui/material";
 
 const Report = () => {
-  const { register, handleSubmit, control, formState: { errors } } = useForm();
+  const { register, control, formState: { errors } } = useForm();
   const [transactions, setTransactions] = useState([]);
   const [searchParams, setSearchParams] = useState("");
   const [sortBy, setSortBy] = useState("newest");
@@ -26,10 +28,10 @@ const Report = () => {
   const [endDate, setEndDate] = useState([]);
   const [notFoundMsg, setNotFoundMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [currentTransactionPages, setCurrentTransactionPages] = useState("");
+  const [totalTransactionPages, setTotalTransactionPages] = useState("");
+  const [rowsPerTransactionPage, setRowsPerTransactionPage] = useState(10);
 
-  const onSubmit = (data) => {
-    alert(JSON.stringify(data));
-  }
   const handleSelectStart = (startDate)=>{
     setStartDate(startDate);
   }
@@ -38,36 +40,52 @@ const Report = () => {
     setEndDate(endDate);
   }
 
-  const headers = [
-    { label: 'Date', key: 'created_at'},
-    { label: 'Transaction id', key: 'id'},
-    { label: 'User id', key: 'user_id'},
-    { label: 'Counselor id', key: 'counselor_data.id'},
-    { label: 'Counselors name', key: 'counselor_data.name'},
-    { label: 'Method', key: 'consultation_method'},
-    { label: 'Topic', key: 'counselor_data.topic'},
-    { label: 'Time', key: 'time_start'},
-    { label: 'Price', key: 'counselor_data.price'},
-    { label: 'Status', key: 'status'},
-  ];
+  const handleTransactionSearch = (e) => {
+    setSearchParams(e.target.value);
+    setCurrentTransactionPages(1);
+  };
 
+  const handleTransactionSortBy = (e) => {
+    setSortBy(e.target.value);
+    setCurrentTransactionPages(1);
+  };
+  
   const fetchReports = async (params = {}) => {
     setIsLoading(true);
-
     try {
-      const response = await getReport(params);
-      setTransactions(response);
+      const {transaction,current_pages, total_pages } = await getReport(params);
+      setTransactions(transaction);
+      setCurrentTransactionPages(current_pages);
+      setTotalTransactionPages(total_pages);
       setIsLoading(false);
-
       if (response.length < 1) {
         setNotFoundMsg("What you are looking for doesn't exist");
       }
     } catch (error) {
       setIsLoading(false);
     }
-
     setNotFoundMsg("What you are looking for doesn't exist");
   };
+
+  const fetchReportDownload = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getReportDownload({
+        start_date: startDate,
+        end_date: endDate,
+        sort_by: sortBy,
+        search: searchParams,});
+        setIsLoading(false);
+        const csvContent = `data:text/csv;charset=utf-8,${response.data}`;
+        const encodedURI = encodeURI(csvContent);
+        
+        window.open(encodedURI);
+    } catch (error) {
+      setIsLoading(false);
+      console.log("err")
+    }
+  };
+  
  
   useEffect (()=>{
     fetchReports({
@@ -75,13 +93,15 @@ const Report = () => {
       end_date: endDate,
       sort_by: sortBy,
       search: searchParams,
+      limit: rowsPerTransactionPage,
+      page: currentTransactionPages,
     })
+    
   },[ startDate,endDate,sortBy,searchParams]);
 
   return (
     <>
-    <form onSubmit={handleSubmit(onSubmit)}>
-    <div className="flex relative w-full mx-4 mt-4">
+    <div className="flex relative w-full">
       <div className="w-1/2 mr-4">
         <Calendar
         control ={control}
@@ -93,7 +113,7 @@ const Report = () => {
         handleSelect={handleSelectStart}
         />
       </div>
-      <div className="w-1/2 mr-4">
+      <div className="w-1/2">
         <Calendar
         control ={control}
         type="calendar-input"
@@ -104,24 +124,20 @@ const Report = () => {
         handleSelect={handleSelectEnd}/>
       </div>
     </div>
-    </form>
-      <CSVLink 
-        data={transactions}
-        headers={headers}
-        filename={"Counseling Report.csv"}>
-        <ButtonPrimary className="m-4 w-[140px] h-10 text-base">
-          <FileDownloadRoundedIcon className="mr-[10px]" />Export File
-        </ButtonPrimary>
-      </CSVLink>
+      <ButtonPrimary 
+        className="my-4 w-[140px] h-10 text-base"
+        onClick={fetchReportDownload}>
+        <FileDownloadRoundedIcon className="mr-[10px]" />Export File
+      </ButtonPrimary>
     <TableContainer>
         <TableTitle 
         title={"Counseling Report"}
         onChange={(e)=>
-          setSearchParams(e.target.value)
+          handleTransactionSearch(e)
         }
         sortBy={sortBy}
         onSelect={(e) => 
-          setSortBy(e.target.value)
+          handleTransactionSortBy(e)
         }
          />
         <Tables scroll>
@@ -152,14 +168,14 @@ const Report = () => {
                 </td>
               ) : (
                 <>
-                  <td className="w-[130px]">{convertDate(transaction.created_at)}</td>
+                  <td className="w-[130px]">{convertDate(transaction.created_at, " / ", true)}</td>
                   <td className="w-[130px]">{transaction.id}</td>
                   <td className="w-[130px]">{transaction.user_id}</td>
                   <td className="w-[130px]">{transaction.counselor_data.id}</td>
                   <td className="w-[130px]">{transaction.counselor_data.name}</td>
                   <td className="w-[130px]">{transaction.consultation_method}</td>
                   <td className="w-[130px]">{transaction.counselor_data.topic}</td>
-                  <td className="w-[130px]">{transaction.time_start}</td>
+                  <td className="w-[130px]">{convertTime(transaction.time_start)}</td>
                   <td className="w-[130px]">{formatCurrency(transaction.counselor_data.price)}</td>
                   <td className="w-[130px]"><StatusTag type={transaction.status} /></td>
                 </>
@@ -173,7 +189,36 @@ const Report = () => {
              )}                         
           </TableBody>
         </Tables>
-      </TableContainer>     
+      {transactions.length >= 1 && (
+          <PaginationTable
+            page={currentTransactionPages}
+            rows={totalTransactionPages}
+            rowsPerPage={rowsPerTransactionPage}
+            handleChangePage={(event, currentTransactionPages) => {
+              setCurrentTransactionPages(currentTransactionPages);
+              fetchReports({
+                page: currentTransactionPages,
+                sort_by: sortBy,
+                limit: rowsPerTransactionPage,
+                start_date: startDate,
+                end_date: endDate,
+              });
+            }}
+            handleChangeRowsPerPage={(event) => {
+              setRowsPerTransactionPage(parseInt(event.target.value, 10));
+              setCurrentTransactionPages(1);
+              setSearchParams("");
+              fetchReports({
+                limit: parseInt(event.target.value, 10),
+                page: currentTransactionPages,
+                sort_by: sortBy,
+                start_date: startDate,
+                end_date: endDate,
+              });
+            }}
+          />
+        )}  
+      </TableContainer>
     </>
   )
 };
