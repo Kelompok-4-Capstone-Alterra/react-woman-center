@@ -63,7 +63,7 @@ const Career = () => {
       dispatch(updateCareer(response));
       setIsLoading(false);
 
-      if (response.length < 1) {
+      if (response.careers.length < 1) {
         setNotFoundMsg("What you are looking for doesn't exist");
       }
     } catch (error) {
@@ -206,7 +206,8 @@ const Career = () => {
     const sortByValue = event.target.value;
 
     setSortBy(sortByValue);
-    fetchAllCareers({ sort_by: sortByValue, search: searchKeyword });
+    setPage(1);
+    fetchAllCareers({ sort_by: sortByValue, search: searchKeyword, page: 1 });
   };
 
   const handlePopup = (isSuccess, message) => {
