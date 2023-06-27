@@ -420,7 +420,7 @@ const CounselingPage = () => {
                     ) : (
                       <>
                         <td className="w-[130px]">
-                          {convertDate(transaction.created_at, " / ")}
+                          {convertDate(transaction.created_at, " / ", true)}
                         </td>
                         <td className="w-[130px]">{hideId(transaction.id)}</td>
                         <td className="w-[130px]">
