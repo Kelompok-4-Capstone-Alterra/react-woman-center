@@ -1,3 +1,3 @@
-export const hideId = (id, charLength = 15) => {
-  return `${id.substring(0, charLength)}...`;
+export const hideId = (id, charLength = 13) => {
+  return `${id.substring(0, charLength)}`;
 };

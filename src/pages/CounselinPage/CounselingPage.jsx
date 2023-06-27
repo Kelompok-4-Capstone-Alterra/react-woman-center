@@ -422,14 +422,12 @@ const CounselingPage = () => {
                         <td className="w-[130px]">
                           {convertDate(transaction.created_at, " / ")}
                         </td>
+                        <td className="w-[130px]">{hideId(transaction.id)}</td>
                         <td className="w-[130px]">
-                          {hideId(transaction.id, 7)}
+                          {hideId(transaction.user_id)}
                         </td>
                         <td className="w-[130px]">
-                          {hideId(transaction.user_id, 7)}
-                        </td>
-                        <td className="w-[130px]">
-                          {hideId(transaction.counselor_id, 7)}
+                          {hideId(transaction.counselor_id)}
                         </td>
                         <td className="w-[130px]">
                           {transaction.counselor_data.name}

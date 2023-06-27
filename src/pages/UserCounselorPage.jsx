@@ -402,9 +402,7 @@ const UserCounselorPage = () => {
                   counselorsData.length > 0 ? (
                     counselorsData.map((counselor) => (
                       <TableRow key={counselor.id}>
-                        <td className="w-[130px]">
-                          {hideId(counselor.id, 12)}
-                        </td>
+                        <td className="w-[130px]">{hideId(counselor.id)}</td>
                         <td className="w-[130px]">{counselor.name}</td>
                         <td className="w-[130px]">{counselor.username}</td>
                         <td className="w-[130px]">{counselor.email}</td>
