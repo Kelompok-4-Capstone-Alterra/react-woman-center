@@ -30,14 +30,20 @@ const DashboardPage = () => {
   const [rowsPerTransactionPage, setRowsPerTransactionPage] = useState(10);
 
   const handleTransactionSearch = (e) => {
-    const transactionSearchParams = e.target.value
+    const transactionSearchParams = e.target.value;
     setTransactionSearchParams(transactionSearchParams);
-    fetchAllTransactions({ search: transactionSearchParams, sort_by: transactionSortBy })
+    fetchAllTransactions({
+      search: transactionSearchParams,
+      sort_by: transactionSortBy,
+    });
   };
   const handleTransactionSortBy = (e) => {
     const transactionSortBy = e.target.value;
     setTransactionSortBy(transactionSortBy);
-    fetchAllTransactions({ search:transactionSearchParams , sort_by: transactionSortBy })
+    fetchAllTransactions({
+      search: transactionSearchParams,
+      sort_by: transactionSortBy,
+    });
   };
 
   const fetchAllStatistics = async () => {
@@ -55,7 +61,8 @@ const DashboardPage = () => {
   const fetchAllTransactions = async (params = {}) => {
     setIsLoading(true);
     try {
-      const  { transaction, current_pages, total_pages } = await getAllTransactions(params);
+      const { transaction, current_pages, total_pages } =
+        await getAllTransactions(params);
       setTransactions(transaction);
       setCurrentTransactionPages(current_pages);
       setTotalTransactionPages(total_pages);
@@ -101,13 +108,9 @@ const DashboardPage = () => {
       <TableContainer>
         <TableTitle
           title={"Recent Counseling Transaction"}
-          onChange={(e)=>
-            handleTransactionSearch(e)
-          }
+          onChange={(e) => handleTransactionSearch(e)}
           sortBy={transactionSortBy}
-          onSelect={(e) => 
-            handleTransactionSortBy(e)
-          }
+          onSelect={(e) => handleTransactionSortBy(e)}
         />
         <Tables scroll>
           <TableHeader>
@@ -122,40 +125,60 @@ const DashboardPage = () => {
             <th className="w-[130px]">Price</th>
             <th className="w-[130px]">Status</th>
           </TableHeader>
-          <TableBody> 
-          {transactions.length >= 1 ? (
-            transactions.map((transaction,index) => (
-            <TableRow key={index} >
-              {isLoading ? (
-                  <td colSpan={12}>
-                    <Skeleton
-                      animation="wave"
-                      variant="rounded"
-                      width="100%"
-                      height={50}
-                  />
-                </td>
-              ) : (
-                <>
-                  <td className="w-[130px]">{convertDate(transaction.created_at, " / ", true)}</td>
-                  <td className="w-[130px]">{hideId(transaction.id)}</td>
-                  <td className="w-[130px]">{hideId(transaction.user_id)}</td>
-                  <td className="w-[130px]">{hideId(transaction.counselor_data.id)}</td>
-                  <td className="w-[130px]">{transaction.counselor_data.name}</td>
-                  <td className="w-[130px]">{transaction.consultation_method}</td>
-                  <td className="w-[130px]">{transaction.counselor_data.topic}</td>
-                  <td className="w-[130px]">{convertTime(transaction.time_start)}</td>
-                  <td className="w-[130px]">{formatCurrency(transaction.counselor_data.price)}</td>
-                  <td className="w-[130px]"><StatusTag type={transaction.status} /></td>
-                </>
-              ) }
-              </TableRow>
-            ))
-             ) : (
+          <TableBody>
+            {transactions.length >= 1 ? (
+              transactions.map((transaction, index) => (
+                <TableRow key={index}>
+                  {isLoading ? (
+                    <td colSpan={12}>
+                      <Skeleton
+                        animation="wave"
+                        variant="rounded"
+                        width="100%"
+                        height={50}
+                      />
+                    </td>
+                  ) : (
+                    <>
+                      <td className="w-[130px]">
+                        {convertDate(transaction.created_at, " / ", true)}
+                      </td>
+                      <td className="w-[130px]">{hideId(transaction.id)}</td>
+                      <td className="w-[130px]">
+                        {hideId(transaction.user_id)}
+                      </td>
+                      <td className="w-[130px]">
+                        {hideId(transaction.counselor_data.id)}
+                      </td>
+                      <td className="w-[130px]">
+                        {transaction.counselor_data.name}
+                      </td>
+                      <td className="w-[130px]">
+                        {transaction.consultation_method}
+                      </td>
+                      <td className="w-[130px]">
+                        {transaction.counselor_data.topic}
+                      </td>
+                      <td className="w-[130px]">
+                        {convertTime(transaction.time_start)}
+                      </td>
+                      <td className="w-[130px]">
+                        {formatCurrency(transaction.counselor_data.price)}
+                      </td>
+                      <td className="w-[130px]">
+                        <StatusTag type={transaction.status} />
+                      </td>
+                    </>
+                  )}
+                </TableRow>
+              ))
+            ) : (
               <TableRow>
-              <td colSpan={7}>{notFoundMsg}</td>
-            </TableRow>
-             )}                         
+                <td className="font-semibold text-center" colSpan={7}>
+                  {notFoundMsg}
+                </td>
+              </TableRow>
+            )}
           </TableBody>
         </Tables>
         {transactions.length >= 1 && (

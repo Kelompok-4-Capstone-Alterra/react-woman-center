@@ -61,7 +61,8 @@ const UserCounselorPage = () => {
   const [user, setUser] = useState(null);
   const [counselor, setCounselor] = useState(null);
   const [showModalConfirmUser, setShowModalConfirmUser] = useState(false);
-  const [showModalConfirmCounselor, setShowModalConfirmCounselor] = useState(false);
+  const [showModalConfirmCounselor, setShowModalConfirmCounselor] =
+    useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedCounselorId, setSelectedCounselorId] = useState(null);
   const [counselorSearchParams, setCounselorSearchParams] = useState("");
@@ -442,7 +443,7 @@ const UserCounselorPage = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <td className="font-semibold" colSpan={7}>
+                      <td className="font-semibold text-center" colSpan={7}>
                         What are you looking for doesnt exist.
                       </td>
                     </TableRow>
@@ -501,7 +502,7 @@ const UserCounselorPage = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <td className="font-semibold" colSpan={6}>
+                      <td className="font-semibold text-center" colSpan={6}>
                         What are you looking for doesnt exist.
                       </td>
                     </TableRow>
@@ -632,8 +633,8 @@ const UserCounselorPage = () => {
                   <ImageThumbnail src={imagePreview} />
                 ) : (
                   <ImageThumbnail
-                  src={counselor?.profile_picture}
-                  onError={handleImageError}
+                    src={counselor?.profile_picture}
+                    onError={handleImageError}
                   />
                 )}
               </ImageUploader>
@@ -718,10 +719,10 @@ const UserCounselorPage = () => {
           <div>
             <form className="mb-3">
               <ImageUploader className="mb-5">
-                  <ImageThumbnail
+                <ImageThumbnail
                   src={user?.profile_picture}
                   onError={handleImageError}
-                  />
+                />
               </ImageUploader>
               <InputField
                 name="id"
@@ -804,55 +805,55 @@ const UserCounselorPage = () => {
           {isShowToast.message}
         </Alert>
       </Snackbar>
-      { isCounselor ? (
-          <PaginationTable
-            page={currentCounselorPages}
-            rows={totalCounselorPages}
-            rowsPerPage={rowsPerCounselorPage}
-            handleChangePage={(event, currentCounselorPages) => {
-              setCurrentCounselorPages(currentCounselorPages);
-              fetchDataCounselors({
-                page: currentCounselorPages,
-                sort_by: counselorSortBy,
-                limit: rowsPerCounselorPage,
-              });
-            }}
-            handleChangeRowsPerPage={(event) => {
-              setRowsPerCounselorPage(parseInt(event.target.value, 10));
-              setCurrentCounselorPages(1);
-              setCounselorSearchParams("");
-              fetchDataCounselors({
-                limit: parseInt(event.target.value, 10),
-                page: currentCounselorPages,
-                sort_by: counselorSortBy,
-              });
-            }}
-          />
-        ) : (
-          <PaginationTable
-            page={currentUserPages}
-            rows={totalUserPages}
-            rowsPerPage={rowsPerUserPage}
-            handleChangePage={(event, currentUserPages) => {
-              setCurrentUserPages(currentUserPages);
-              fetchDataUsers({
-                page: currentUserPages,
-                sort_by: userSortBy,
-                limit: rowsPerUserPage,
-              });
-            }}
-            handleChangeRowsPerPage={(event) => {
-              setRowsPerUserPage(parseInt(event.target.value, 10));
-              setCurrentUserPages(1);
-              setUserSearchParams("");
-              fetchDataUsers({
-                limit: parseInt(event.target.value, 10),
-                page: currentUserPages,
-                sort_by: userSortBy,
-              });
-            }}
-          />
-        )}
+      {isCounselor ? (
+        <PaginationTable
+          page={currentCounselorPages}
+          rows={totalCounselorPages}
+          rowsPerPage={rowsPerCounselorPage}
+          handleChangePage={(event, currentCounselorPages) => {
+            setCurrentCounselorPages(currentCounselorPages);
+            fetchDataCounselors({
+              page: currentCounselorPages,
+              sort_by: counselorSortBy,
+              limit: rowsPerCounselorPage,
+            });
+          }}
+          handleChangeRowsPerPage={(event) => {
+            setRowsPerCounselorPage(parseInt(event.target.value, 10));
+            setCurrentCounselorPages(1);
+            setCounselorSearchParams("");
+            fetchDataCounselors({
+              limit: parseInt(event.target.value, 10),
+              page: currentCounselorPages,
+              sort_by: counselorSortBy,
+            });
+          }}
+        />
+      ) : (
+        <PaginationTable
+          page={currentUserPages}
+          rows={totalUserPages}
+          rowsPerPage={rowsPerUserPage}
+          handleChangePage={(event, currentUserPages) => {
+            setCurrentUserPages(currentUserPages);
+            fetchDataUsers({
+              page: currentUserPages,
+              sort_by: userSortBy,
+              limit: rowsPerUserPage,
+            });
+          }}
+          handleChangeRowsPerPage={(event) => {
+            setRowsPerUserPage(parseInt(event.target.value, 10));
+            setCurrentUserPages(1);
+            setUserSearchParams("");
+            fetchDataUsers({
+              limit: parseInt(event.target.value, 10),
+              page: currentUserPages,
+              sort_by: userSortBy,
+            });
+          }}
+        />
+      )}
     </>
   );
 };

@@ -396,7 +396,9 @@ const CounselingPage = () => {
                 ))
               ) : (
                 <TableRow>
-                  <td colSpan={6}>{notFoundMsg}</td>
+                  <td className="text-center font-semibold" colSpan={6}>
+                    {notFoundMsg}
+                  </td>
                 </TableRow>
               )}
             </TableBody>
@@ -496,7 +498,9 @@ const CounselingPage = () => {
                 ))
               ) : (
                 <TableRow>
-                  <td colSpan={9}>{notFoundMsg}</td>
+                  <td className="text-center font-semibold" colSpan={9}>
+                    {notFoundMsg}
+                  </td>
                 </TableRow>
               )}
             </TableBody>
