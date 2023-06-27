@@ -113,8 +113,7 @@ const UserCounselorPage = () => {
       handleAdd();
       handlePopup(true, "Counselor succesfully added");
 
-      const counselorsData = await getAllCounselors({ sort_by: "newest" });
-      setCounselorsData(counselorsData);
+      fetchDataCounselors({ sort_by: "newest" });
 
       return response.data.meta;
     } catch (error) {
@@ -153,8 +152,7 @@ const UserCounselorPage = () => {
       handlePopup(true, "Counselor succesfully updated");
       setImagePreview("");
 
-      const counselorsData = await getAllCounselors({ sort_by: "newest" });
-      setCounselorsData(counselorsData);
+      fetchDataCounselors({ sort_by: "newest" });
 
       return response.data.meta;
     } catch (error) {
@@ -281,6 +279,7 @@ const UserCounselorPage = () => {
   const handleAdd = () => {
     setisAdd(false);
     reset();
+    setImagePreview(null);
   };
 
   const openView = () => {
