@@ -1,6 +1,5 @@
 import { getAuthCookie } from '../utils/cookies';
 import axios from 'axios';
-import FormData from 'form-data';
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
@@ -20,7 +19,7 @@ export const getAllArticles = async (params) => {
 
     const response = await axios(config);
 
-    return response.data.data.articles;
+    return response.data.data;
   } catch (error) {
     throw error.response.data.meta;
   }
