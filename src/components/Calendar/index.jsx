@@ -113,7 +113,7 @@ const Calendar = ({control, name, label, type, placeholder, errors, register, ha
           <div
             tabIndex={-1}
             style={popper.styles.popper}
-            className="dialog-sheet w-[574px]"
+            className="dialog-sheet w-[574px] z-10"
             {...popper.attributes.popper}
             ref={setPopperElement}
             role="dialog"

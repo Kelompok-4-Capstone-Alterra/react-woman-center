@@ -28,8 +28,8 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
   useEffect(() => {
     const token = getAuthCookie();
     if (modalState == true) {
-      getAllCounselors({ has_schedule: false }).then((data) =>
-        setCounselors(data)
+      getAllCounselors({ has_schedule: false }).then(({ counselors }) =>
+        setCounselors(counselors)
       );
     }
   }, [modalState]);
@@ -46,7 +46,7 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
   };
 
   return (
-    <Modal isOpen={modalState} type={"addCounselor"}>
+    <Modal isOpen={modalState} type={"addCounselor"} onClose={closeModal}>
       <form
         onSubmit={handleSubmit((data) => {
           const counselorId = data.counselor.value;

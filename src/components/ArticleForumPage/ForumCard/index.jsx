@@ -4,7 +4,6 @@ import ButtonPrimary from "../../ButtonPrimary";
 import ButtonOutline from "../../ButtonOutline";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useDispatch } from "react-redux";
 import ModalConfirm from "../../ModalConfirm";
 import axios from "axios";
 import { getAuthCookie } from "../../../utils/cookies";
@@ -12,16 +11,11 @@ import moment from "moment";
 import avatarDefault from "../../../assets/forum/avatar-default.png";
 import Modal from "../../Modal";
 import InputField from "../../InputField";
-import { useForm } from "react-hook-form";
 import { Skeleton } from "@mui/material";
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
-const ForumCard = ({ openEdit, openModalComment, payloads, deleteForum }) => {
-  const {
-    register,
-    formState: { errors },
-  } = useForm();
+const ForumCard = ({ payloads, deleteForum }) => {
   const backgroundStyle = {
     background:
       "conic-gradient(from 180deg at 50% 50%, #DAD29C -120deg, #F9DAD9 33.75deg, #DAD29C 240deg, #F9DAD9 393.75deg)",
@@ -30,7 +24,6 @@ const ForumCard = ({ openEdit, openModalComment, payloads, deleteForum }) => {
   const [isLoadingUser, setIsLoadingUser] = useState(false);
   const [isShowModalConfirm, setIsShowModalConfirm] = useState(false);
   const [isShowModalEdit, setIsShowModalEdit] = useState(false);
-  const dispatch = useDispatch();
   const { user_id, category, link, topic, member, created_at } = payloads;
   const [user, setUser] = useState({});
   const differenceDay = moment(new Date(created_at)).from(moment());
@@ -92,7 +85,7 @@ const ForumCard = ({ openEdit, openModalComment, payloads, deleteForum }) => {
             ) : (
               <img
                 src={user.profile_picture}
-                className="w-[40px] h-[40px] rounded-full"
+                className="w-[40px] h-[40px] rounded-full object-cover"
                 onError={handleImageError}
               />
             )}
