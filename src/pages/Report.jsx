@@ -17,6 +17,7 @@ import { getReportDownload } from "../api/transaction";
 import { formatCurrency } from "../helpers/formatCurrency";
 import { convertDate } from "../helpers/convertDate";
 import { convertTime } from "../helpers/converTime";
+import { hideId } from "../helpers/hideId";
 import { Skeleton } from "@mui/material";
 
 const Report = () => {
@@ -169,9 +170,9 @@ const Report = () => {
               ) : (
                 <>
                   <td className="w-[130px]">{convertDate(transaction.created_at, " / ", true)}</td>
-                  <td className="w-[130px]">{transaction.id}</td>
-                  <td className="w-[130px]">{transaction.user_id}</td>
-                  <td className="w-[130px]">{transaction.counselor_data.id}</td>
+                  <td className="w-[130px]">{hideId(transaction.id)}</td>
+                  <td className="w-[130px]">{hideId(transaction.user_id)}</td>
+                  <td className="w-[130px]">{hideId(transaction.counselor_data.id)}</td>
                   <td className="w-[130px]">{transaction.counselor_data.name}</td>
                   <td className="w-[130px]">{transaction.consultation_method}</td>
                   <td className="w-[130px]">{transaction.counselor_data.topic}</td>
