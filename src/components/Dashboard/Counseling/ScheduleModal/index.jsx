@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import Dropdown from "../../../Dropdown";
+import DropdownPage from "../../../DropdownPage";
 import Modal from "../../../Modal";
 import Calendar from "../../../Calendar";
 import ButtonPrimary from "../../../ButtonPrimary";
@@ -24,6 +25,8 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
 
   const [counselors, setCounselors] = useState([]);
   const [times, setTimes] = useState([]);
+
+  const { replace } = useFieldArray({ name: "dates", control });
 
   useEffect(() => {
     const token = getAuthCookie();
@@ -53,11 +56,13 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
           const dates = data.dates.map((date) => convertDate(date));
 
           addSchedule({ counselorId, dates, times })
-            .then((data) => {
+            .then(() => {
               onSubmit(true, "success");
+              replace([]);
+              setTimes([]);
             })
             .catch((error) => {
-              onSubmit(false, "failed");
+              onSubmit(false, error.message || "something went wrong");
             });
 
           closeModal();
@@ -89,7 +94,7 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
           register={register}
           placeholder={""}
         />
-        <Dropdown
+        <DropdownPage
           control={control}
           name={"times"}
           label={"Choose Time"}
@@ -106,7 +111,7 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
           <option value="13:00" label="13:00"></option>
           <option value="14:00" label="14:00"></option>
           <option value="15:00" label="15:00"></option>
-        </Dropdown>
+        </DropdownPage>
         {times?.map((time) => (
           <div
             key={time}
@@ -126,7 +131,11 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
         </ButtonPrimary>
         <ButtonOutline
           type="button"
-          onClick={closeModal}
+          onClick={() => {
+            closeModal();
+            replace([]);
+            setTimes([]);
+          }}
           className="flex items-center justify-center h-[56px] w-full text-[17px]"
         >
           Not Now

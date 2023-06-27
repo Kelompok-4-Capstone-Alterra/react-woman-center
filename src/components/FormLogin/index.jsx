@@ -8,6 +8,7 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import { Alert, CircularProgress, Snackbar } from "@mui/material";
 import ButtonPrimary from "../ButtonPrimary";
+import Popup from "../Dashboard/Popup";
 
 const FormLogin = () => {
   const {
@@ -17,9 +18,10 @@ const FormLogin = () => {
   } = useForm();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [errorLogin, setErrorLogin] = useState({});
-  const [isShowErrorToast, setIsShowErrorToast] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpenPopup, setIsOpenPopup] = useState(false);
+  const [isSuccessPopup, setIsSuccessPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
 
   const onLogin = async (data) => {
     setIsLoading(true);
@@ -31,31 +33,27 @@ const FormLogin = () => {
       setAuthCookie(token);
       navigate("/dashboard");
     } catch (error) {
-      setIsShowErrorToast(true);
-      setErrorLogin({
-        ...error,
-        message: "You have entered an invalid username or password",
-      });
+      handlePopup(false, "You have entered an invalid username or password");
     }
     setIsLoading(false);
   };
 
+  const handlePopup = (isSuccess, message) => {
+    setIsOpenPopup(true);
+    setIsSuccessPopup(isSuccess);
+    setPopupMessage(message);
+    setTimeout(function () {
+      setIsOpenPopup(false);
+    }, 2000);
+  };
+
   return (
     <div>
-      <Snackbar
-        open={isShowErrorToast}
-        autoHideDuration={5000}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        onClose={() => setIsShowErrorToast(false)}
-      >
-        <Alert
-          onClose={() => setIsShowErrorToast(false)}
-          severity="error"
-          sx={{ width: "100%" }}
-        >
-          {errorLogin.message}
-        </Alert>
-      </Snackbar>
+      <Popup
+        isSuccess={isSuccessPopup}
+        isOpen={isOpenPopup}
+        message={popupMessage}
+      />
       <form onSubmit={handleSubmit(onLogin)}>
         <InputField
           name="username"
@@ -82,10 +80,6 @@ const FormLogin = () => {
             {isLoading ? "Loading..." : "Sign In"}
           </span>
         </ButtonPrimary>
-        {/* <input
-          className="flex justify-center bg-primaryMain px-2 py-4 rounded text-white font-medium w-full"
-          value="Sign In"
-        /> */}
       </form>
     </div>
   );

@@ -1,7 +1,7 @@
 import { RouterProvider, redirect } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import { getAuthCookie } from "./utils/cookies";
-import CounselingPage from "./pages/CounselinPage/CounselingPage";
+import CounselingPage from "./pages/CounselingPage";
 import Dashboard from "./layouts/Dashboard";
 import LandingPage from "./pages/LandingPage";
 import DashboardPage from "./pages/DashboardPage";

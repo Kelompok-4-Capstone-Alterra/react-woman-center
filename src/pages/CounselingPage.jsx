@@ -1,34 +1,34 @@
 import React, { useEffect, useState } from "react";
 
-import TableTitle from "../../components/Dashboard/Tables/TableTitle";
-import TableContainer from "../../components/Dashboard/Tables/TableContainer";
-import TableHeader from "../../components/Dashboard/Tables/TableHeader";
-import Tables from "../../components/Dashboard/Tables/Tables";
-import TableBody from "../../components/Dashboard/Tables/TableBody";
-import TableRow from "../../components/Dashboard/Tables/TableRow";
-import DropdownPage from "../../components/DropdownPage";
-import StatusTag from "../../components/StatusTag/index";
-import ButtonPrimary from "../../components/ButtonPrimary";
-import ButtonOutline from "../../components/ButtonOutline/index";
-import ScheduleModal from "../../components/Dashboard/Counseling/ScheduleModal";
-import UpdateModal from "../../components/Dashboard/Counseling/UpdateModal/index";
-import ViewModal from "../../components/Dashboard/Counseling/ViewModal/index";
-import DeleteModal from "../../components/Dashboard/Counseling/DeleteModal/index";
-import LinkModal from "../../components/Dashboard/Counseling/LinkModal";
-import CancelModal from "../../components/Dashboard/Counseling/CancelModal";
-import Popup from "../../components/Dashboard/Popup";
-import PaginationTable from "../../components/PaginationTable";
+import TableTitle from "../components/Dashboard/Tables/TableTitle";
+import TableContainer from "../components/Dashboard/Tables/TableContainer";
+import TableHeader from "../components/Dashboard/Tables/TableHeader";
+import Tables from "../components/Dashboard/Tables/Tables";
+import TableBody from "../components/Dashboard/Tables/TableBody";
+import TableRow from "../components/Dashboard/Tables/TableRow";
+import DropdownPage from "../components/DropdownPage";
+import StatusTag from "../components/StatusTag/index";
+import ButtonPrimary from "../components/ButtonPrimary";
+import ButtonOutline from "../components/ButtonOutline/index";
+import ScheduleModal from "../components/Dashboard/Counseling/ScheduleModal";
+import UpdateModal from "../components/Dashboard/Counseling/UpdateModal/index";
+import ViewModal from "../components/Dashboard/Counseling/ViewModal/index";
+import DeleteModal from "../components/Dashboard/Counseling/DeleteModal/index";
+import LinkModal from "../components/Dashboard/Counseling/LinkModal";
+import CancelModal from "../components/Dashboard/Counseling/CancelModal";
+import Popup from "../components/Dashboard/Popup";
+import PaginationTable from "../components/PaginationTable";
 
-import { getAllTransactions } from "../../api/transaction";
-import { getAllCounselors } from "../../api/usercounselor";
-import { formatCurrency } from "../../helpers/formatCurrency";
-import { convertDate } from "../../helpers/convertDate";
+import { getAllTransactions } from "../api/transaction";
+import { getAllCounselors } from "../api/usercounselor";
+import { formatCurrency } from "../helpers/formatCurrency";
+import { convertDate } from "../helpers/convertDate";
 
 import { useForm } from "react-hook-form";
 import { Delete, Edit, Visibility, Add, Link } from "@mui/icons-material";
 import { Skeleton } from "@mui/material";
-import { hideId } from "../../helpers/hideId";
-import { convertTime } from "../../helpers/converTime";
+import { hideId } from "../helpers/hideId";
+import { convertTime } from "../helpers/converTime";
 
 const CounselingPage = () => {
   // Table State
@@ -94,7 +94,7 @@ const CounselingPage = () => {
     setPopupMessage(message);
     setTimeout(function () {
       setIsPopup(false);
-    }, 1500);
+    }, 2000);
   };
 
   const handleSubmitSchedule = (popupType, popupMessage) => {
@@ -396,7 +396,9 @@ const CounselingPage = () => {
                 ))
               ) : (
                 <TableRow>
-                  <td colSpan={6}>{notFoundMsg}</td>
+                  <td className="text-center font-semibold" colSpan={6}>
+                    {notFoundMsg}
+                  </td>
                 </TableRow>
               )}
             </TableBody>
@@ -420,7 +422,7 @@ const CounselingPage = () => {
                     ) : (
                       <>
                         <td className="w-[130px]">
-                          {convertDate(transaction.created_at, " / ")}
+                          {convertDate(transaction.created_at, " / ", true)}
                         </td>
                         <td className="w-[130px]">{hideId(transaction.id)}</td>
                         <td className="w-[130px]">
@@ -496,7 +498,9 @@ const CounselingPage = () => {
                 ))
               ) : (
                 <TableRow>
-                  <td colSpan={9}>{notFoundMsg}</td>
+                  <td className="text-center font-semibold" colSpan={9}>
+                    {notFoundMsg}
+                  </td>
                 </TableRow>
               )}
             </TableBody>

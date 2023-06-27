@@ -26,7 +26,7 @@ const CommentModal = ({ openModal, onClose, articleId, updateData }) => {
     setPopupMessage(message);
     setTimeout(function () {
       setIsPopup(false);
-    }, 1500);
+    }, 2000);
   };
 
   useEffect(() => {
@@ -71,8 +71,15 @@ const CommentModal = ({ openModal, onClose, articleId, updateData }) => {
         <div className="p-[32px] flex flex-col w-full">
           <div className="py-2">
             <div className="flex justify-between w-full mb-[44px]">
-              <div className='font-medium'>
-                <CommentIcon className="text-primaryMain" /> {comments.comment_count} Comments
+              <div className='font-medium flex flex-row'>
+                <CommentIcon className="text-primaryMain ml-1" /> 
+                {isLoading ? (
+                    <Skeleton animation="wave" variant="rounded" width={15} height={20} />
+                  ) : (
+                    comments.comment_count
+                  )
+                } 
+                <span className='ml-1'>Comments</span>
               </div>
               <button onClick={() => onClose(false)}>
                 <CloseIcon className="bg-black text-white w-[18px] h-[18px]" />

@@ -6,12 +6,15 @@ import Tables from "../components/Dashboard/Tables/Tables";
 import TableHeader from "../components/Dashboard/Tables/TableHeader";
 import TableBody from "../components/Dashboard/Tables/TableBody";
 import TableRow from "../components/Dashboard/Tables/TableRow";
+import PaginationTable from "../components/PaginationTable";
 import GroupsIcon from "@mui/icons-material/Groups";
 import ShoppingBagRoundedIcon from "@mui/icons-material/ShoppingBagRounded";
 import StatusTag from "../components/StatusTag";
 import { getAllTransactions } from "../api/transaction";
 import { formatCurrency } from "../helpers/formatCurrency";
 import { convertDate } from "../helpers/convertDate";
+import { convertTime } from "../helpers/converTime";
+import { hideId } from "../helpers/hideId";
 import { getStatistics } from "../api/statistics";
 import { Skeleton } from "@mui/material";
 
@@ -22,34 +25,66 @@ const DashboardPage = () => {
   const [transactionSortBy, setTransactionSortBy] = useState("newest");
   const [isLoading, setIsLoading] = useState(false);
   const [notFoundMsg, setNotFoundMsg] = useState("");
+  const [currentTransactionPages, setCurrentTransactionPages] = useState("");
+  const [totalTransactionPages, setTotalTransactionPages] = useState("");
+  const [rowsPerTransactionPage, setRowsPerTransactionPage] = useState(10);
 
-  const fetchAllTransactions = async (params = {}) => {
+  const handleTransactionSearch = (e) => {
+    const transactionSearchParams = e.target.value;
+    setTransactionSearchParams(transactionSearchParams);
+    fetchAllTransactions({
+      search: transactionSearchParams,
+      sort_by: transactionSortBy,
+    });
+  };
+  const handleTransactionSortBy = (e) => {
+    const transactionSortBy = e.target.value;
+    setTransactionSortBy(transactionSortBy);
+    fetchAllTransactions({
+      search: transactionSearchParams,
+      sort_by: transactionSortBy,
+    });
+  };
+
+  const fetchAllStatistics = async () => {
     setIsLoading(true);
 
     try {
-      const response = await getAllTransactions(params);
-      setTransactions(response);
+      const response = await getStatistics();
+      setStatistics(response);
       setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+    }
+  };
 
+  const fetchAllTransactions = async (params = {}) => {
+    setIsLoading(true);
+    try {
+      const { transaction, current_pages, total_pages } =
+        await getAllTransactions(params);
+      setTransactions(transaction);
+      setCurrentTransactionPages(current_pages);
+      setTotalTransactionPages(total_pages);
+      setIsLoading(false);
       if (response.length < 1) {
         setNotFoundMsg("What you are looking for doesn't exist");
       }
     } catch (error) {
       setIsLoading(false);
     }
-
     setNotFoundMsg("What you are looking for doesn't exist");
   };
 
   useEffect(() => {
-    getStatistics().then((data) => {
-      setStatistics(data);
-    });
+    fetchAllStatistics();
     fetchAllTransactions({
       sort_by: transactionSortBy,
       search: transactionSearchParams,
+      limit: rowsPerTransactionPage,
+      page: currentTransactionPages,
     });
-  }, [transactionSortBy, transactionSearchParams]);
+  }, []);
 
   return (
     <>
@@ -73,9 +108,9 @@ const DashboardPage = () => {
       <TableContainer>
         <TableTitle
           title={"Recent Counseling Transaction"}
-          onChange={(e) => setTransactionSearchParams(e.target.value)}
+          onChange={(e) => handleTransactionSearch(e)}
           sortBy={transactionSortBy}
-          onSelect={(event) => setTransactionSortBy(event.target.value)}
+          onSelect={(e) => handleTransactionSortBy(e)}
         />
         <Tables scroll>
           <TableHeader>
@@ -106,12 +141,14 @@ const DashboardPage = () => {
                   ) : (
                     <>
                       <td className="w-[130px]">
-                        {convertDate(transaction.created_at)}
+                        {convertDate(transaction.created_at, " / ", true)}
                       </td>
-                      <td className="w-[130px]">{transaction.id}</td>
-                      <td className="w-[130px]">{transaction.user_id}</td>
+                      <td className="w-[130px]">{hideId(transaction.id)}</td>
                       <td className="w-[130px]">
-                        {transaction.counselor_data.id}
+                        {hideId(transaction.user_id)}
+                      </td>
+                      <td className="w-[130px]">
+                        {hideId(transaction.counselor_data.id)}
                       </td>
                       <td className="w-[130px]">
                         {transaction.counselor_data.name}
@@ -122,7 +159,9 @@ const DashboardPage = () => {
                       <td className="w-[130px]">
                         {transaction.counselor_data.topic}
                       </td>
-                      <td className="w-[130px]">{transaction.time_start}</td>
+                      <td className="w-[130px]">
+                        {convertTime(transaction.time_start)}
+                      </td>
                       <td className="w-[130px]">
                         {formatCurrency(transaction.counselor_data.price)}
                       </td>
@@ -135,11 +174,38 @@ const DashboardPage = () => {
               ))
             ) : (
               <TableRow>
-                <td colSpan={7}>{notFoundMsg}</td>
+                <td className="font-semibold text-center" colSpan={7}>
+                  {notFoundMsg}
+                </td>
               </TableRow>
             )}
           </TableBody>
         </Tables>
+        {transactions.length >= 1 && (
+          <PaginationTable
+            page={currentTransactionPages}
+            rows={totalTransactionPages}
+            rowsPerPage={rowsPerTransactionPage}
+            handleChangePage={(event, currentTransactionPages) => {
+              setCurrentTransactionPages(currentTransactionPages);
+              fetchAllTransactions({
+                page: currentTransactionPages,
+                sort_by: transactionSortBy,
+                limit: rowsPerTransactionPage,
+              });
+            }}
+            handleChangeRowsPerPage={(event) => {
+              setRowsPerTransactionPage(parseInt(event.target.value, 10));
+              setCurrentTransactionPages(1);
+              setTransactionSearchParams("");
+              fetchAllTransactions({
+                limit: parseInt(event.target.value, 10),
+                page: currentTransactionPages,
+                sort_by: transactionSortBy,
+              });
+            }}
+          />
+        )}
       </TableContainer>
     </>
   );
