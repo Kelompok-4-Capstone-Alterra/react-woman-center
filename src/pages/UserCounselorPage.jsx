@@ -61,8 +61,7 @@ const UserCounselorPage = () => {
   const [user, setUser] = useState(null);
   const [counselor, setCounselor] = useState(null);
   const [showModalConfirmUser, setShowModalConfirmUser] = useState(false);
-  const [showModalConfirmCounselor, setShowModalConfirmCounselor] =
-    useState(false);
+  const [showModalConfirmCounselor, setShowModalConfirmCounselor] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedCounselorId, setSelectedCounselorId] = useState(null);
   const [counselorSearchParams, setCounselorSearchParams] = useState("");
