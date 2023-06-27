@@ -74,7 +74,7 @@ const CommentModal = ({ openModal, onClose, articleId, updateData }) => {
               <div className='font-medium flex flex-row'>
                 <CommentIcon className="text-primaryMain ml-1" /> 
                 {isLoading ? (
-                    <Skeleton animation="wave" variant="rounded" width={20} height={20} />
+                    <Skeleton animation="wave" variant="rounded" width={15} height={20} />
                   ) : (
                     comments.comment_count
                   )

@@ -8,11 +8,10 @@ import moment from 'moment';
 const MAX_COMMENT_LENGTH = 25;
 
 const CommentCard = ({ payloads, deleteComment }) => {
-  const { profile_pricture, username, created_at } = payloads;
+  const { profile_pricture, username, created_at, comment } = payloads;
   const [isShowModalConfirm, setIsShowModalConfirm] = useState(false);
   const differenceDay = moment(new Date(created_at)).from(moment());
 
-  const comment = 'halo aku disini. iniasdasdaskdjkjashdkjakjshdkjahskdhasdasdasdasdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaakajsdkjashiniasdasdaskdjkjashdkjakjshdkjahskdhasdasdasdasdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaakajsdkjash '
   const isCommentLong = comment.length > MAX_COMMENT_LENGTH;
   const [isHidden, setIsHidden] = useState(true);
 
@@ -49,7 +48,7 @@ const CommentCard = ({ payloads, deleteComment }) => {
           </div>
         </div>
         <div>
-          <p className={`transition-all ${isHidden ? 'truncate' : ''}`}>
+          <p className={`w-[28rem] break-words transition-all ${isHidden ? 'truncate' : ''}`}>
             {' '}
             <span className="mr-3">{isCommentLong && isHidden ? comment.slice(0, MAX_COMMENT_LENGTH) + '...' : comment}</span>{' '}
           </p>
