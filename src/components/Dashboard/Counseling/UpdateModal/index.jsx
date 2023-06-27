@@ -7,6 +7,7 @@ import ButtonPrimary from "../../../ButtonPrimary";
 import ButtonOutline from "../../../ButtonOutline/index";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
+import Avatar from "../../../../assets/profile/avatar.png";
 import { getSchedule, updateSchedule } from "../../../../api/schedule";
 import { convertDate } from "../../../../helpers/convertDate";
 import { getCounselorById } from "../../../../api/usercounselor";
@@ -54,11 +55,20 @@ const UpdateModal = ({ modalState, closeModal, counselor, onSubmit }) => {
     setTimes((prevTimes) => prevTimes.filter((prevTime) => prevTime !== time));
   };
 
+  const handleImageError = (event) => {
+    event.currentTarget.src = Avatar;
+  };
+
   return (
     <Modal isOpen={modalState} type={"viewUpdateSchedule"} onClose={closeModal}>
       <Modal.LeftSide>
         {counselorImage && (
-          <img src={counselorImage} alt="" className="w-[100px] h-[80px]" />
+          <img
+            src={counselorImage}
+            alt=""
+            className="w-[100px] h-[80px] rounded-full"
+            onError={handleImageError}
+          />
         )}
       </Modal.LeftSide>
       <Modal.RightSide>

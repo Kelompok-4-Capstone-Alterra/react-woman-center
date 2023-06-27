@@ -145,10 +145,7 @@ export const TextEditor = ({ label, name, register, control, errors }) => {
 
   const editor = useEditor({
     extensions: [
-      StarterKit.configure({
-        // bulletList: false,
-        // orderedList: false,
-      }),
+      StarterKit,
       Underline,
       TextStyle,
       TextAlign.configure({

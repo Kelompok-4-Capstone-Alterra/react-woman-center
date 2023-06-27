@@ -10,7 +10,6 @@ const Dropdown = ({
   placeholder,
   label,
   children,
-  handleSelect,
   errors,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,7 +35,6 @@ const Dropdown = ({
     onChange(selected);
     toggleDropdown();
     setSelectedLabel(selected.label);
-    handleSelect();
   };
 
   return (

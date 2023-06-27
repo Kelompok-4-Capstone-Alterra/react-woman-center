@@ -38,14 +38,19 @@ const ViewModal = ({ modalState, closeModal, counselor }) => {
     }
   }, [modalState]);
 
+  const handleImageError = (event) => {
+    event.currentTarget.src = Avatar;
+  };
+
   return (
     <Modal isOpen={modalState} type={"viewUpdateSchedule"} onClose={closeModal}>
       <Modal.LeftSide>
         {counselorImage && (
           <img
-            src={counselorImage || Avatar}
+            src={counselorImage}
             alt=""
             className="w-[100px] h-[80px] rounded-full"
+            onError={handleImageError}
           />
         )}
       </Modal.LeftSide>

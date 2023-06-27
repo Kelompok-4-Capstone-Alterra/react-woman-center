@@ -15,9 +15,10 @@ import { TextEditor } from '../../TextEditor';
 import { getArticleById } from '../../../api/article';
 import { getAuthCookie } from '../../../utils/cookies';
 
-import { AddRounded} from '@mui/icons-material';
+import { AddRounded } from '@mui/icons-material';
 import NoImage from '../../../assets/article/no-image.jpg';
 import Popup from '../../Dashboard/Popup';
+import { Skeleton } from '@mui/material';
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
@@ -25,11 +26,12 @@ const EditArticleModal = ({ openModal, onClose, articleId, updateData }) => {
   const [topics, setTopics] = useState([]);
   const [article, setArticle] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
-  const [selectedImage, setSelectedImage] = useState({});
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const [isPopup, setIsPopup] = useState(false);
   const [popupSuccess, setPopupSuccess] = useState(true);
   const [popupMessage, setPopupMessage] = useState('success');
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -51,75 +53,73 @@ const EditArticleModal = ({ openModal, onClose, articleId, updateData }) => {
 
   useEffect(() => {
     if (article) {
-      setValue('id', article.id);
-      setValue('title', article.title);
-      setValue('author', article.author);
-      setValue('description', article.description);
-      setValue('image', article.image);
-      setImagePreview(article.image);
+      setValue('id', article?.id);
+      setValue('title', article?.title);
+      setValue('author', article?.author);
+      setValue('description', article?.description);
+      setValue('image', article?.image);
+      setImagePreview(article?.image);
+      setValue('topic', article?.topic);
     }
   }, [article, setValue]);
 
   useEffect(() => {
     getTopics();
-  }, []);
+  }, [openModal]);
 
   useEffect(() => {
     if (openModal) {
       fetchArticleById();
     }
-  }, [openModal]);
-
-  useEffect(() => {
-    setArticle((prev) => ({ ...prev, ...article }));
-  }, []);
+  }, [articleId, openModal]);
 
   const getTopics = async () => {
     const token = getAuthCookie();
-    const response = await axios.get(`${VITE_API_BASE_URL}/topics`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
 
-    setTopics(response.data.data);
+    try {
+      const response = await axios.get(`${VITE_API_BASE_URL}/users/public/topics`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setTopics(response.data.data.topics);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const fetchArticleById = async () => {
     if (articleId) {
+      setIsLoading(true);
       try {
         const response = await getArticleById(articleId);
+
         setArticle(response.data);
+
       } catch (error) {
         console.log(error);
       }
+      setIsLoading(false);
     }
   };
 
   const handleImageChange = (file) => {
-    setSelectedImage({ ...selectedImage, [articleId]: file });
+    setSelectedImage(file);
     const imageUrl = URL.createObjectURL(file);
     setImagePreview(imageUrl);
   };
-
-  const handleSelectTopic = (event) => {};
-
+  
   const onSubmit = async (articleData) => {
     const formData = new FormData();
-    formData.append('image', selectedImage[articleId]);
+    formData.append('image', selectedImage);
     formData.append('title', articleData.title);
     formData.append('author', articleData.author);
     formData.append('description', articleData.description);
-
-    if (!articleData.topic) {
-      const selectTopic = topics?.topics?.find((topic) => topic.name === article.topic);
-      if (selectTopic) {
-        formData.append('topic', selectTopic.id);
-      }
-    } else {
+    if (articleData.topic !== article.topic) {
       formData.append('topic', articleData.topic.value);
     }
-
+    
     try {
       const token = getAuthCookie();
 
@@ -136,18 +136,20 @@ const EditArticleModal = ({ openModal, onClose, articleId, updateData }) => {
 
       const response = await axios(config);
 
-      handlePopup(true, 'succes');
+      handlePopup(true, response.data.meta.message);
 
       reset();
       setImagePreview('');
       updateData();
       onClose(false);
     } catch (error) {
-      handlePopup(false, 'false');
+      handlePopup(false, error.message);
     }
   };
 
+
   const handleClose = () => {
+    reset();
     onClose(false);
   };
 
@@ -157,27 +159,31 @@ const EditArticleModal = ({ openModal, onClose, articleId, updateData }) => {
 
       <Modal isOpen={openModal} onClose={handleClose} type={'addArticle'}>
         <Modal.Title title={'Edit Article'} />
-        <div>
-          <form className="mb-3" onSubmit={handleSubmit(onSubmit)}>
-            <ImageUploader className="mb-4" icon={<AddRounded />} handleChange={(file) => handleImageChange(file)}>
-              {!imagePreview ? <ImageThumbnail src={NoImage} /> : <ImageThumbnail src={imagePreview} />}
-            </ImageUploader>
-            <InputField name="id" label="ID" type="text" placeholder="12345" errors={errors} register={register} disabled={true} />
-            <InputField name="title" label="Title" type="text" placeholder="Ex : How to get women's right?" errors={errors} register={register} />
-            <InputField name="author" label="Author" type="text" placeholder="Ex : Ruby Jane" errors={errors} register={register} />
-            <TextEditor label={'Description'} name={'description'} register={register} control={control} errors={errors}/>
-            <Dropdown control={control} type="edit" name={'topic'} label={'Topic'} placeholder={article?.topic} handleSelect={handleSelectTopic}>
-              {topics?.topics?.map((topic) => (
-                <option label={topic.name} value={topic.id} key={topic.id} />
-              ))}
-            </Dropdown>
-            <ButtonPrimary className="w-full">Save</ButtonPrimary>
-          </form>
 
-          <ButtonOutline className="w-full" onClick={handleClose}>
-            Discard
-          </ButtonOutline>
-        </div>
+        <form className="mb-3 gap-x-4" onSubmit={handleSubmit(onSubmit)}>
+          <ImageUploader className="mb-4" icon={<AddRounded />} handleChange={(file) => handleImageChange(file)}>
+            {imagePreview ? <>{isLoading ? <Skeleton variant="circular" width={100 + '%'} height={100 + '%'} /> : <ImageThumbnail src={imagePreview} />}</> : <ImageThumbnail src={NoImage} />}
+          </ImageUploader>
+          <InputField name="id" label="Article Id" type="text" placeholder="12345" errors={errors} register={register} disabled={true}/>
+          
+          <InputField name="title" label="Title" type="text" placeholder="Ex : How to get women's right?" errors={errors} register={register} />
+          <InputField name="author" label="Author" type="text" placeholder="Ex : Ruby Jane" errors={errors} register={register} />
+          <TextEditor label={'Description'} name={'description'} register={register} control={control} errors={errors} />
+          <Dropdown control={control} type="edit" name={'topic'} label={'Topic'} placeholder={article?.topic} errors={errors}>
+            {topics.map((topic) => (
+              <option label={topic.name} value={topic.id} key={topic.id}>
+                {topic.name}
+              </option>
+            ))}
+          </Dropdown>
+          <ButtonPrimary className="w-full">
+            <span className="text-[16px] font-medium">Save</span>
+          </ButtonPrimary>
+        </form>
+
+        <ButtonOutline className="w-full" onClick={handleClose}>
+          <span className="text-[16px] font-medium">Discard</span>
+        </ButtonOutline>
       </Modal>
     </>
   );
