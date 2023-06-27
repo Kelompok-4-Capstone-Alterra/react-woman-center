@@ -427,7 +427,6 @@ const Career = () => {
               });
             }}
           />
-          {/* <PaginationTable rows={careers.total_pages} /> */}
         </div>
       </div>
     </div>
