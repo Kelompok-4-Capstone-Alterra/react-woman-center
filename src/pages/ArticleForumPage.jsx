@@ -118,9 +118,9 @@ const ArticleForumPage = () => {
     setSearchKeyword(keyword);
     setSearchValue(keyword);
     if (isArticle) {
-      fetchAllArticles({ search: keyword, sort_by: sortBy });
+      fetchAllArticles({ search: keyword, sort_by: sortBy, page: currentPage });
     } else {
-      fetchAllArticles({ topic: keyword, sort_by: sortBy });
+      fetchAllArticles({ topic: keyword, sort_by: sortBy, page: currentPage });
     }
   };
 
@@ -130,9 +130,9 @@ const ArticleForumPage = () => {
     setSortBy(sortByValue);
 
     if (isArticle) {
-      fetchAllArticles({ sort_by: sortByValue, search: searchKeyword, page });
+      fetchAllArticles({ sort_by: sortByValue, search: searchKeyword, page: currentPage });
     } else {
-      fetchAllArticles({ sort_by: sortByValue, topic: searchKeyword, page });
+      fetchAllArticles({ sort_by: sortByValue, topic: searchKeyword, page: currentPage });
     }
   };
 
