@@ -40,12 +40,33 @@ export const getReport = async (params) => {
     };
 
     const response = await axios(config, params);
-
-    return response.data.data.transaction;
+    return response.data.data;
   } catch (error) {
     throw error.response.data.meta;
   }
 };
+
+export const getReportDownload = async (params) => {
+
+  try {
+    const token = getAuthCookie();
+
+    const config = {
+      method: "GET",
+      baseURL: VITE_API_BASE_URL,
+      url: "/admin/transactions/report/download",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params,
+    };
+    const response = await axios(config);
+    return response
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 
 export const sendTransactionLink = async (id, link) => {
   try {
