@@ -58,7 +58,7 @@ const ScheduleModal = ({ modalState, closeModal, onSubmit }) => {
               onSubmit(true, "success");
             })
             .catch((error) => {
-              onSubmit(false, "failed");
+              onSubmit(false, error.message || "something went wrong");
             });
 
           closeModal();

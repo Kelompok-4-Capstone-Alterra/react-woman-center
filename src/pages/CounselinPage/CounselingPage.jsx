@@ -94,7 +94,7 @@ const CounselingPage = () => {
     setPopupMessage(message);
     setTimeout(function () {
       setIsPopup(false);
-    }, 1500);
+    }, 2000);
   };
 
   const handleSubmitSchedule = (popupType, popupMessage) => {
