@@ -331,6 +331,10 @@ const UserCounselorPage = () => {
     }, 1500);
   };
 
+  const handleImageError = (event) => {
+    event.currentTarget.src = Avatar;
+  };
+
   return (
     <>
       <div>
@@ -626,7 +630,10 @@ const UserCounselorPage = () => {
                 {imagePreview ? (
                   <ImageThumbnail src={imagePreview} />
                 ) : (
-                  <ImageThumbnail src={counselor?.profile_picture} />
+                  <ImageThumbnail
+                  src={counselor?.profile_picture}
+                  onError={handleImageError}
+                  />
                 )}
               </ImageUploader>
               <InputField
@@ -710,11 +717,10 @@ const UserCounselorPage = () => {
           <div>
             <form className="mb-3">
               <ImageUploader className="mb-5">
-                {user?.profile_picture ? (
-                  <ImageThumbnail src={user?.profile_picture} />
-                ) : (
-                  <ImageThumbnail src={Avatar} />
-                )}
+                  <ImageThumbnail
+                  src={user?.profile_picture}
+                  onError={handleImageError}
+                  />
               </ImageUploader>
               <InputField
                 name="id"
