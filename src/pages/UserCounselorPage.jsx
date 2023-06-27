@@ -182,7 +182,7 @@ const UserCounselorPage = () => {
       const { users, current_pages, total_pages } = await getAllUsers(params);
       setUsersData(users);
       setCurrentCounselorPages(current_pages);
-      setTotalCounselorPages(total_pages);
+      setTotalUserPages(total_pages);
     } catch (error) {
       console.log("Error:", error);
     }
@@ -797,55 +797,55 @@ const UserCounselorPage = () => {
           {isShowToast.message}
         </Alert>
       </Snackbar>
-      {isCounselor ? (
-        <PaginationTable
-          page={currentCounselorPages}
-          rows={totalCounselorPages}
-          rowsPerPage={rowsPerCounselorPage}
-          handleChangePage={(event, currentCounselorPages) => {
-            setCurrentCounselorPages(currentCounselorPages);
-            fetchDataCounselors({
-              page: currentCounselorPages,
-              sort_by: counselorSortBy,
-              limit: rowsPerCounselorPage,
-            });
-          }}
-          handleChangeRowsPerPage={(event) => {
-            setRowsPerCounselorPage(parseInt(event.target.value, 10));
-            setCurrentCounselorPages(1);
-            setCounselorSearchParams("");
-            fetchDataCounselors({
-              limit: parseInt(event.target.value, 10),
-              page: currentCounselorPages,
-              sort_by: counselorSortBy,
-            });
-          }}
-        />
-      ) : (
-        <PaginationTable
-          page={currentUserPages}
-          rows={totalUserPages}
-          rowsPerPage={rowsPerUserPage}
-          handleChangePage={(event, currentUserPages) => {
-            setCurrentTransactionPages(currentUserPages);
-            fetchDataUsers({
-              page: currentUserPages,
-              sort_by: userSortBy,
-              limit: rowsPerUserPage,
-            });
-          }}
-          handleChangeRowsPerPage={(event) => {
-            setRowsPerUserPage(parseInt(event.target.value, 10));
-            setCurrentUserPages(1);
-            setUserSearchParams("");
-            fetchDataUsers({
-              limit: parseInt(event.target.value, 10),
-              page: currentUserPages,
-              sort_by: userSortBy,
-            });
-          }}
-        />
-      )}
+      { isCounselor ? (
+          <PaginationTable
+            page={currentCounselorPages}
+            rows={totalCounselorPages}
+            rowsPerPage={rowsPerCounselorPage}
+            handleChangePage={(event, currentCounselorPages) => {
+              setCurrentCounselorPages(currentCounselorPages);
+              fetchDataCounselors({
+                page: currentCounselorPages,
+                sort_by: counselorSortBy,
+                limit: rowsPerCounselorPage,
+              });
+            }}
+            handleChangeRowsPerPage={(event) => {
+              setRowsPerCounselorPage(parseInt(event.target.value, 10));
+              setCurrentCounselorPages(1);
+              setCounselorSearchParams("");
+              fetchDataCounselors({
+                limit: parseInt(event.target.value, 10),
+                page: currentCounselorPages,
+                sort_by: counselorSortBy,
+              });
+            }}
+          />
+        ) : (
+          <PaginationTable
+            page={currentUserPages}
+            rows={totalUserPages}
+            rowsPerPage={rowsPerUserPage}
+            handleChangePage={(event, currentUserPages) => {
+              setCurrentUserPages(currentUserPages);
+              fetchDataUsers({
+                page: currentUserPages,
+                sort_by: userSortBy,
+                limit: rowsPerUserPage,
+              });
+            }}
+            handleChangeRowsPerPage={(event) => {
+              setRowsPerUserPage(parseInt(event.target.value, 10));
+              setCurrentUserPages(1);
+              setUserSearchParams("");
+              fetchDataUsers({
+                limit: parseInt(event.target.value, 10),
+                page: currentUserPages,
+                sort_by: userSortBy,
+              });
+            }}
+          />
+        )}
     </>
   );
 };
